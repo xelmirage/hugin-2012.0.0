@@ -754,9 +754,24 @@ bool PanoDetector::matchgps(PoolExecutor& aExecutor, std::vector<HuginBase::UInt
 		vector<int> ipair;
 		ipair.push_back(id);
 		split(sv,SplitVec[3],is_any_of(","),token_compress_on);
+		
+		
+		//当最后一张照片出现时会没有匹配
+		if(sv.size()==0)
+		{
+			continue;
+		}
 		for(int i=0;i<sv.size();i++)
 		{
+			try
+			{
 			ipair.push_back(boost::lexical_cast<int>(sv[i]));
+			}
+			catch (boost::bad_lexical_cast& e)
+			{
+				cout<<endl<<e.what()<<endl<<"bad lexical_cast,continue"<<endl;
+				continue;
+			}
 			if (i==1) break;
 
 		}
