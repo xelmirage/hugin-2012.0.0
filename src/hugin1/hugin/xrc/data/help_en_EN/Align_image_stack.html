@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<meta name="generator" content="MediaWiki 1.14.0" />
+		<meta name="keywords" content="Align image stack,Control points,Depth of Field,EXIF,Exposure blending,Field of view,Fisheye Projection,HDR,Hugin,Rectilinear Projection" />
+		
+		
+		
+		
+		
+		
+		<title>Align image stack - PanoTools.org Wiki</title>
+		
+		
+		
+		<!--[if lt IE 5.5000]><![endif]-->
+		<!--[if IE 5.5000]><![endif]-->
+		<!--[if IE 6]><![endif]-->
+		<!--[if IE 7]><![endif]-->
+		
+		
+		
+		
+		<!--[if lt IE 7]>
+		<meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+
+		
+
+		
+		<style media="screen" type="text/css" title="Screen style sheet"> @import url(manual.css); </style>
+		
+				
+	</head>
+<body class="mediawiki ltr ns-0 ns-subject page-Align_image_stack skin-monobook">
+	<div id="globalWrapper">
+		<div id="column-content">
+	<div id="content">
+		<a name="top" id="top"></a>
+				<h1 id="firstHeading" class="firstHeading">Align image stack</h1>
+		<div id="bodyContent">
+			
+			
+												<!-- start content -->
+			<p>align_image_stack is a command-line tool available in the development version of <a href="Hugin.html" title="Hugin">hugin</a> to align overlapping images to facilitate <a href="HDR.html" title="HDR">HDR</a> creation, Exposure blending<a class="external" href="http://wiki.panotools.org/Exposure_blending">[*]</a> and extended <a href="Depth_of_Field.html" title="Depth of Field">Depth of Field</a> images.
+</p>
+<a name="Usage" id="Usage"></a><h2> <span class="mw-headline"> Usage </span></h2>
+<pre>align_image_stack [options] input files
+</pre>
+<a name="Options:_modes_of_operation" id="Options:_modes_of_operation"></a><h3> <span class="mw-headline"> Options: modes of operation </span></h3>
+<pre>-p file   
+</pre>
+<p>Output .pto file (useful for debugging, or further refinement)"
+</p>
+<pre>-a prefix 
+</pre>
+<p>Align images, output as prefix_xxxx.tif
+</p>
+<pre>-o output 
+</pre>
+<p>Merge images to HDR, generate output.hdr
+</p>
+<a name="Options:_modifiers" id="Options:_modifiers"></a><h3> <span class="mw-headline"> Options: modifiers </span></h3>
+<pre>-v        
+</pre>
+<p>Verbose, print progress messages
+</p>
+<pre>-e
+</pre>
+<p>Assume input images are full frame <a href="Fisheye_Projection.html" title="Fisheye Projection">fish eye</a> (default: <a href="Rectilinear_Projection.html" title="Rectilinear Projection">rectilinear</a>)
+</p>
+<pre>-t num    
+</pre>
+<p>Remove all control points with an error higher than num pixels (default: 3)
+</p>
+<pre>-f HFOV   
+</pre>
+<p>Approximate horizontal field of view<a class="external" href="http://wiki.panotools.org/Field_of_view">[*]</a> of input images, use if <a href="EXIF.html" title="EXIF">EXIF</a> info not complete
+</p>
+<pre>-m        
+</pre>
+<p>Optimize field of view for all images, except for first. Useful for aligning focus stacks with slightly different magnification
+</p>
+<pre>-c num    
+</pre>
+<p>Number of <a href="Control_points.html" title="Control points">control points</a> to create between adjacent images (default: 8)
+</p>
+<pre>-l
+</pre>
+<p>Assume linear input files
+</p>
+<pre>-s scale
+</pre>
+<p>Scale down image by 2^scale (default: 1 [2x downsampling]). Scaling down images will improve speed at the cost of accuracy.
+</p>
+<pre>-g gsize  
+</pre>
+<p>Break image into a rectangular grid (gsize x gsize) and attempt to find num control points in each section (default: 5 [5x5 grid] )
+</p>
+<pre>-h        
+</pre>
+<p>Display help.
+</p>
+<div class="usermessage" id="stub">
+<table cellpadding="0" cellspacing="0" style="background-color:inherit">
+<tr>
+<td><i>This article is incomplete.  You can help Panotools Wiki by expanding it<a class="external" href="http://wiki.panotools.org/wiki/index.php?stub&amp;title=Align_image_stack&amp;action=edit">[*]</a>.</i>
+</td></tr></table>
+<p><span style="font-weight:normal;">
+<small>Once the article is ok feel free to remove the {{Incomplete}} template</small>
+</p><p></span>
+</p>
+</div>
+
+
+
+
+<div class="printfooter">
+Retrieved from "<a href="Align_image_stack.html">http://wiki.panotools.org/Align_image_stack</a>"</div>
+			</div></div></div></div></body></html>

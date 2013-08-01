@@ -1,0 +1,1446 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<resource>
+  <object class="wxDialog" name="pref_dialog">
+    <title>Preferences - hugin</title>
+    <style>wxDEFAULT_DIALOG_STYLE|wxCAPTION|wxRESIZE_BORDER|wxTAB_TRAVERSAL</style>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxNotebook" name="prefs_tab">
+          <object class="notebookpage">
+            <label>General</label>
+            <object class="wxPanel">
+              <object class="wxBoxSizer">
+                <orient>wxVERTICAL</orient>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <label>Resource Usage</label>
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxFlexGridSizer">
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Image cache memory:</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxSpinCtrl" name="prefs_cache_UpperBound">
+                            <min>1</min>
+                            <max>2147483646</max>
+                            <tooltip>Keep fullsize images in memory, until this limit is exceeded</tooltip>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>MB</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <cols>3</cols>
+                        <rows>2</rows>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Number of CPUs:</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxSpinCtrl" name="prefs_nona_NumberOfThreads">
+                            <value>1</value>
+                            <min>1</min>
+                            <tooltip>Hugin's preview window can use multiple threads for processing.\nSet this to the number of processors or processor cores available in your system.</tooltip>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label></label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                      </object>
+                      <flag>wxEXPAND</flag>
+                    </object>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <label>User Interface</label>
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxFlexGridSizer">
+                        <cols>3</cols>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Language:</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxChoice" name="prefs_gui_language">
+                            <content/>
+                          </object>
+                          <flag>wxALL|wxEXPAND</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>(requires restarting hugin)</label>
+                            <style></style>
+                          </object>
+                          <flag>wxALL|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Project Name:</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxCheckBox" name="prefs_project_naming_convention">
+                            <label>based on containing folder</label>
+                            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE|wxALIGN_TOP</flag>
+                            <border>5</border>
+                          </object>
+                          <flag>wxALL|wxEXPAND|wxALIGN_TOP</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label> </label>
+                          </object>
+                          <flag>wxLEFT|wxEXPAND|wxALIGN_RIGHT|wxALIGN_TOP</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Undo:</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxCheckBox" name="prefs_smart_undo">
+                            <label>Skip over visibility toggles</label>
+                            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE|wxALIGN_TOP</flag>
+                            <border>5</border>
+                          </object>
+                          <flag>wxALL|wxEXPAND|wxALIGN_TOP</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>May have unforseen consequences. \n(EXPERIMENTAL)</label>
+                          </object>
+                          <flag>wxLEFT|wxEXPAND|wxALIGN_RIGHT|wxALIGN_TOP</flag>
+                          <border>5</border>
+                        </object>
+                        <growablecols>2</growablecols>
+                        <object class="spacer">
+                          <size>0,0</size>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxCheckBox" name="pref_show_projection_hints">
+                            <label>Show hints about projections</label>
+                            <enabled>0</enabled>
+                            <hidden>1</hidden>
+                            <tooltip>The hints are shown only in the fast preview window</tooltip>
+                          </object>
+                          <flag>wxALL|wxEXPAND|wxALIGN_TOP</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="spacer">
+                          <flag>wxALL|wxEXPAND|wxALIGN_TOP</flag>
+                          <border>5</border>
+                        </object>
+                      </object>
+                      <flag>wxEXPAND</flag>
+                    </object>
+                    <object class="sizeritem">
+                      <object class="wxCheckBox" name="prefs_misc_showDruid">
+                        <label>Show Druid (requires restarting hugin)</label>
+                        <hidden>1</hidden>
+                      </object>
+                      <flag>wxALL</flag>
+                      <border>5</border>
+                    </object>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <label>File Options</label>
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxBoxSizer">
+                        <orient>wxHORIZONTAL</orient>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Temporary dir:</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxTextCtrl" name="prefs_misc_tempdir"/>
+                          <option>1</option>
+                          <flag>wxALL|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>(leave empty for OS default)</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                      </object>
+                      <flag>wxEXPAND</flag>
+                    </object>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+              </object>
+            </object>
+          </object>
+          <object class="notebookpage">
+            <label>Assistant</label>
+            <object class="wxPanel">
+              <object class="wxBoxSizer">
+                <orient>wxVERTICAL</orient>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <label>Image loading</label>
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxCheckBox" name="prefs_ass_autoAlign">
+                        <label>Automatically align images after loading</label>
+                      </object>
+                      <flag>wxALL</flag>
+                      <border>5</border>
+                    </object>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <object class="sizeritem">
+                      <object class="wxCheckBox" name="prefs_ass_linefind">
+                        <label>Detect vertical lines</label>
+                        <tooltip>Detects vertical lines in the images to level the pano</tooltip>
+                      </object>
+                      <flag>wxALL</flag>
+                      <border>5</border>
+                    </object>
+                    <object class="sizeritem">
+                      <object class="wxCheckBox" name="prefs_celeste_auto">
+                        <label>Remove cloud-like control points (Celeste)</label>
+                      </object>
+                      <flag>wxALL</flag>
+                      <border>5</border>
+                    </object>
+                    <object class="sizeritem">
+                      <object class="wxCheckBox" name="prefs_auto_cpclean">
+                        <label>Remove outlying control points by statistical method</label>
+                      </object>
+                      <flag>wxALL</flag>
+                      <border>5</border>
+                    </object>
+                    <label>Optional assistant steps</label>
+                    <orient>wxVERTICAL</orient>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <label>Auto align</label>
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxFlexGridSizer">
+                        <cols>3</cols>
+                        <object class="sizeritem">
+                          <object class="wxStaticText" name="">
+                            <label>Number of Control Points
+per overlap</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxSpinCtrl" name="prefs_ass_nControlPoints">
+                            <min>50</min>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label></label>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Downscale final pano</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxSpinCtrl" name="prefs_ass_panoDownsizeFactor">
+                            <min>70</min>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>percent of max. width</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <growablecols>2</growablecols>
+                      </object>
+                      <option>1</option>
+                      <flag>wxEXPAND</flag>
+                    </object>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <label>Show Preview</label>
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxBoxSizer">
+                        <object class="sizeritem">
+                          <object class="wxBoxSizer">
+                            <orient>wxHORIZONTAL</orient>
+                            <object class="sizeritem">
+                              <object class="wxStaticText">
+                                <label>After align open</label>
+                              </object>
+                              <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                              <border>5</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxChoice" name="prefs_ass_preview">
+                                <content>
+                                  <item>Nothing</item>
+                                  <item>Fast Preview window</item>
+                                  <item>Preview window</item>
+                                </content>
+                              </object>
+                              <flag>wxLEFT|wxRIGHT|wxEXPAND</flag>
+                              <border>5</border>
+                            </object>
+                          </object>
+                          <flag>wxEXPAND</flag>
+                        </object>
+                        <orient>wxVERTICAL</orient>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Use Fast Preview window for general use, 
+for HDR panoramas use Preview window.</label>
+                          </object>
+                          <flag>wxALL|wxEXPAND</flag>
+                          <border>5</border>
+                        </object>
+                      </object>
+                      <flag>wxEXPAND</flag>
+                      <border>5</border>
+                    </object>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxPanel">
+                    <object class="wxStaticBoxSizer">
+                      <label>Create</label>
+                      <orient>wxVERTICAL</orient>
+                      <object class="sizeritem">
+                        <object class="wxCheckBox" name="prefs_ass_run_editor">
+                          <label>Open final panorama in external editor</label>
+                        </object>
+                        <flag>wxALL</flag>
+                        <border>5</border>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxFlexGridSizer">
+                          <cols>2</cols>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>Editor:</label>
+                            </object>
+                            <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxBoxSizer">
+                              <orient>wxHORIZONTAL</orient>
+                              <object class="sizeritem">
+                                <object class="wxTextCtrl" name="prefs_ass_editor">
+                                  <style></style>
+                                </object>
+                                <option>1</option>
+                                <flag>wxALL|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                                <border>5</border>
+                              </object>
+                              <object class="sizeritem">
+                                <object class="wxButton" name="prefs_editor_select">
+                                  <label>Choose...</label>
+                                </object>
+                                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                              </object>
+                            </object>
+                            <flag>wxEXPAND</flag>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>Arguments:</label>
+                            </object>
+                            <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxTextCtrl" name="prefs_ass_editor_args"/>
+                            <option>2</option>
+                            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                          <growablecols>1</growablecols>
+                        </object>
+                        <option>1</option>
+                        <flag>wxEXPAND</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>The The following patterns will be substituted before running:
+%f  -- final panorama
+%i  -- first input image</label>
+                        </object>
+                        <flag>wxLEFT|wxEXPAND</flag>
+                        <border>15</border>
+                      </object>
+                    </object>
+                    <hidden>1</hidden>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+              </object>
+            </object>
+          </object>
+          <object class="notebookpage">
+            <label>Control Points Editor</label>
+            <object class="wxPanel">
+              <object class="wxBoxSizer">
+                <orient>wxVERTICAL</orient>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <label>HDR and 16 Bit display</label>
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxFlexGridSizer">
+                        <cols>3</cols>
+                        <rows>2</rows>
+                        <growablecols>1</growablecols>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Curve</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxChoice" name="prefs_misc_hdr_mapping">
+                            <content>
+                              <item>linear</item>
+                              <item>logarithmic</item>
+                              <item>gamma 2.2</item>
+                            </content>
+                          </object>
+                          <flag>wxALL|wxEXPAND</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>used for display in GUI</label>
+                          </object>
+                          <flag>wxALL|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                      </object>
+                      <flag>wxEXPAND</flag>
+                    </object>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <label>Fine-tune</label>
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxFlexGridSizer">
+                        <cols>3</cols>
+                        <object class="sizeritem">
+                          <object class="wxStaticText" name="">
+                            <label>Patch width:</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxSpinCtrl" name="prefs_ft_TemplateSize">
+                            <min>3</min>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>pixels</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Search area width:</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxSpinCtrl" name="prefs_ft_SearchAreaPercent">
+                            <min>1</min>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>percent of image width</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText" name="">
+                            <label>Local search area width:</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxSpinCtrl" name="prefs_ft_LocalSearchWidth">
+                            <min>1</min>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>pixels</label>
+                            <tooltip></tooltip>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Correlation Threshold:</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxTextCtrl" name="prefs_ft_CorrThreshold"/>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>0: no similarity\n1: maximum similarity</label>
+                            <tooltip></tooltip>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Peak Curvature Threshold:</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxTextCtrl" name="prefs_ft_CurvThreshold"/>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>0: no peak\n0.2: distinctive peak</label>
+                            <tooltip></tooltip>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <growablecols>2</growablecols>
+                      </object>
+                      <option>1</option>
+                      <flag>wxEXPAND</flag>
+                    </object>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <label>Rotation search</label>
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxCheckBox" name="prefs_ft_RotationSearch">
+                        <label>Enable rotation search (slower, but more accurate)</label>
+                      </object>
+                    </object>
+                    <object class="sizeritem">
+                      <object class="wxPanel" name="prefs_ft_rot_panel">
+                        <object class="wxFlexGridSizer">
+                          <cols>3</cols>
+                          <object class="sizeritem">
+                            <object class="wxStaticText" name="">
+                              <label>Start angle:</label>
+                            </object>
+                            <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxSpinCtrl" name="prefs_ft_RotationStartAngle">
+                              <style></style>
+                            </object>
+                            <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>degrees</label>
+                            </object>
+                            <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>Stop angle:</label>
+                            </object>
+                            <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxSpinCtrl" name="prefs_ft_RotationStopAngle"/>
+                            <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>degrees</label>
+                            </object>
+                            <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>Steps:</label>
+                            </object>
+                            <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxSpinCtrl" name="prefs_ft_RotationSteps">
+                              <min>1</min>
+                            </object>
+                            <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                          <growablecols>2</growablecols>
+                          <object class="spacer">
+                            <size>0,0</size>
+                          </object>
+                        </object>
+                      </object>
+                    </object>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+              </object>
+            </object>
+          </object>
+          <object class="notebookpage">
+            <label>Control Point Detectors</label>
+            <object class="wxPanel">
+              <object class="wxBoxSizer">
+                <orient>wxVERTICAL</orient>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <label>Control Point Detector Programs</label>
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxFlexGridSizer">
+                        <object class="sizeritem">
+                          <object class="wxListBox" name="pref_cpdetector_list">
+                            <style>wxLB_SINGLE</style>
+                            <content/>
+                          </object>
+                          <flag>wxALL|wxEXPAND</flag>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxBoxSizer">
+                            <orient>wxVERTICAL</orient>
+                            <object class="sizeritem">
+                              <object class="wxButton" name="pref_cpdetector_new">
+                                <label>New...</label>
+                              </object>
+                              <flag>wxALL|wxEXPAND</flag>
+                              <border>3</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxButton" name="pref_cpdetector_edit">
+                                <label>Edit...</label>
+                              </object>
+                              <flag>wxALL|wxEXPAND</flag>
+                              <border>3</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxButton" name="pref_cpdetector_del">
+                                <label>Delete</label>
+                              </object>
+                              <flag>wxALL|wxEXPAND</flag>
+                              <border>3</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxButton" name="pref_cpdetector_moveup">
+                                <label>Move up</label>
+                              </object>
+                              <flag>wxALL|wxEXPAND</flag>
+                              <border>3</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxButton" name="pref_cpdetector_movedown">
+                                <label>Move down</label>
+                              </object>
+                              <flag>wxALL|wxEXPAND</flag>
+                              <border>3</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxButton" name="pref_cpdetector_default">
+                                <label>Set default</label>
+                              </object>
+                              <flag>wxALL|wxEXPAND</flag>
+                              <border>3</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxStaticLine"/>
+                              <flag>wxEXPAND</flag>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxButton" name="pref_cpdetector_load">
+                                <label>Import</label>
+                              </object>
+                              <flag>wxALL|wxEXPAND</flag>
+                              <border>3</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxButton" name="pref_cpdetector_save">
+                                <label>Export</label>
+                              </object>
+                              <flag>wxALL|wxEXPAND</flag>
+                              <border>3</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxStaticLine"/>
+                              <flag>wxEXPAND</flag>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxButton" name="pref_cpdetector_help">
+                                <label>Help</label>
+                              </object>
+                              <flag>wxALL|wxEXPAND</flag>
+                              <border>3</border>
+                            </object>
+                          </object>
+                          <flag>wxALL</flag>
+                          <border>5</border>
+                        </object>
+                        <cols>2</cols>
+                        <growablecols>0</growablecols>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>The assistant is using the default setting.</label>
+                          </object>
+                          <flag>wxALL|wxEXPAND</flag>
+                          <border>5</border>
+                        </object>
+                      </object>
+                      <flag>wxALL|wxEXPAND</flag>
+                      <border>5</border>
+                    </object>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+              </object>
+            </object>
+          </object>
+          <object class="notebookpage">
+            <object class="wxPanel">
+              <object class="wxBoxSizer">
+                <orient>wxVERTICAL</orient>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    
+                    <label>Output Format</label>
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxBoxSizer">
+                        <object class="sizeritem">
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <object class="wxStaticText">
+                            <label>Default File Format:</label>
+                          </object>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <object class="wxChoice" name="pref_ldr_output_file_format">
+                            <content>
+                              <item>TIFF</item>
+                              <item>JPEG</item>
+                              <item>PNG</item>
+                            </content>
+                            <selection>0</selection>
+                            <tooltip>default output format for final panorama</tooltip>
+                            <border>5</border>
+                          </object>
+                        </object>
+                        <object class="sizeritem">
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <object class="wxStaticText" name="pref_tiff_compression_label">
+                            <label>TIFF Compression:</label>
+                          </object>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <object class="wxChoice" name="pref_tiff_compression">
+                            <content>
+                              <item>None</item>
+                              <item>Packbits</item>
+                              <item>LZW</item>
+                              <item>Deflate</item>
+                            </content>
+                            <selection>0</selection>
+                            <tooltip>default TIFF compression</tooltip>
+                            <border>5</border>
+                          </object>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText" name="pref_jpeg_quality_label">
+                            <label>JPEG Quality:</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <object class="wxSpinCtrl" name="pref_jpeg_quality">
+                            <min>1</min>
+                            <max>100</max>
+                            <size>60,-1</size>
+                            <tooltip>default JPEG compression setting</tooltip>
+                            <border>5</border>
+                          </object>
+                        </object>
+                        <orient>wxHORIZONTAL</orient>
+                      </object>
+                      <flag>wxALL|wxEXPAND</flag>
+                      <border>5</border>
+                    </object>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    
+                    <label>Processor</label>
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxBoxSizer">
+                        <object class="sizeritem">
+                          <object class="wxChoice" name="pref_processor_gui">
+                            <content>
+                              <item>PTBatcherGUI</item>
+                              <item>Hugin_stitch_project</item>
+                            </content>
+                            <selection>0</selection>
+                            <tooltip>The engine that will run the stitch</tooltip>
+                          </object>
+                          <flag>wxALL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticBoxSizer">
+                            <object class="sizeritem">
+                              <object class="wxCheckBox" name="pref_processor_start">
+                                <label>Start stitching jobs immediately</label>
+                                <tooltip>If selected, the processor will immediately resume processing the jobs queue.  Otherwise the processor is started in suspended state and the user has to start the processing manually.</tooltip>
+                              </object>
+                              <flag>wxALL</flag>
+                              <border>5</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxCheckBox" name="pref_processor_parallel">
+                                <label>Run stitching jobs in parallel</label>
+                                <tooltip>If selected, the processor will run multiple jobs contemporaneously.  Otherwise it will run one job at a time.  Note that selecting this option may actually result in slower stitches, depending on the system's resources and bottlenecks.</tooltip>
+                              </object>
+                              <flag>wxALL</flag>
+                              <border>5</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxCheckBox" name="pref_processor_overwrite">
+                                <label>Overwrite existing files</label>
+                                <tooltip>WARNING: existing files will be silently overwritten.</tooltip>
+                              </object>
+                              <flag>wxALL</flag>
+                              <border>5</border>
+                            </object>
+                            <object class="sizeritem">
+                              <object class="wxCheckBox" name="pref_processor_verbose">
+                                <label>Verbose Output</label>
+                                <tooltip>Enable to get the details, useful when reporting a bug or just to watch the project's progress.</tooltip>
+                              </object>
+                              <flag>wxALL</flag>
+                              <border>5</border>
+                            </object>
+                            <label>Options</label>
+                            <orient>wxVERTICAL</orient>
+                          </object>
+                          <flag>wxEXPAND|wxALL</flag>
+                          <border>5</border>
+                        </object>
+                        <orient>wxVERTICAL</orient>
+                      </object>
+                      <flag>wxALL|wxEXPAND</flag>
+                      <border>5</border>
+                    </object>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <label>Advanced options</label>
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxCheckBox" name="pref_exiftool_metadata">
+                        <label>Copy metadata into final files using ExifTool</label>
+                      </object>
+                      <flag>wxALL|wxEXPAND</flag>
+                      <border>5</border>
+                    </object>
+                    <object class="sizeritem">
+                      <object class="wxBoxSizer">
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Number of threads:</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxSpinCtrl" name="prefs_output_NumberOfThreads">
+                            <value>0</value>
+                            <min>0</min>
+                            <tooltip>Nona and the OpenMP enabled enblend/enfuse can use multiple threads for processing.\nSet this number maximal to the number of processors or processor cores available in your system</tooltip>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>0 for automatic detection</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <orient>wxHORIZONTAL</orient>
+                      </object>
+                      <flag>wxALL|wxEXPAND</flag>
+                      <border>5</border>
+                    </object>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+              </object>
+            </object>
+            <label>Stitching</label>
+          </object>
+          <object class="notebookpage">
+            <object class="wxPanel">
+              <object class="wxBoxSizer">
+                <orient>wxVERTICAL</orient>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <object class="sizeritem">
+                      <object class="wxPanel">
+                        <object class="wxBoxSizer">
+                          <orient>wxVERTICAL</orient>
+                          <object class="sizeritem">
+                            <object class="wxFlexGridSizer">
+                              <object class="sizeritem">
+                                <object class="wxStaticText">
+                                  <label>Default Interpolator (i):</label>
+                                </object>
+                                <flag>wxALL</flag>
+                                <border>5</border>
+                              </object>
+                              <object class="sizeritem">
+                                <object class="wxChoice" name="prefs_nona_interpolator">
+                                  <content>
+                                    <item>Poly3 (Bicubic)</item>
+                                    <item>Spline 16</item>
+                                    <item>Spline 36</item>
+                                    <item>Sinc 256</item>
+                                    <item>Spline 64</item>
+                                    <item>Bilinear</item>
+                                    <item>Nearest neighbor</item>
+                                    <item>Sinc 1024</item>
+                                  </content>
+                                  <selection>0</selection>
+                                  <tooltip>approximation of values between source pixels</tooltip>
+                                  <border>5</border>
+                                </object>
+                              </object>
+                              <cols>2</cols>
+                              <rows>2</rows>
+                            </object>
+                            <flag>wxEXPAND</flag>
+                            <border>0</border>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxCheckBox" name="prefs_nona_createCroppedImages">
+                              <label>Create cropped images by default</label>
+                            </object>
+                            <flag>wxALL|wxSHAPED|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxCheckBox" name="prefs_nona_useGpu">
+                              <label>Use GPU for remapping (EXPERIMENTAL)</label>
+                              <tooltip>Use video card GPU to speed up remapping</tooltip>
+                            </object>
+                            <flag>wxLEFT|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                        </object>
+                      </object>
+                      <flag>wxEXPAND</flag>
+                    </object>
+                    <label>Nona</label>
+                    <orient>wxVERTICAL</orient>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <object class="sizeritem">
+                      <object class="wxPanel">
+                        <object class="wxBoxSizer">
+                          <orient>wxVERTICAL</orient>
+                          <object class="sizeritem">
+                            <object class="wxCheckBox" name="prefs_enblend_Custom">
+                              <label>Use alternative Enblend program</label>
+                            </object>
+                            <flag>wxLEFT|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxFlexGridSizer">
+                              <cols>2</cols>
+                              <object class="sizeritem">
+                                <object class="wxStaticText">
+                                  <label>Enblend executable:</label>
+                                </object>
+                                <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                                <border>5</border>
+                              </object>
+                              <object class="sizeritem">
+                                <object class="wxBoxSizer">
+                                  <orient>wxHORIZONTAL</orient>
+                                  <object class="sizeritem">
+                                    <object class="wxTextCtrl" name="prefs_enblend_EnblendExe"/>
+                                    <option>1</option>
+                                    <flag>wxALL|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                                    <border>5</border>
+                                  </object>
+                                  <object class="sizeritem">
+                                    <object class="wxButton" name="prefs_enblend_select">
+                                      <label>Choose...</label>
+                                    </object>
+                                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                                  </object>
+                                </object>
+                                <flag>wxEXPAND</flag>
+                              </object>
+                              <object class="sizeritem">
+                                <object class="wxStaticText">
+                                  <label>Default Arguments:</label>
+                                </object>
+                                <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                                <border>5</border>
+                              </object>
+                              <object class="sizeritem">
+                                <object class="wxTextCtrl" name="prefs_enblend_EnblendArgs"/>
+                                <option>2</option>
+                                <flag>wxALL|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                                <border>5</border>
+                              </object>
+                              <growablecols>1</growablecols>
+                              <object class="spacer">
+                                <size>0,0</size>
+                              </object>
+                            </object>
+                            <flag>wxEXPAND</flag>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>These are the default arguments for new projects.\nThey can be changed for individual projects in the Stitcher tab.
+Do not set -w, -o and --compression arguments, they are set by hugin</label>
+                            </object>
+                            <flag>wxBOTTOM|wxLEFT|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>10</border>
+                          </object>
+                        </object>
+                      </object>
+                      <flag>wxEXPAND</flag>
+                    </object>
+                    <label>Enblend</label>
+                    <orient>wxVERTICAL</orient>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <object class="sizeritem">
+                      <object class="wxPanel">
+                        <object class="wxBoxSizer">
+                          <orient>wxVERTICAL</orient>
+                          <object class="sizeritem">
+                            <object class="wxCheckBox" name="prefs_enblend_enfuseCustom">
+                              <label>Use alternative Enfuse program</label>
+                            </object>
+                            <flag>wxLEFT|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>5</border>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxFlexGridSizer">
+                              <cols>2</cols>
+                              <object class="sizeritem">
+                                <object class="wxStaticText">
+                                  <label>Enfuse executable:</label>
+                                </object>
+                                <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                                <border>5</border>
+                              </object>
+                              <object class="sizeritem">
+                                <object class="wxBoxSizer">
+                                  <orient>wxHORIZONTAL</orient>
+                                  <object class="sizeritem">
+                                    <object class="wxTextCtrl" name="prefs_enblend_EnfuseExe"/>
+                                    <option>1</option>
+                                    <flag>wxALL|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                                    <border>5</border>
+                                  </object>
+                                  <object class="sizeritem">
+                                    <object class="wxButton" name="prefs_enblend_enfuse_select">
+                                      <label>Choose...</label>
+                                    </object>
+                                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                                  </object>
+                                </object>
+                                <flag>wxEXPAND</flag>
+                              </object>
+                              <object class="sizeritem">
+                                <object class="wxStaticText">
+                                  <label>Default Arguments:</label>
+                                </object>
+                                <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                                <border>5</border>
+                              </object>
+                              <object class="sizeritem">
+                                <object class="wxTextCtrl" name="prefs_enblend_EnfuseArgs"/>
+                                <option>2</option>
+                                <flag>wxALL|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                                <border>5</border>
+                              </object>
+                              <growablecols>1</growablecols>
+                              <object class="spacer">
+                                <size>0,0</size>
+                              </object>
+                            </object>
+                            <flag>wxEXPAND</flag>
+                          </object>
+                          <object class="sizeritem">
+                            <object class="wxStaticText">
+                              <label>These are the default arguments for new projects.\nThey can be changed for individual projects in the Stitcher tab.
+Do not set -w, -o and --compression arguments, they are set by hugin</label>
+                            </object>
+                            <flag>wxBOTTOM|wxLEFT|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                            <border>10</border>
+                          </object>
+                        </object>
+                      </object>
+                      <flag>wxEXPAND</flag>
+                    </object>
+                    <label>Enfuse</label>
+                    <orient>wxVERTICAL</orient>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+              </object>
+            </object>
+            <label>Programs</label>
+          </object>
+          <object class="notebookpage">
+            <object class="wxPanel">
+              <object class="wxBoxSizer">
+                <orient>wxVERTICAL</orient>
+                <object class="sizeritem">
+                  <object class="wxStaticBoxSizer">
+                    <label>Celeste parameters</label>
+                    <orient>wxVERTICAL</orient>
+                    <object class="sizeritem">
+                      <object class="wxFlexGridSizer">
+                        <cols>3</cols>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>SVM threshold:</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxTextCtrl" name="prefs_celeste_threshold"/>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>greater than 0.5: less sensitive\nless than 0.5: more sensitive</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>Gabor filter size</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxChoice" name="prefs_celeste_filter">
+                            <content>
+                              <item>small</item>
+                              <item>large</item>
+                            </content>
+                          </object>
+                          <flag>wxALL|wxEXPAND</flag>
+                          <border>5</border>
+                        </object>
+                        <object class="sizeritem">
+                          <object class="wxStaticText">
+                            <label>large is more accurate\nsmall can examine control points close to image border</label>
+                          </object>
+                          <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                          <border>5</border>
+                        </object>
+                        <growablecols>2</growablecols>
+                      </object>
+                      <option>1</option>
+                      <flag>wxEXPAND</flag>
+                    </object>
+                  </object>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <border>5</border>
+                </object>
+              </object>
+            </object>
+            <label>Celeste</label>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxALL|wxEXPAND</flag>
+        <border>5</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxButton" name="prefs_defaults">
+              <label>Load Defaults</label>
+            </object>
+            <flag>wxALL|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+            <border>5</border>
+          </object>
+          <object class="spacer">
+            <option>1</option>
+            <flag>wxEXPAND</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStdDialogButtonSizer">
+              <object class="button">
+                <object class="wxButton" name="wxID_APPLY">
+                  <label>Apply</label>
+                </object>
+              </object>
+              <object class="button">
+                <object class="wxButton" name="wxID_OK">
+                  <label>OK</label>
+                  <default>1</default>
+                </object>
+              </object>
+              <object class="button">
+                <object class="wxButton" name="wxID_CANCEL">
+                  <label>Cancel</label>
+                </object>
+              </object>
+            </object>
+            <flag>wxALL|wxEXPAND</flag>
+          </object>
+        </object>
+        <flag>wxTOP|wxALL|wxEXPAND</flag>
+        <border>5</border>
+      </object>
+    </object>
+  </object>
+  <object class="wxDialog" name="WORKBENCH">
+    <title></title>
+    <object class="wxPanel">
+      <object class="wxBoxSizer">
+        <orient>wxVERTICAL</orient>
+        <object class="sizeritem">
+          <object class="wxStaticBoxSizer">
+            <label>Panorama Tools</label>
+            <orient>wxVERTICAL</orient>
+            <object class="sizeritem">
+              <object class="wxGridBagSizer">
+                <growablecols>1</growablecols>
+                <object class="sizeritem">
+                  <object class="wxCheckBox" name="prefs_pt_PTStitcherEXE_custom">
+                    <label>Use alternative PTStitcher program</label>
+                  </object>
+                  <cellpos>0,0</cellpos>
+                  <cellspan>1,3</cellspan>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticText" name="">
+                    <label>PTStitcher:</label>
+                  </object>
+                  <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                  <border>5</border>
+                  <cellpos>1,0</cellpos>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxTextCtrl" name="prefs_pt_PTStitcherEXE"/>
+                  <flag>wxALL|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                  <border>5</border>
+                  <cellpos>1,1</cellpos>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxButton" name="prefs_ptstitcher_select">
+                    <label>Choose...</label>
+                  </object>
+                  <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  <cellpos>1,2</cellpos>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticText">
+                    <label>Scriptfile:</label>
+                  </object>
+                  <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                  <border>5</border>
+                  <cellpos>2,0</cellpos>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxTextCtrl" name="prefs_pt_ScriptFile">
+                    <tooltip>Name of the temporary script file used by Panotools</tooltip>
+                  </object>
+                  <flag>wxALL|wxEXPAND|wxALIGN_CENTRE_VERTICAL</flag>
+                  <border>5</border>
+                  <cellpos>2,1</cellpos>
+                  <cellspan>1,2</cellspan>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticText">
+                    <label>Panotools:</label>
+                  </object>
+                  <flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                  <border>5</border>
+                  <cellpos>3,0</cellpos>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxStaticText" name="prefs_panotools_version">
+                    <label>Panotools</label>
+                  </object>
+                  <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                  <border>5</border>
+                  <cellpos>3,1</cellpos>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxButton" name="prefs_panotools_details">
+                    <label>Details</label>
+                    <enabled>0</enabled>
+                  </object>
+                  <flag>wxALIGN_RIGHT|wxALIGN_CENTRE_VERTICAL</flag>
+                  <cellpos>3,2</cellpos>
+                </object>
+              </object>
+              <flag>wxEXPAND</flag>
+            </object>
+          </object>
+          <flag>wxALL|wxEXPAND</flag>
+          <border>5</border>
+        </object>
+      </object>
+    </object>
+  </object>
+</resource>
