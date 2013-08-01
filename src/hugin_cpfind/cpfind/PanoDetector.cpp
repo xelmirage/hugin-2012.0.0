@@ -841,17 +841,23 @@ bool PanoDetector::matchgps(PoolExecutor& aExecutor, std::vector<HuginBase::UInt
 	{
 		int idtoFind;
 		id=ids[i1];
+
 		for(int j=1;j<pairs[i1].size();j++)
 		{
 			idtoFind=pairs[i1][j];
 			//vector<int>::iterator it;
-			for(int it=0;it<ids.size();it++)
+			int it;
+			for(it=0;it<ids.size();it++)
 			{
 				if(ids[it]==idtoFind)
 				{
 					i2=it;
 					break;
 				}
+			}
+			if (it==ids.size())
+			{
+				continue;
 			}
 			cout<<"Pair "<<i1<<","<<i2<<endl;
 
