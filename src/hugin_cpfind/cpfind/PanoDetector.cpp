@@ -486,8 +486,7 @@ void PanoDetector::run()
             setCores(maxCores);
         };
     };
-	PoolExecutor aExecutor(8);
-    //PoolExecutor aExecutor(_cores);
+	PoolExecutor aExecutor(_cores);
     svmModel=NULL;
     if(_celeste)
     {
