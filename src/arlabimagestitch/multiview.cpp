@@ -12,6 +12,11 @@ multiview::multiview(QWidget *parent, Qt::WFlags flags)
 	char arg2[]="-o out.pto";
 	char arg3[]="asdfaw";
 	mainview = new ImgViewer; 
+	QLayout* layout = new QVBoxLayout();
+	
+	
+
+
 
 	scrollArea = new QScrollArea;
 	scrollArea->setBackgroundRole(QPalette::Dark);
@@ -28,8 +33,10 @@ multiview::multiview(QWidget *parent, Qt::WFlags flags)
 
 	setWindowTitle(tr("Dock Widgets"));
 
-	resize(640, 480);
+	resize(800, 600);
 	//QMessageBox::information(NULL, "Title", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+	//lineEdit_4 = new QLineEdit;
+	
 
 
 
@@ -155,10 +162,8 @@ void multiview::createDockWindows()
 	//preViewer->setMaximumHeight(400);
 	//preViewer->adjustSize();
 
-	addDockWidget(Qt::BottomDockWidgetArea, dock);
-	viewMenu->addAction(dock->toggleViewAction());
-	connect(preViewer, SIGNAL(doubleClicked(const QModelIndex &)),
-		this, SLOT(setNewImage()));
+	
+	
 
 
 	//osgqtView = new ViewerQT;
@@ -171,6 +176,35 @@ void multiview::createDockWindows()
 	//   //connect(paragraphsList, SIGNAL(currentTextChanged()),
 	//   //        this, SLOT(addParagraph(const QString &)));
 	////InitOsg();
+
+
+
+	//侧边栏cmd输出
+	QDockWidget *cmd_dock = new QDockWidget(tr("Cmd Out window"), this);
+	cmd_dock->setAllowedAreas(  Qt::BottomDockWidgetArea 
+		| Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	textEdit = new QTextEdit(cmd_dock);
+	cursor=new QTextCursor(textEdit->textCursor());
+	cursor->movePosition(QTextCursor::Start);
+	lineEdit_4 = new QLineEdit;
+
+	
+
+	cmd_dock->setWidget(textEdit);
+	textEdit->setMinimumHeight(100);
+	textEdit->adjustSize();
+
+	addDockWidget (Qt::BottomDockWidgetArea, dock);
+
+	addDockWidget(Qt::BottomDockWidgetArea, cmd_dock);
+
+	
+
+	viewMenu->addAction(dock->toggleViewAction());
+	connect(preViewer, SIGNAL(doubleClicked(const QModelIndex &)),
+		this, SLOT(setNewImage()));
+
+
 
 } 
 
@@ -221,31 +255,51 @@ void multiview::newFile()
 	QString fileName; 
 	QFileDialog* fd = new QFileDialog(this);//创建对话框
 	//fd->resize(240,320);    //设置显示的大小
-	fd->setFilter( "Images (*.png *.tif *.jpg)"); //设置文件过滤器
+	//fd->setFilter( "Images (*.png *.tif *.jpg)"); //设置文件过滤器
 	fd->setViewMode(QFileDialog::List);  //设置浏览模式，有 列表（list） 模式和 详细信息（detail）两种方式
 	//fd->setMode( QFileDialog::ExistingFiles ); 
-	fd->setFileMode(QFileDialog::ExistingFiles);
+	fd->setFileMode(QFileDialog::DirectoryOnly);
 	if ( fd->exec() == QDialog::Accepted )   //如果成功的执行
 	{
+		
 		fileNameList = fd->selectedFiles();      //返回文件列表的名称
 		fileName = fileNameList[0];            //取第一个文件名
+		QMessageBox::information(NULL, "Title",fileName, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 	}
-	else
-		fd->close();
+	//else
+	//	fd->close();
 
 	QString argnames;
 	argnames.clear();
 
-		
-	//	char * ch=(char*)str.c_str();
-	//QMessageBox::information(NULL, "Title",ch, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 	
 
-	h.pto_gen(fileNameList,"qout.pto");
-	h.cpfind("qout.pto","cpout.pto");
+	myprocess = new QProcess(this);
+
+	connect(myprocess, SIGNAL(readyReadStandardOutput()),
+		this, SLOT(outlog()));
+	myprocess->start("./belt1.bat");
+	// For debugging: Wait until the process has finished.
+	//myprocess->waitForFinished();
+	while (! myprocess->waitForFinished(100)) { //启动程序后，用循环等待其结束，如果对程序何时结束并不关心，以下代码可以不需要。
+		if (myprocess->state() == QProcess::NotRunning) { //process failed
+			QMessageBox::critical(NULL, "critical", tr("Error when record cd."));
+
+		}
+
+		qApp->processEvents(); //防止UI死锁，一般情况下，用这种等一小段时间（这 里是300ms），让UI响应一次的办法，已经足够使用了。
+		
+	
+	}	
+	//	char * ch=(char*)str.c_str();
+	//QMessageBox::information(NULL, "Title",ch, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+
+	//h.pto_gen(fileNameList,"qout.pto");
+	//h.cpfind("qout.pto","cpout.pto");
 
 	//h.readData("cpout.pto");
-	h.loadProject("cpout.pto");
+	//h.loadProject("cpout.pto");
 
 
 
@@ -374,6 +428,22 @@ void multiview::adjustScrollBar(QScrollBar *scrollBar, double factor)
 		+ ((factor - 1) * scrollBar->pageStep()/2)));
 
 }
+
+
+void multiview::outlog()
+{
+	static QString text;
+	QString abc = myprocess->readAllStandardOutput();
+	emit outlogtext(abc);
+	text+=abc;
+	textEdit->setText(text);
+	cursor->movePosition(QTextCursor::End);
+	textEdit->setTextCursor(*cursor);
+	//lineEdit_4->setText(abc);
+}
+
+
+
 
 
 //---------------------------------------------------------------------

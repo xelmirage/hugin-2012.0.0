@@ -4,7 +4,7 @@
 #include <QtGui/QMainWindow>
 //#include <QGraphicsView>
 //#include "ui_multiview.h"
-
+#include <QtCore/QDebug>
 #include <QtCore/QAbstractListModel>
 #include <QtCore/QList>
 #include <QtCore/QPoint>
@@ -19,9 +19,8 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include <f:\huginbase20130128\hugin-2012.0.0\src\arlabimagestitch\pto_gen.h>
-#include<f:\huginbase20130128\hugin-2012.0.0\src\arlabimagestitch\cpfind\cpfind.h>
-#include<hugin.h>
+
+
 using namespace std;
 
 
@@ -153,15 +152,25 @@ private:
 
 private:
 	//Ui::multiviewClass ui;
+	///QLineEdit* lineEdit_4;
 
 	ImgViewer *mainview;
-    //QTextEdit *textEdit;
+    QTextEdit *textEdit;
 	ImgPreview* preViewer;
     QScrollArea *scrollArea;
 	double scaleFactor;
 
-
-	myhugin h;
+signals:
+    void outlogtext(QString ver);
+private slots:
+    void outlog();
+    
+private:
+	QLineEdit*  lineEdit_4;
+	QTextCursor* cursor; 
+	
+	
+    QProcess *myprocess;
 
 };
 
