@@ -31,7 +31,7 @@ multiview::multiview(QWidget *parent, Qt::WFlags flags)
 	createStatusBar();
 	createDockWindows();
 
-	setWindowTitle(tr("Dock Widgets"));
+	setWindowTitle(tr("ARLab Image Sticher"));
 
 	resize(800, 600);
 	//QMessageBox::information(NULL, "Title", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
@@ -45,6 +45,7 @@ multiview::multiview(QWidget *parent, Qt::WFlags flags)
 
 multiview::~multiview()
 {
+
 
 }
 
@@ -248,11 +249,12 @@ void multiview::newFile()
 	//       preViewer->ReadImages();
 
 	//   }
-	int i;
-
 
 	QStringList    fileNameList;
-	QString fileName; 
+	QString fileName,gpsfileName,sdir; 
+
+	//-----------------获取照片目录-----//
+	
 	QFileDialog* fd = new QFileDialog(this);//创建对话框
 	//fd->resize(240,320);    //设置显示的大小
 	//fd->setFilter( "Images (*.png *.tif *.jpg)"); //设置文件过滤器
@@ -263,14 +265,38 @@ void multiview::newFile()
 	{
 		
 		fileNameList = fd->selectedFiles();      //返回文件列表的名称
-		fileName = fileNameList[0];            //取第一个文件名
-		QMessageBox::information(NULL, "Title",fileName, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+		sdir = fileNameList[0]+"/";            //取第一个文件名
+		QMessageBox::information(NULL, "Title",sdir, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 	}
-	//else
-	//	fd->close();
+	else
+	{
+		fd->close();
+		return;
+	}
 
-	QString argnames;
-	argnames.clear();
+
+	//---------------GPS ----------//
+	
+	fd->setFilter( "GPS data (*.txt)"); //设置文件过滤器
+	fd->setViewMode(QFileDialog::List);  //设置浏览模式，有 列表（list） 模式和 详细信息（detail）两种方式
+	fd->setFileMode( QFileDialog::ExistingFile ); 
+	//fd->setFileMode(QFileDialog::DirectoryOnly);
+	if ( fd->exec() == QDialog::Accepted )   //如果成功的执行
+	{
+		
+		fileNameList = fd->selectedFiles();      //返回文件列表的名称
+		gpsfileName = fileNameList[0];            //取第一个文件名
+		QMessageBox::information(NULL, "Title",gpsfileName, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+	}
+	else
+	{
+		fd->close();
+		return;
+	}
+
+
+
+
 
 	
 
@@ -278,19 +304,64 @@ void multiview::newFile()
 
 	connect(myprocess, SIGNAL(readyReadStandardOutput()),
 		this, SLOT(outlog()));
-	myprocess->start("./belt1.bat");
-	// For debugging: Wait until the process has finished.
-	//myprocess->waitForFinished();
-	while (! myprocess->waitForFinished(100)) { //启动程序后，用循环等待其结束，如果对程序何时结束并不关心，以下代码可以不需要。
-		if (myprocess->state() == QProcess::NotRunning) { //process failed
-			QMessageBox::critical(NULL, "critical", tr("Error when record cd."));
 
-		}
+	this->execexternal(myprocess,
+		"./gpsfilter -o "+sdir+"belts.log -g "+gpsfileName+" -s "+sdir,"processing GPSFilting");
 
-		qApp->processEvents(); //防止UI死锁，一般情况下，用这种等一小段时间（这 里是300ms），让UI响应一次的办法，已经足够使用了。
-		
-	
-	}	
+	this->execexternal(myprocess,
+		"./pto_gen "+sdir+"*.jpg -o "+sdir+"stich.pto --gps -f 1","generating pto");
+	this->execexternal(myprocess,
+		"./cpfindgps001 -o "+sdir+"stich_cp.pto "+sdir+"stich.pto --gps","Finding Control Points");
+
+	this->execexternal(myprocess,
+		"./cpclean -o "+sdir+"stich_cp_cpclean.pto "+sdir+"stich_cp.pto","Cleaning Control Points");
+	this->execexternal(myprocess,
+		"./linefind -o "+sdir+"stich_cp_cpclean_linefind.pto stich_cp_cpclean.pto","Finding vertical lines");
+	this->execexternal(myprocess,
+		"./checkpto "+sdir+"stich_cp_cpclean_linefind.pto","Checking PTO");
+
+
+	//----------------insert check
+
+	this->execexternal(myprocess,
+		"./autooptimiser -a  -l -s -o "+sdir+"stich_cp_cpclean_linefind_optimised.pto "+sdir+"stich_cp_cpclean_linefind.pto","optimising");
+	this->execexternal(myprocess,
+		"./pano_modify --canvas=20%% --crop=AUTO -o "+sdir+"stich_cp_cpclean_linefind_optimised_mod.pto "+sdir+"stich_cp_cpclean_linefind_optimised.pto ","modifying");
+
+	this->execexternal(myprocess,
+		"./nona -g  -z LZW -r ldr -m TIFF_m -o "+sdir+"temp  "+sdir+"stich_cp_cpclean_linefind_optimised_mod.pto ","resampling");
+	this->execexternal(myprocess,
+		"./enblend --compression=80  -o "+sdir+"final_output.jpg -- "+sdir+"temp*.tif --gpu -m 12000","Enblending");
+
+	//myprocess->start("./gpsfilter -o f:/kl/qtout.txt -g f:/kl/02.txt -s f:/kl");
+	//// For debugging: Wait until the process has finished.
+	////myprocess->waitForFinished();
+	//while (! myprocess->waitForFinished(100)) { //启动程序后，用循环等待其结束，如果对程序何时结束并不关心，以下代码可以不需要。
+	//	if (myprocess->state() == QProcess::NotRunning) { //process failed
+	//		if (myprocess->exitCode() != 0) { //error when run process
+	//			QMessageBox::critical(NULL,"Wrong Exitcode", tr("Error exitcode"));
+	//			return;
+	//		}
+
+
+	//	}
+
+
+	//	qApp->processEvents(); //防止UI死锁，一般情况下，用这种等一小段时间（这 里是300ms），让UI响应一次的办法，已经足够使用了。
+
+
+	//}	
+	//if (myprocess->exitCode() != 0) { //error when run process
+	//	QMessageBox::critical(NULL,"Wrong Exitcode", tr("Error exitcode"));
+	//	return;
+	//}
+
+
+
+
+
+
+
 	//	char * ch=(char*)str.c_str();
 	//QMessageBox::information(NULL, "Title",ch, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
@@ -439,11 +510,67 @@ void multiview::outlog()
 	textEdit->setText(text);
 	cursor->movePosition(QTextCursor::End);
 	textEdit->setTextCursor(*cursor);
+	
 	//lineEdit_4->setText(abc);
 }
+void multiview::tick(QString message)
+{
+	static int n;
+	int i;
+	QString messageToShow=message;
+	for(i=0;i<n;i++)
+	{
+		messageToShow+=".";
+
+	}
+	n++;
+	if (n>15) n=0;
+
+	statusBar()->showMessage(messageToShow);
+	
+
+}
+
+int multiview::execexternal(QProcess* myprocess,QString command,QString tickmessage)
+{
+	
+	myprocess->start(command);
+	// For debugging: Wait until the process has finished.
+	//myprocess->waitForFinished();
+	while (! myprocess->waitForFinished(100)) 
+	{ //启动程序后，用循环等待其结束，如果对程序何时结束并不关心，以下代码可以不需要。
 
 
+		tick(tickmessage);
+		if (myprocess->state() == QProcess::NotRunning) 
+		{ //process failed
+			if (myprocess->exitCode() != 0)
+			{ //error when run process
+				QMessageBox::critical(NULL,"Wrong Exitcode", tr("Error exitcode"));
+				return myprocess->exitCode();
+			}
+			else
+			{
+				statusBar()->showMessage(tr("Ready."));
+				return myprocess->exitCode();
 
+			}
+
+
+		}
+
+
+		qApp->processEvents(); //防止UI死锁，一般情况下，用这种等一小段时间（这 里是300ms），让UI响应一次的办法，已经足够使用了。
+
+
+	}	
+	if (myprocess->exitCode() != 0) { //error when run process
+		QMessageBox::critical(NULL,"Wrong Exitcode", tr("Error exitcode"));
+		return myprocess->exitCode();
+	}
+	return myprocess->exitCode();
+
+}
 
 
 //---------------------------------------------------------------------

@@ -120,24 +120,25 @@ private slots:
 
 
 private:
-     void createActions();
-     void createMenus();
-     void createToolBars();
-     void createStatusBar();
-     void createDockWindows();
+	void createActions();
+	void createMenus();
+	void createToolBars();
+	void createStatusBar();
+	void createDockWindows();
 
-    void scaleImage(double factor);
-    void adjustScrollBar(QScrollBar *scrollBar, double factor);
+	void scaleImage(double factor);
+	void adjustScrollBar(QScrollBar *scrollBar, double factor);
+	void tick(QString message);
+	int execexternal(QProcess* myprocess,QString command,QString tickmessage);
 
+	QMenu *fileMenu;
+	QMenu *editMenu;
+	QMenu *viewMenu;
+	QMenu *helpMenu;
+	QToolBar *fileToolBar;
+	QToolBar *editToolBar;
 
-     QMenu *fileMenu;
-     QMenu *editMenu;
-     QMenu *viewMenu;
-     QMenu *helpMenu;
-     QToolBar *fileToolBar;
-     QToolBar *editToolBar;
-
-     //actions must be add into menu to take its function!!
+	//actions must be add into menu to take its function!!
 
      QAction *newFileAct;
      QAction *saveAct;
