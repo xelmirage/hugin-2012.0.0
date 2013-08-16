@@ -36,6 +36,11 @@ multiview::multiview(QWidget *parent, Qt::WFlags flags)
 	resize(800, 600);
 	//QMessageBox::information(NULL, "Title", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 	//lineEdit_4 = new QLineEdit;
+	time_count=0;
+	timer = new QTimer(this);
+    timer->setInterval(1000); //1000ms == 1s
+    connect(timer,SIGNAL(timeout()),this,SLOT(count_time()));
+	
 	
 
 
@@ -194,6 +199,7 @@ void multiview::createDockWindows()
 	cmd_dock->setWidget(textEdit);
 	textEdit->setMinimumHeight(100);
 	textEdit->adjustSize();
+	textEdit->setReadOnly(false);
 
 	addDockWidget (Qt::BottomDockWidgetArea, dock);
 
@@ -213,6 +219,25 @@ void multiview::createDockWindows()
 
 void multiview::newFile()
 {
+	//QImage image("f:/kl/DSC01814.jpg");
+
+	//if (image.isNull()) 
+	//{
+	//	QMessageBox::information(this, tr("Image Viewer"),
+	//		tr("Cannot load %1.").arg("f:/kl/DSC01814.jpg"));
+	//	return;
+	//}
+	//mainview->setPixmap(QPixmap::fromImage(image));
+	//
+	//
+
+	//printAct->setEnabled(true);
+	////updateActions();
+	//zoomInAct->setEnabled(true);
+	//zoomOutAct->setEnabled(true);
+
+	//mainview->adjustSize();
+
 	//   QString fileName = QFileDialog::getOpenFileName(this,
 	//                                   tr("Open File"), QDir::currentPath());
 
@@ -300,38 +325,120 @@ void multiview::newFile()
 
 	
 
+	QDateTime start_time=QDateTime::currentDateTime();
 	myprocess = new QProcess(this);
 
 	connect(myprocess, SIGNAL(readyReadStandardOutput()),
 		this, SLOT(outlog()));
+	time_count=1;
+	timer->start(1000);
+	
+	QFileInfo beltlog(sdir+"belts.log");
+	//if (!beltlog)
+	if(!beltlog.exists())
+	{
+		this->execexternal(myprocess,
+			"./gpsfilter -o "+sdir+"belts.log -g "+gpsfileName+" -s "+sdir,"processing GPSFilting");
+	}
+	else
+	{
+		push_message("\n---------------\n["+run_time+"] skipping filting......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skipping filting......\n\n"));
+		//QMessageBox::information(NULL, "Existing results","Skipping GPSFilting", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+	}
+
+	QFileInfo stich(sdir+"stich.pto");
+
+	if(!stich.exists())
+	{
+		this->execexternal(myprocess,
+			"./pto_gen "+sdir+"*.jpg -o "+sdir+"stich.pto --gps -f 1","generating pto");
+	}
+	else
+	{
+		push_message("\n---------------\n["+run_time+"] skipping generating pto......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skipping generating pto......\n\n"));
+
+	}
+	QFileInfo stich_cp(sdir+"stich_cp.pto");
+
+	if(!stich_cp.exists())
+	{
+		this->execexternal(myprocess,
+			"./cpfindgps001 -o "+sdir+"stich_cp.pto "+sdir+"stich.pto --gps","Finding Control Points");
+	}
+	else
+	{
+		push_message("\n---------------\n["+run_time+"] skipping finding control points......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skipping finding control points......\n\n"));
+
+	}
+
+	QFileInfo stich_cp_clean(sdir+"stich_cp_clean.pto");
+
+	if(!stich_cp_clean.exists())
+	{
+
+		this->execexternal(myprocess,
+			"./cpclean -o "+sdir+"stich_cp_clean.pto "+sdir+"stich_cp.pto","Cleaning Control Points");
+	}
+	else
+	{
+		push_message("\n---------------\n["+run_time+"] skipping cleaning control points......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skipping cleaning control points......\n\n"));
+	}
+	QFileInfo stich_cp_clean_line(sdir+"stich_cp_clean_linefind.pto");
+
+	if(!stich_cp_clean_line.exists())
+	{
+		this->execexternal(myprocess,
+			"./linefind -o "+sdir+"stich_cp_clean_linefind.pto "+sdir+"stich_cp_clean.pto","Finding vertical lines");
+	}
+	else
+	{
+		push_message("\n---------------\n["+run_time+"] skipping finding vertical lines......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skipping finding vertical lines......\n\n"));
+
+
+	}
 
 	this->execexternal(myprocess,
-		"./gpsfilter -o "+sdir+"belts.log -g "+gpsfileName+" -s "+sdir,"processing GPSFilting");
-
-	this->execexternal(myprocess,
-		"./pto_gen "+sdir+"*.jpg -o "+sdir+"stich.pto --gps -f 1","generating pto");
-	this->execexternal(myprocess,
-		"./cpfindgps001 -o "+sdir+"stich_cp.pto "+sdir+"stich.pto --gps","Finding Control Points");
-
-	this->execexternal(myprocess,
-		"./cpclean -o "+sdir+"stich_cp_cpclean.pto "+sdir+"stich_cp.pto","Cleaning Control Points");
-	this->execexternal(myprocess,
-		"./linefind -o "+sdir+"stich_cp_cpclean_linefind.pto stich_cp_cpclean.pto","Finding vertical lines");
-	this->execexternal(myprocess,
-		"./checkpto "+sdir+"stich_cp_cpclean_linefind.pto","Checking PTO");
-
+		"./checkpto "+sdir+"stich_cp_clean_linefind.pto","Checking PTO");
 
 	//----------------insert check
+	QFileInfo stich_cp_clean_line_op(sdir+"stich_cp_clean_linefind_optimised.pto");
+
+	if(!stich_cp_clean_line_op.exists())
+	{
+		this->execexternal(myprocess,
+			"./autooptimiser -a  -l -s -o "+sdir+"stich_cp_clean_linefind_optimised.pto "+sdir+"stich_cp_clean_linefind.pto","optimising");
+	}
+	else
+	{
+		push_message("\n---------------\n["+run_time+"] skipping optimising......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skipping optimising......\n\n"));
+
+	}
+
+
+
 
 	this->execexternal(myprocess,
-		"./autooptimiser -a  -l -s -o "+sdir+"stich_cp_cpclean_linefind_optimised.pto "+sdir+"stich_cp_cpclean_linefind.pto","optimising");
-	this->execexternal(myprocess,
-		"./pano_modify --canvas=20%% --crop=AUTO -o "+sdir+"stich_cp_cpclean_linefind_optimised_mod.pto "+sdir+"stich_cp_cpclean_linefind_optimised.pto ","modifying");
+		"./pano_modify --canvas=20%% --crop=AUTO -o "+sdir+"stich_cp_clean_linefind_optimised_mod.pto "+sdir+"stich_cp_clean_linefind_optimised.pto ","modifying");
 
 	this->execexternal(myprocess,
-		"./nona -g  -z LZW -r ldr -m TIFF_m -o "+sdir+"temp  "+sdir+"stich_cp_cpclean_linefind_optimised_mod.pto ","resampling");
-	this->execexternal(myprocess,
-		"./enblend --compression=80  -o "+sdir+"final_output.jpg -- "+sdir+"temp*.tif --gpu -m 12000","Enblending");
+		"./nona -g  -z LZW -r ldr -m TIFF_m -o "+sdir+"temp  "+sdir+"stich_cp_clean_linefind_optimised_mod.pto ","resampling");
+	
+	QDateTime end_time;
+	if(this->execexternal(myprocess,
+		"./enblend --compression=80  -o "+sdir+"final_output.jpg -- "+sdir+"temp*.tif --gpu -m 12000","Enblending")==0)
+	{
+		end_time=QDateTime::currentDateTime();
+		this->push_message("\n---------------\nSuccessfully processed in "+run_time);
+		this->push_message("\nfrom "+start_time.toString("yyyy-MM-dd hh:mm:ss ddd")+" to "+end_time.toString("yyyy-MM-dd hh:mm:ss ddd"));
+	};
+	
 
 	//myprocess->start("./gpsfilter -o f:/kl/qtout.txt -g f:/kl/02.txt -s f:/kl");
 	//// For debugging: Wait until the process has finished.
@@ -384,6 +491,7 @@ void multiview::newFile()
 
 	//char * args2[]={"","out.pto","-o out2.pto"};
 	//cpfind::cpfind_main(3,args2);
+	timer->stop();
 
 
 
@@ -503,11 +611,11 @@ void multiview::adjustScrollBar(QScrollBar *scrollBar, double factor)
 
 void multiview::outlog()
 {
-	static QString text;
+	//static QString text;
 	QString abc = myprocess->readAllStandardOutput();
 	emit outlogtext(abc);
-	text+=abc;
-	textEdit->setText(text);
+	//text+=abc;
+	textEdit->setText(textEdit->toPlainText()+abc);
 	cursor->movePosition(QTextCursor::End);
 	textEdit->setTextCursor(*cursor);
 	
@@ -517,7 +625,7 @@ void multiview::tick(QString message)
 {
 	static int n;
 	int i;
-	QString messageToShow=message;
+	QString messageToShow="["+run_time+"] "+message;
 	for(i=0;i<n;i++)
 	{
 		messageToShow+=".";
@@ -533,10 +641,12 @@ void multiview::tick(QString message)
 
 int multiview::execexternal(QProcess* myprocess,QString command,QString tickmessage)
 {
+	int eCode;
 	
 	myprocess->start(command);
 	// For debugging: Wait until the process has finished.
 	//myprocess->waitForFinished();
+	push_message("\n---------------\n["+run_time+"] start "+tickmessage+"\n---------------\n");
 	while (! myprocess->waitForFinished(100)) 
 	{ //启动程序后，用循环等待其结束，如果对程序何时结束并不关心，以下代码可以不需要。
 
@@ -544,10 +654,11 @@ int multiview::execexternal(QProcess* myprocess,QString command,QString tickmess
 		tick(tickmessage);
 		if (myprocess->state() == QProcess::NotRunning) 
 		{ //process failed
-			if (myprocess->exitCode() != 0)
+			eCode=myprocess->exitCode() ;
+			if (eCode != 0)
 			{ //error when run process
-				QMessageBox::critical(NULL,"Wrong Exitcode", tr("Error exitcode"));
-				return myprocess->exitCode();
+				QMessageBox::critical(NULL,"Wrong Exitcode inner", tickmessage+tr(" got an error exitcode ")+QString::number(eCode,16));
+				return eCode;
 			}
 			else
 			{
@@ -564,14 +675,47 @@ int multiview::execexternal(QProcess* myprocess,QString command,QString tickmess
 
 
 	}	
-	if (myprocess->exitCode() != 0) { //error when run process
-		QMessageBox::critical(NULL,"Wrong Exitcode", tr("Error exitcode"));
+	eCode=myprocess->exitCode() ;
+	if (eCode != 0) { //error when run process
+		QMessageBox::critical(NULL,"Wrong Exitcode outer", tickmessage+tr(" got an error exitcode ")+QString::number(eCode,16));
 		return myprocess->exitCode();
 	}
+	push_message("\n---------------\n["+run_time+"] "+tickmessage+" finished\n---------------\n");
 	return myprocess->exitCode();
 
 }
+void multiview::push_message(QString message)
+{
+	cursor->movePosition(QTextCursor::End);
+	textEdit->setTextCursor(*cursor);
 
+	textEdit->setText(textEdit->toPlainText()+message+"\n");
+
+	cursor->movePosition(QTextCursor::End);
+	textEdit->setTextCursor(*cursor);
+}
+
+
+void multiview::count_time()
+{
+	time_count++;
+	int day,hour,minute,second;
+	day=time_count/24/3600;
+	hour=time_count/3600;
+	minute=time_count/60;
+	second=time_count%60;
+
+	run_time.clear();
+
+	run_time+=QString::number(day,10)+" d ";
+	run_time+=QString::number(hour,10)+" h ";
+	run_time+=QString::number(minute,10)+" m ";
+	run_time+=QString::number(second,10)+" s ";
+
+	
+
+	
+}
 
 //---------------------------------------------------------------------
 //  imageview class implementation

@@ -130,6 +130,9 @@ private:
 	void adjustScrollBar(QScrollBar *scrollBar, double factor);
 	void tick(QString message);
 	int execexternal(QProcess* myprocess,QString command,QString tickmessage);
+	void push_message(QString message);
+	
+
 
 	QMenu *fileMenu;
 	QMenu *editMenu;
@@ -165,13 +168,17 @@ signals:
     void outlogtext(QString ver);
 private slots:
     void outlog();
+	void count_time();
     
 private:
+	QTimer* timer ;
 	QLineEdit*  lineEdit_4;
 	QTextCursor* cursor; 
 	
 	
     QProcess *myprocess;
+	int time_count;
+	QString run_time;
 
 };
 
