@@ -113,7 +113,7 @@ private slots:
      void print();
      void undo();
      void about();
-     void setNewImage();
+     void setNewImage(QString  item);
 
     void zoomIn();
     void zoomOut();
@@ -162,6 +162,7 @@ private:
     QTextEdit *textEdit;
 	ImgPreview* preViewer;
     QScrollArea *scrollArea;
+	QListWidget* m_pListWidget;
 	double scaleFactor;
 
 signals:
@@ -180,6 +181,8 @@ private:
     QProcess *myprocess;
 	int time_count;
 	QString run_time;
+	int tick_max;
+	int previewSize;
 
 };
 

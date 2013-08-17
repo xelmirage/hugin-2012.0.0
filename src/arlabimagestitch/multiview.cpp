@@ -8,21 +8,27 @@ multiview::multiview(QWidget *parent, Qt::WFlags flags)
 {
 	
 	//ui.setupUi(this);
+	tick_max=30;
+	previewSize=15;
+
+
+
+
+
+
+
 	
 	mainview = new ImgViewer; 
 	QLayout* layout = new QVBoxLayout();
 
-	
-	
-	
-	
-	
 
 
 
 	scrollArea = new QScrollArea;
 	scrollArea->setBackgroundRole(QPalette::Dark);
+	scrollArea->setAlignment(Qt::AlignCenter);
 	scrollArea->setWidget(mainview);
+	//scrollArea->setWidget(m_pListWidget);
 	
 	
 
@@ -45,8 +51,8 @@ multiview::multiview(QWidget *parent, Qt::WFlags flags)
     timer->setInterval(1000); //1000ms == 1s
     connect(timer,SIGNAL(timeout()),this,SLOT(count_time()));
 
-	pBar=new QProgressBar(statusBar());
-	statusBar()->addWidget(pBar);
+	
+	//statusBar()->addWidget(pBar);
 	
 	
 
@@ -139,9 +145,17 @@ void multiview::createToolBars()
 	fileToolBar->addAction(newFileAct);
 	fileToolBar->addAction(saveAct);
 	fileToolBar->addAction(printAct);
+	
 
 	editToolBar = addToolBar(tr("Edit"));
-	editToolBar->addAction(undoAct);
+
+	//editToolBar->addAction(undoAct);
+	pBar=new QProgressBar();
+	pBar->setRange(0,tick_max);
+	pBar->setTextVisible(false);
+	pBar->setVisible(true);
+	
+	editToolBar->addWidget(pBar);
 }
 
 void multiview::createStatusBar()
@@ -151,27 +165,32 @@ void multiview::createStatusBar()
 
 void multiview::createDockWindows()
 {
-	QDockWidget *dock = new QDockWidget(tr("Command window"), this);
+	QDockWidget *dock = new QDockWidget(tr("Preview Window"), this);
 	dock->setAllowedAreas(  Qt::BottomDockWidgetArea 
 		| Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
-	preViewer = new ImgPreview(dock);
-	preViewer->setParent(this);
+	
 
-	//textEdit = new QTextEdit(dock);
-	//   QTextCursor cursor(textEdit->textCursor());
-	//   cursor.movePosition(QTextCursor::Start);
+//创建QListWidget部件
+    m_pListWidget = new QListWidget(this);
+    //设置QListWidget中的单元项的图片大小
+    m_pListWidget->setIconSize(QSize(3*previewSize, 2*previewSize));
+    m_pListWidget->setResizeMode(QListView::Adjust);
+    //设置QListWidget的显示模式
+    m_pListWidget->setViewMode(QListView::IconMode);
+    //设置QListWidget中的单元项不可被拖动
+    m_pListWidget->setMovement(QListView::Static);
+    //设置QListWidget中的单元项的间距
+    m_pListWidget->setSpacing(10);
 
-	//cursor.insertBlock();
-	//   cursor.insertText("This is command window");
-	//   cursor.insertBlock();
-	//   cursor.insertText("Input your command here!");
 
-	//   dock->setWidget(textEdit);
-	//textEdit->setMinimumHeight(100);
-	//textEdit->adjustSize();
 
-	dock->setWidget(preViewer);
+//---------------end for preview/-------///
+	dock->setWidget(m_pListWidget);
+	m_pListWidget->setMaximumHeight(400);
+	m_pListWidget->adjustSize();
+
+	//dock->setWidget(preViewer);
 	//preViewer->setMaximumHeight(400);
 	//preViewer->adjustSize();
 
@@ -209,6 +228,12 @@ void multiview::createDockWindows()
 	textEdit->adjustSize();
 	textEdit->setReadOnly(false);
 
+
+
+
+	
+	
+
 	addDockWidget (Qt::BottomDockWidgetArea, dock);
 
 	addDockWidget(Qt::BottomDockWidgetArea, cmd_dock);
@@ -216,8 +241,10 @@ void multiview::createDockWindows()
 	
 
 	viewMenu->addAction(dock->toggleViewAction());
-	connect(preViewer, SIGNAL(doubleClicked(const QModelIndex &)),
-		this, SLOT(setNewImage()));
+	connect(m_pListWidget, SIGNAL(currentTextChanged(QString)),
+		this, SLOT(setNewImage(QString)));
+	//connect(preViewer, SIGNAL(doubleClicked(const QModelIndex &)),
+		//this, SLOT(setNewImage()));
 
 
 
@@ -324,26 +351,61 @@ void multiview::newFile()
 		return;
 	}
 
+	
+
 
 	/*if(preViewer)
 	{
 		preViewer->ReadImages(sdir);
 
 	}*/
+    time_count=1;
+	timer->start(1000);
+
+	QStringList fileList;
+	QDir dir(sdir);
+	if (!dir.exists()) 
+		return; 
+	dir.setFilter(QDir::Files); 
+	dir.setSorting(QDir::Name);//排序方式 修改时间从小到大 
+	QFileInfoList list = dir.entryInfoList(); 
+	int i;
+	int nIndex=0;
+	for (i=0;i<list.size();i++)
+	{
+		QFileInfo fileInfo = list.at(i); 
+		if (fileInfo.completeSuffix()=="jpg"||fileInfo.completeSuffix()=="JPG")
+		{
+			
+			QString imageFile=fileInfo.path()+"/"+fileInfo.fileName();
+			this->push_message("Adding "+imageFile);
+
+			QPixmap objPixmap(imageFile);
+			//生成QListWidgetItem对象(注意：其Icon图像进行了伸缩[96*96])---scaled函数
+			QListWidgetItem *pItem = new QListWidgetItem(QIcon(objPixmap.scaled(QSize(3*previewSize, 2*previewSize))),imageFile);
+			//设置单元项的宽度和高度
+			pItem->setSizeHint(QSize(3*previewSize, 2*previewSize));
+			m_pListWidget->insertItem(nIndex, pItem);
+			nIndex++;
+			qApp->processEvents(); //防止UI死锁，一般情况下，用这种等一小段时间（这 里是300ms），让UI响应一次的办法，已经足够使用了。
 
 
 
+		}
+		tick("Adding files");
+
+	}
 
 
-	
+
 
 	QDateTime start_time=QDateTime::currentDateTime();
+	QDateTime end_time;
 	myprocess = new QProcess(this);
 
 	connect(myprocess, SIGNAL(readyReadStandardOutput()),
 		this, SLOT(outlog()));
-	time_count=1;
-	timer->start(1000);
+	
 	
 	QFileInfo beltlog(sdir+"belts.log");
 	//if (!beltlog)
@@ -418,39 +480,52 @@ void multiview::newFile()
 	this->execexternal(myprocess,
 		"./checkpto "+sdir+"stich_cp_clean_linefind.pto","Checking PTO");
 
-	//----------------insert check
-	QFileInfo stich_cp_clean_line_op(sdir+"stich_cp_clean_linefind_optimised.pto");
-
-	if(!stich_cp_clean_line_op.exists())
+	if(textEdit->toPlainText().contains("All images are connected."))
 	{
+
+		//----------------insert check
+		QFileInfo stich_cp_clean_line_op(sdir+"stich_cp_clean_linefind_optimised.pto");
+
+		if(!stich_cp_clean_line_op.exists())
+		{
+			this->execexternal(myprocess,
+				"./autooptimiser -a  -l -s -o "+sdir+"stich_cp_clean_linefind_optimised.pto "+sdir+"stich_cp_clean_linefind.pto","optimising");
+		}
+		else
+		{
+			push_message("\n---------------\n["+run_time+"] skip optimising......\n---------------\n");
+			//textEdit->setText(textEdit->toPlainText()+tr("\n skip optimising......\n\n"));
+
+		}
+
+
+
+
 		this->execexternal(myprocess,
-			"./autooptimiser -a  -l -s -o "+sdir+"stich_cp_clean_linefind_optimised.pto "+sdir+"stich_cp_clean_linefind.pto","optimising");
+			"./pano_modify --canvas=20%% --crop=AUTO -o "+sdir+"stich_cp_clean_linefind_optimised_mod.pto "+sdir+"stich_cp_clean_linefind_optimised.pto ","modifying");
+
+		this->execexternal(myprocess,
+			"./nona -g  -z LZW -r ldr -m TIFF_m -o "+sdir+"temp  "+sdir+"stich_cp_clean_linefind_optimised_mod.pto ","resampling");
+
+
+		if(this->execexternal(myprocess,
+			"./enblend --compression=LZW  -o "+sdir+"final_output.tif -- "+sdir+"temp*.tif --gpu -m 12000","Enblending")==0)
+		{
+			end_time=QDateTime::currentDateTime();
+			this->push_message("\n---------------\nSuccessfully processed in "+run_time);
+			this->push_message("\nfrom "+start_time.toString("yyyy-MM-dd hh:mm:ss ddd")+" to "+end_time.toString("yyyy-MM-dd hh:mm:ss ddd"));
+			statusBar()->showMessage("Successfully processed from"+start_time.toString("yyyy-MM-dd hh:mm:ss ddd")+" to "+end_time.toString("yyyy-MM-dd hh:mm:ss ddd"));
+		};
 	}
 	else
 	{
-		push_message("\n---------------\n["+run_time+"] skip optimising......\n---------------\n");
-		//textEdit->setText(textEdit->toPlainText()+tr("\n skip optimising......\n\n"));
+		end_time=QDateTime::currentDateTime();
+		this->push_message("\n---------------\nNot all the images are conncted. "+run_time);
+		this->push_message("\nfrom "+start_time.toString("yyyy-MM-dd hh:mm:ss ddd")+" to "+end_time.toString("yyyy-MM-dd hh:mm:ss ddd"));
 
 	}
 
 
-
-
-	this->execexternal(myprocess,
-		"./pano_modify --canvas=20%% --crop=AUTO -o "+sdir+"stich_cp_clean_linefind_optimised_mod.pto "+sdir+"stich_cp_clean_linefind_optimised.pto ","modifying");
-
-	this->execexternal(myprocess,
-		"./nona -g  -z LZW -r ldr -m TIFF_m -o "+sdir+"temp  "+sdir+"stich_cp_clean_linefind_optimised_mod.pto ","resampling");
-	
-	QDateTime end_time;
-	if(this->execexternal(myprocess,
-		"./enblend --compression=LZW  -o "+sdir+"final_output.tif -- "+sdir+"temp*.tif --gpu -m 12000","Enblending")==0)
-	{
-		end_time=QDateTime::currentDateTime();
-		this->push_message("\n---------------\nSuccessfully processed in "+run_time);
-		this->push_message("\nfrom "+start_time.toString("yyyy-MM-dd hh:mm:ss ddd")+" to "+end_time.toString("yyyy-MM-dd hh:mm:ss ddd"));
-	};
-	
 
 	//myprocess->start("./gpsfilter -o f:/kl/qtout.txt -g f:/kl/02.txt -s f:/kl");
 	//// For debugging: Wait until the process has finished.
@@ -566,12 +641,37 @@ void multiview::undo()
 	//document->undo();
 }
 
-void multiview::setNewImage()
+void multiview::setNewImage(QString item)
 {
-	if(mainview && preViewer)
+	//QMessageBox::information(NULL, "Title",item, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+	QImage img(item);
+
+	QPixmap pmap = QPixmap::fromImage(img);
+	float ratio=scrollArea->width()/scrollArea->height();
+	if(ratio>(float)(pmap.width()/pmap.height()))
+	{
+		mainview->setPixmap(pmap.scaledToHeight(scrollArea->height()));
+
+	}
+	else
+	{
+		mainview->setPixmap(pmap.scaledToWidth(scrollArea->width()));
+
+	}
+
+	
+	//mainview->setMaximumHeight(scrollArea->height());
+	
+	mainview->adjustSize();
+
+
+	/*if(mainview && preViewer)
 	{
 		QModelIndex index;
 		preViewer->GetCurrentIndex(&index);
+		m_pListWidget
+		
 
 		if(index.row() >= 0)
 		{
@@ -584,7 +684,7 @@ void multiview::setNewImage()
 
 		}
 
-	}
+	}*/
 
 }
 
@@ -644,9 +744,10 @@ void multiview::tick(QString message)
 
 	}
 	n++;
-	if (n>15) n=0;
+	if (n>tick_max) n=0;
 
 	statusBar()->showMessage(messageToShow);
+	pBar->setValue(n);
 	
 
 }
@@ -747,8 +848,9 @@ ImgViewer::ImgViewer(QLabel *parent)
 
 }
 
-void ImgViewer::paintEvent(QPaintEvent * /* event */)
+void ImgViewer::paintEvent(QPaintEvent * event)
 {
+	QRect rect=event->rect();
 	QBrush brush;
 
 	QPainter painter(this);
@@ -766,51 +868,7 @@ void ImgViewer::paintEvent(QPaintEvent * /* event */)
 	}
 
 
-	//  static const QPoint points[4] = {
-	//       QPoint(10, 80),
-	//       QPoint(20, 10),
-	//       QPoint(80, 30),
-	//       QPoint(90, 70)
-	//   };
-
-	//   QRect rect(10, 20, 80, 60);
-
-	//   QPainterPath path;
-	//   path.moveTo(20, 80);
-	//   path.lineTo(20, 30);
-	//   path.cubicTo(80, 0, 50, 50, 80, 80);
-
-	//   int startAngle = 30 * 16;
-	//   int arcLength = 120 * 16;
-	//{
-	//       painter.setRenderHint(QPainter::Antialiasing, true);
-	//       painter.translate(+0.5, +0.5);
-	//   }
-
-	//   for (int x = 0; x < width(); x += 100) 
-	//{
-	//       for (int y = 0; y < height(); y += 100) 
-	//	{
-	//           painter.save();
-	//           painter.translate(x, y);
-
-	//		{
-	//               painter.translate(50, 50);
-	//               painter.rotate(60.0);
-	//               painter.scale(0.6, 0.9);
-	//               painter.translate(-50, -50);
-	//           }
-
-
-	//        painter.drawLine(rect.bottomLeft(), rect.topRight());
-
-	//	  painter.drawPoints(points, 4);
-
-	//	  painter.drawPolygon(points, 4);
-
-	//	  painter.restore();
-	//       }
-	//   }
+	
 
 	painter.setPen(palette().dark().color());
 	painter.setBrush(Qt::NoBrush);
