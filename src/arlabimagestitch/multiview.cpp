@@ -8,11 +8,13 @@ multiview::multiview(QWidget *parent, Qt::WFlags flags)
 {
 	
 	//ui.setupUi(this);
-	char arg1[]="*.jpg";
-	char arg2[]="-o out.pto";
-	char arg3[]="asdfaw";
+	
 	mainview = new ImgViewer; 
 	QLayout* layout = new QVBoxLayout();
+
+	
+	
+	
 	
 	
 
@@ -21,6 +23,8 @@ multiview::multiview(QWidget *parent, Qt::WFlags flags)
 	scrollArea = new QScrollArea;
 	scrollArea->setBackgroundRole(QPalette::Dark);
 	scrollArea->setWidget(mainview);
+	
+	
 
 	//setCentralWidget(mainview);
 	setCentralWidget(scrollArea);
@@ -40,6 +44,9 @@ multiview::multiview(QWidget *parent, Qt::WFlags flags)
 	timer = new QTimer(this);
     timer->setInterval(1000); //1000ms == 1s
     connect(timer,SIGNAL(timeout()),this,SLOT(count_time()));
+
+	pBar=new QProgressBar(statusBar());
+	statusBar()->addWidget(pBar);
 	
 	
 
@@ -197,6 +204,7 @@ void multiview::createDockWindows()
 	
 
 	cmd_dock->setWidget(textEdit);
+	
 	textEdit->setMinimumHeight(100);
 	textEdit->adjustSize();
 	textEdit->setReadOnly(false);
@@ -269,11 +277,7 @@ void multiview::newFile()
 
 	//}
 
-	//   if(preViewer)
-	//   {
-	//       preViewer->ReadImages();
-
-	//   }
+	  
 
 	QStringList    fileNameList;
 	QString fileName,gpsfileName,sdir; 
@@ -281,6 +285,7 @@ void multiview::newFile()
 	//-----------------获取照片目录-----//
 	
 	QFileDialog* fd = new QFileDialog(this);//创建对话框
+	
 	//fd->resize(240,320);    //设置显示的大小
 	//fd->setFilter( "Images (*.png *.tif *.jpg)"); //设置文件过滤器
 	fd->setViewMode(QFileDialog::List);  //设置浏览模式，有 列表（list） 模式和 详细信息（detail）两种方式
@@ -320,6 +325,13 @@ void multiview::newFile()
 	}
 
 
+	/*if(preViewer)
+	{
+		preViewer->ReadImages(sdir);
+
+	}*/
+
+
 
 
 
@@ -342,9 +354,9 @@ void multiview::newFile()
 	}
 	else
 	{
-		push_message("\n---------------\n["+run_time+"] skipping filting......\n---------------\n");
-		//textEdit->setText(textEdit->toPlainText()+tr("\n skipping filting......\n\n"));
-		//QMessageBox::information(NULL, "Existing results","Skipping GPSFilting", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+		push_message("\n---------------\n["+run_time+"] skip filting......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skip filting......\n\n"));
+		//QMessageBox::information(NULL, "Existing results","skip GPSFilting", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
 	}
 
@@ -357,8 +369,8 @@ void multiview::newFile()
 	}
 	else
 	{
-		push_message("\n---------------\n["+run_time+"] skipping generating pto......\n---------------\n");
-		//textEdit->setText(textEdit->toPlainText()+tr("\n skipping generating pto......\n\n"));
+		push_message("\n---------------\n["+run_time+"] skip generating pto......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skip generating pto......\n\n"));
 
 	}
 	QFileInfo stich_cp(sdir+"stich_cp.pto");
@@ -370,8 +382,8 @@ void multiview::newFile()
 	}
 	else
 	{
-		push_message("\n---------------\n["+run_time+"] skipping finding control points......\n---------------\n");
-		//textEdit->setText(textEdit->toPlainText()+tr("\n skipping finding control points......\n\n"));
+		push_message("\n---------------\n["+run_time+"] skip finding control points......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skip finding control points......\n\n"));
 
 	}
 
@@ -385,8 +397,8 @@ void multiview::newFile()
 	}
 	else
 	{
-		push_message("\n---------------\n["+run_time+"] skipping cleaning control points......\n---------------\n");
-		//textEdit->setText(textEdit->toPlainText()+tr("\n skipping cleaning control points......\n\n"));
+		push_message("\n---------------\n["+run_time+"] skip cleaning control points......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skip cleaning control points......\n\n"));
 	}
 	QFileInfo stich_cp_clean_line(sdir+"stich_cp_clean_linefind.pto");
 
@@ -397,8 +409,8 @@ void multiview::newFile()
 	}
 	else
 	{
-		push_message("\n---------------\n["+run_time+"] skipping finding vertical lines......\n---------------\n");
-		//textEdit->setText(textEdit->toPlainText()+tr("\n skipping finding vertical lines......\n\n"));
+		push_message("\n---------------\n["+run_time+"] skip finding vertical lines......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skip finding vertical lines......\n\n"));
 
 
 	}
@@ -416,8 +428,8 @@ void multiview::newFile()
 	}
 	else
 	{
-		push_message("\n---------------\n["+run_time+"] skipping optimising......\n---------------\n");
-		//textEdit->setText(textEdit->toPlainText()+tr("\n skipping optimising......\n\n"));
+		push_message("\n---------------\n["+run_time+"] skip optimising......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skip optimising......\n\n"));
 
 	}
 
@@ -432,7 +444,7 @@ void multiview::newFile()
 	
 	QDateTime end_time;
 	if(this->execexternal(myprocess,
-		"./enblend --compression=80  -o "+sdir+"final_output.jpg -- "+sdir+"temp*.tif --gpu -m 12000","Enblending")==0)
+		"./enblend --compression=LZW  -o "+sdir+"final_output.tif -- "+sdir+"temp*.tif --gpu -m 12000","Enblending")==0)
 	{
 		end_time=QDateTime::currentDateTime();
 		this->push_message("\n---------------\nSuccessfully processed in "+run_time);
@@ -564,7 +576,7 @@ void multiview::setNewImage()
 		if(index.row() >= 0)
 		{
 			int row = index.row();
-			QImage img = preViewer->imgarray[row];
+			QImage img = *(preViewer->imglist[row]);
 
 			QPixmap pmap = QPixmap::fromImage(img);
 
@@ -701,8 +713,8 @@ void multiview::count_time()
 	time_count++;
 	int day,hour,minute,second;
 	day=time_count/24/3600;
-	hour=time_count/3600;
-	minute=time_count/60;
+	hour=(time_count/3600)%24;
+	minute=(time_count/60)%60;
 	second=time_count%60;
 
 	run_time.clear();
@@ -922,33 +934,56 @@ ImgPreview::ImgPreview(QWidget *parent)
 }
 
 //#define DATAPATH "D:\\My Works\\Programming\\imageData\\"
-#define DATAPATH "D:\\SunData\\images\\"
 
-void ImgPreview::ReadImages()
+
+void ImgPreview::ReadImages(QString sdir)
 {
 
 	if(iconlist == NULL)
 		return;
-
-	for(int i = 0; i < 20; i++)
+	QStringList fileList;
+	QDir dir(sdir);
+	if (!dir.exists()) 
+		return; 
+	dir.setFilter(QDir::Dirs|QDir::Files); 
+	dir.setSorting(QDir::Time |QDir::Reversed);//排序方式 修改时间从小到大 
+	QFileInfoList list = dir.entryInfoList(); 
+	int i;
+	for (i=0;i<list.size();i++)
 	{
-		std::stringstream os;
-		//os << DATAPATH << "castle00" << i << ".jpg";
-		if(i < 9)
-			os << DATAPATH << "L0_0" << i + 1<< ".jpg";
-		else
-			os << DATAPATH << "L0_" << i + 1 << ".jpg";
-
-		std::string fn = os.str();
-
-		QImage readimg(fn.c_str());
-		//QImage simg = readimg.scaled(iconlist->_isize.width(), iconlist->_isize.height());
-
+		QFileInfo fileInfo = list.at(i); 
+		if (fileInfo.completeSuffix()=="jpg"||fileInfo.completeSuffix()=="JPG")
+			qDebug()<<fileInfo.path()+"/"+fileInfo.fileName()<<endl;
+		QString imageFile=fileInfo.path()+"/"+fileInfo.fileName();
+		QImage readimg(imageFile);
 		iconlist->addPiece(QPixmap::fromImage(readimg), 
 			QPoint(i, 0));
+		imglist.push_back(&readimg);
+
+
+	}
+
+
+	for( i = 0; i < 20; i++)
+	{
+		
+
+		/*QImage readimg(fn.c_str());
+		iconlist->addPiece(QPixmap::fromImage(readimg), 
+			QPoint(i, 0));
+		imglist.push_back(&readimg);*/
+
+
+
+
+
+
+		//QImage simg = readimg.scaled(iconlist->_isize.width(), iconlist->_isize.height());
+
+		
 		//QPoint( i * iconlist->_gsize.width() + iconlist->_space, iconlist->_space));
 
-		imgarray[i] = readimg;
+		
 
 		//iconlist->imglist.insert(i, &readimg);
 
@@ -980,6 +1015,11 @@ void ImgPreview::setActiveLabel()
 void ImgPreview::GetCurrentIndex(QModelIndex * index)
 {
 	*index = currentIndex();
+
+
+
+
+	
 
 }
 

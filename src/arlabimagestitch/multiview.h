@@ -80,13 +80,13 @@ class ImgPreview : public QListView//QWidget
 public:
 	ImgPreview(QWidget *parent = 0);
 
-	//std::vector<QImage*> imglist;
-    QImage imgarray[20];
+	std::vector<QImage*> imglist;
+    //QImage imgarray[20];
     IconList* iconlist;
 	//std::vector<QLabel*> imgLabel; 
     //QLabel* imgLabel[5];
     //QLabel* activeLabel;
-    void ReadImages();
+    void ReadImages(QString sdir);
     void GetCurrentIndex(QModelIndex * index);
 
 private slots:
@@ -174,6 +174,7 @@ private:
 	QTimer* timer ;
 	QLineEdit*  lineEdit_4;
 	QTextCursor* cursor; 
+	QProgressBar* pBar;
 	
 	
     QProcess *myprocess;
