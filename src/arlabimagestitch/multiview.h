@@ -118,6 +118,8 @@ private slots:
     void zoomIn();
     void zoomOut();
 
+	void process();
+
 
 private:
 	void createActions();
@@ -125,6 +127,7 @@ private:
 	void createToolBars();
 	void createStatusBar();
 	void createDockWindows();
+	
 
 	void scaleImage(double factor);
 	void adjustScrollBar(QScrollBar *scrollBar, double factor);
@@ -152,6 +155,7 @@ private:
      QAction *quitAct;
     QAction *zoomInAct;
     QAction *zoomOutAct;
+	QAction *processAct;
 
 
 private:
@@ -183,6 +187,8 @@ private:
 	QString run_time;
 	int tick_max;
 	int previewSize;
+	QString fileName,gpsfileName,sdir; 
+
 
 };
 

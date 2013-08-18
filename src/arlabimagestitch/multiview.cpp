@@ -113,6 +113,12 @@ void multiview::createActions()
 	zoomOutAct->setEnabled(false);
 	connect(zoomOutAct, SIGNAL(triggered()), this, SLOT(zoomOut()));
 
+
+	processAct = new QAction(QIcon("images/start.png"), tr("&Process"), this);
+	processAct->setShortcut(tr("Ctrl+P"));
+	processAct->setEnabled(false);
+	connect(processAct, SIGNAL(triggered()), this, SLOT(process()));
+
 }
 
 void multiview::createMenus()
@@ -149,6 +155,7 @@ void multiview::createToolBars()
 
 	editToolBar = addToolBar(tr("Edit"));
 
+editToolBar->addAction(processAct);
 	//editToolBar->addAction(undoAct);
 	pBar=new QProgressBar();
 	pBar->setRange(0,tick_max);
@@ -254,60 +261,12 @@ void multiview::createDockWindows()
 
 void multiview::newFile()
 {
-	//QImage image("f:/kl/DSC01814.jpg");
-
-	//if (image.isNull()) 
-	//{
-	//	QMessageBox::information(this, tr("Image Viewer"),
-	//		tr("Cannot load %1.").arg("f:/kl/DSC01814.jpg"));
-	//	return;
-	//}
-	//mainview->setPixmap(QPixmap::fromImage(image));
-	//
-	//
-
-	//printAct->setEnabled(true);
-	////updateActions();
-	//zoomInAct->setEnabled(true);
-	//zoomOutAct->setEnabled(true);
-
-	//mainview->adjustSize();
-
-	//   QString fileName = QFileDialog::getOpenFileName(this,
-	//                                   tr("Open File"), QDir::currentPath());
-
-
-	//QString fileName = QFileDialog::getOpenFileName(this, tr("Open file"), "", 
-	//	"Images (*.png *.tif *.jpg)" );
-
-
-	//   if (!fileName.isEmpty()) 
-	//{
-	//	QImage image(fileName);
-
-	//       if (image.isNull()) 
-	//	{
-	//           QMessageBox::information(this, tr("Image Viewer"),
-	//                                    tr("Cannot load %1.").arg(fileName));
-	//           return;
-	//       }
-	//       mainview->setPixmap(QPixmap::fromImage(image));
-	//       scaleFactor = 1.0;
-
-	//       printAct->setEnabled(true);
-	//       //updateActions();
-	//       zoomInAct->setEnabled(true);
-	//       zoomOutAct->setEnabled(true);
-	//           
-	//	mainview->adjustSize();
-
-
-	//}
+	
 
 	  
 
 	QStringList    fileNameList;
-	QString fileName,gpsfileName,sdir; 
+	
 
 	//-----------------获取照片目录-----//
 	
@@ -323,7 +282,7 @@ void multiview::newFile()
 		
 		fileNameList = fd->selectedFiles();      //返回文件列表的名称
 		sdir = fileNameList[0]+"/";            //取第一个文件名
-		QMessageBox::information(NULL, "Title",sdir, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+		QMessageBox::information(NULL, "Image Souce:",sdir, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 	}
 	else
 	{
@@ -343,7 +302,7 @@ void multiview::newFile()
 		
 		fileNameList = fd->selectedFiles();      //返回文件列表的名称
 		gpsfileName = fileNameList[0];            //取第一个文件名
-		QMessageBox::information(NULL, "Title",gpsfileName, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+		QMessageBox::information(NULL, "GPS Data:",gpsfileName, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 	}
 	else
 	{
@@ -399,186 +358,14 @@ void multiview::newFile()
 
 
 
-	QDateTime start_time=QDateTime::currentDateTime();
-	QDateTime end_time;
-	myprocess = new QProcess(this);
-
-	connect(myprocess, SIGNAL(readyReadStandardOutput()),
-		this, SLOT(outlog()));
-	
-	
-	QFileInfo beltlog(sdir+"belts.log");
-	//if (!beltlog)
-	if(!beltlog.exists())
-	{
-		this->execexternal(myprocess,
-			"./gpsfilter -o "+sdir+"belts.log -g "+gpsfileName+" -s "+sdir,"processing GPSFilting");
-	}
-	else
-	{
-		push_message("\n---------------\n["+run_time+"] skip filting......\n---------------\n");
-		//textEdit->setText(textEdit->toPlainText()+tr("\n skip filting......\n\n"));
-		//QMessageBox::information(NULL, "Existing results","skip GPSFilting", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-
-	}
-
-	QFileInfo stich(sdir+"stich.pto");
-
-	if(!stich.exists())
-	{
-		this->execexternal(myprocess,
-			"./pto_gen "+sdir+"*.jpg -o "+sdir+"stich.pto --gps -f 1","generating pto");
-	}
-	else
-	{
-		push_message("\n---------------\n["+run_time+"] skip generating pto......\n---------------\n");
-		//textEdit->setText(textEdit->toPlainText()+tr("\n skip generating pto......\n\n"));
-
-	}
-	QFileInfo stich_cp(sdir+"stich_cp.pto");
-
-	if(!stich_cp.exists())
-	{
-		this->execexternal(myprocess,
-			"./cpfindgps001 -o "+sdir+"stich_cp.pto "+sdir+"stich.pto --gps","Finding Control Points");
-	}
-	else
-	{
-		push_message("\n---------------\n["+run_time+"] skip finding control points......\n---------------\n");
-		//textEdit->setText(textEdit->toPlainText()+tr("\n skip finding control points......\n\n"));
-
-	}
-
-	QFileInfo stich_cp_clean(sdir+"stich_cp_clean.pto");
-
-	if(!stich_cp_clean.exists())
-	{
-
-		this->execexternal(myprocess,
-			"./cpclean -o "+sdir+"stich_cp_clean.pto "+sdir+"stich_cp.pto","Cleaning Control Points");
-	}
-	else
-	{
-		push_message("\n---------------\n["+run_time+"] skip cleaning control points......\n---------------\n");
-		//textEdit->setText(textEdit->toPlainText()+tr("\n skip cleaning control points......\n\n"));
-	}
-	QFileInfo stich_cp_clean_line(sdir+"stich_cp_clean_linefind.pto");
-
-	if(!stich_cp_clean_line.exists())
-	{
-		this->execexternal(myprocess,
-			"./linefind -o "+sdir+"stich_cp_clean_linefind.pto "+sdir+"stich_cp_clean.pto","Finding vertical lines");
-	}
-	else
-	{
-		push_message("\n---------------\n["+run_time+"] skip finding vertical lines......\n---------------\n");
-		//textEdit->setText(textEdit->toPlainText()+tr("\n skip finding vertical lines......\n\n"));
-
-
-	}
-
-	this->execexternal(myprocess,
-		"./checkpto "+sdir+"stich_cp_clean_linefind.pto","Checking PTO");
-
-	if(textEdit->toPlainText().contains("All images are connected."))
-	{
-
-		//----------------insert check
-		QFileInfo stich_cp_clean_line_op(sdir+"stich_cp_clean_linefind_optimised.pto");
-
-		if(!stich_cp_clean_line_op.exists())
-		{
-			this->execexternal(myprocess,
-				"./autooptimiser -a  -l -s -o "+sdir+"stich_cp_clean_linefind_optimised.pto "+sdir+"stich_cp_clean_linefind.pto","optimising");
-		}
-		else
-		{
-			push_message("\n---------------\n["+run_time+"] skip optimising......\n---------------\n");
-			//textEdit->setText(textEdit->toPlainText()+tr("\n skip optimising......\n\n"));
-
-		}
 
 
 
 
-		this->execexternal(myprocess,
-			"./pano_modify --canvas=20%% --crop=AUTO -o "+sdir+"stich_cp_clean_linefind_optimised_mod.pto "+sdir+"stich_cp_clean_linefind_optimised.pto ","modifying");
-
-		this->execexternal(myprocess,
-			"./nona -g  -z LZW -r ldr -m TIFF_m -o "+sdir+"temp  "+sdir+"stich_cp_clean_linefind_optimised_mod.pto ","resampling");
-
-
-		if(this->execexternal(myprocess,
-			"./enblend --compression=LZW  -o "+sdir+"final_output.tif -- "+sdir+"temp*.tif --gpu -m 12000","Enblending")==0)
-		{
-			end_time=QDateTime::currentDateTime();
-			this->push_message("\n---------------\nSuccessfully processed in "+run_time);
-			this->push_message("\nfrom "+start_time.toString("yyyy-MM-dd hh:mm:ss ddd")+" to "+end_time.toString("yyyy-MM-dd hh:mm:ss ddd"));
-			statusBar()->showMessage("Successfully processed from"+start_time.toString("yyyy-MM-dd hh:mm:ss ddd")+" to "+end_time.toString("yyyy-MM-dd hh:mm:ss ddd"));
-		};
-	}
-	else
-	{
-		end_time=QDateTime::currentDateTime();
-		this->push_message("\n---------------\nNot all the images are conncted. "+run_time);
-		this->push_message("\nfrom "+start_time.toString("yyyy-MM-dd hh:mm:ss ddd")+" to "+end_time.toString("yyyy-MM-dd hh:mm:ss ddd"));
-
-	}
-
-
-
-	//myprocess->start("./gpsfilter -o f:/kl/qtout.txt -g f:/kl/02.txt -s f:/kl");
-	//// For debugging: Wait until the process has finished.
-	////myprocess->waitForFinished();
-	//while (! myprocess->waitForFinished(100)) { //启动程序后，用循环等待其结束，如果对程序何时结束并不关心，以下代码可以不需要。
-	//	if (myprocess->state() == QProcess::NotRunning) { //process failed
-	//		if (myprocess->exitCode() != 0) { //error when run process
-	//			QMessageBox::critical(NULL,"Wrong Exitcode", tr("Error exitcode"));
-	//			return;
-	//		}
-
-
-	//	}
-
-
-	//	qApp->processEvents(); //防止UI死锁，一般情况下，用这种等一小段时间（这 里是300ms），让UI响应一次的办法，已经足够使用了。
-
-
-	//}	
-	//if (myprocess->exitCode() != 0) { //error when run process
-	//	QMessageBox::critical(NULL,"Wrong Exitcode", tr("Error exitcode"));
-	//	return;
-	//}
-
-
-
-
-
-
-
-	//	char * ch=(char*)str.c_str();
-	//QMessageBox::information(NULL, "Title",ch, QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-
-
-	//h.pto_gen(fileNameList,"qout.pto");
-	//h.cpfind("qout.pto","cpout.pto");
-
-	//h.readData("cpout.pto");
-	//h.loadProject("cpout.pto");
-
-
-
-	//h.cpoints=h.pano.getCtrlPoints();
-
-
-
-
-	//char *  args[]={"","-oout.pto -p2","*.jpg"};//这个地方很奇怪，要多加一个空参数，而且-o后面不能有空格
-	//ptogen::ptogen_main(3,args);
-
-	//char * args2[]={"","out.pto","-o out2.pto"};
-	//cpfind::cpfind_main(3,args2);
 	timer->stop();
+	processAct->setEnabled(true);
+	pBar->setValue(0);
+	statusBar()->showMessage("Adding completed.");
 
 
 
@@ -830,6 +617,142 @@ void multiview::count_time()
 	
 }
 
+void multiview::process()
+{
+	 time_count=1;
+	timer->start(1000);
+	QDateTime start_time=QDateTime::currentDateTime();
+	QDateTime end_time;
+	myprocess = new QProcess(this);
+
+	connect(myprocess, SIGNAL(readyReadStandardOutput()),
+		this, SLOT(outlog()));
+	
+	
+	QFileInfo beltlog(sdir+"belts.log");
+	//if (!beltlog)
+	if(!beltlog.exists())
+	{
+		this->execexternal(myprocess,
+			"./gpsfilter -o "+sdir+"belts.log -g "+gpsfileName+" -s "+sdir,"processing GPSFilting");
+	}
+	else
+	{
+		push_message("\n---------------\n["+run_time+"] skip filting......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skip filting......\n\n"));
+		//QMessageBox::information(NULL, "Existing results","skip GPSFilting", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+	}
+
+	QFileInfo stich(sdir+"stich.pto");
+
+	if(!stich.exists())
+	{
+		this->execexternal(myprocess,
+			"./pto_gen "+sdir+"*.jpg -o "+sdir+"stich.pto --gps -f 1","generating pto");
+	}
+	else
+	{
+		push_message("\n---------------\n["+run_time+"] skip generating pto......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skip generating pto......\n\n"));
+
+	}
+	QFileInfo stich_cp(sdir+"stich_cp.pto");
+
+	if(!stich_cp.exists())
+	{
+		this->execexternal(myprocess,
+			"./cpfindgps001 -o "+sdir+"stich_cp.pto "+sdir+"stich.pto --gps","Finding Control Points");
+	}
+	else
+	{
+		push_message("\n---------------\n["+run_time+"] skip finding control points......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skip finding control points......\n\n"));
+
+	}
+
+	QFileInfo stich_cp_clean(sdir+"stich_cp_clean.pto");
+
+	if(!stich_cp_clean.exists())
+	{
+
+		this->execexternal(myprocess,
+			"./cpclean -o "+sdir+"stich_cp_clean.pto "+sdir+"stich_cp.pto","Cleaning Control Points");
+	}
+	else
+	{
+		push_message("\n---------------\n["+run_time+"] skip cleaning control points......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skip cleaning control points......\n\n"));
+	}
+	QFileInfo stich_cp_clean_line(sdir+"stich_cp_clean_linefind.pto");
+
+	if(!stich_cp_clean_line.exists())
+	{
+		this->execexternal(myprocess,
+			"./linefind -o "+sdir+"stich_cp_clean_linefind.pto "+sdir+"stich_cp_clean.pto","Finding vertical lines");
+	}
+	else
+	{
+		push_message("\n---------------\n["+run_time+"] skip finding vertical lines......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skip finding vertical lines......\n\n"));
+
+
+	}
+
+	this->execexternal(myprocess,
+		"./checkpto "+sdir+"stich_cp_clean_linefind.pto","Checking PTO");
+
+	if(textEdit->toPlainText().contains("All images are connected."))
+	{
+
+		//----------------insert check
+		QFileInfo stich_cp_clean_line_op(sdir+"stich_cp_clean_linefind_optimised.pto");
+
+		if(!stich_cp_clean_line_op.exists())
+		{
+			this->execexternal(myprocess,
+				"./autooptimiser -a  -l -s -o "+sdir+"stich_cp_clean_linefind_optimised.pto "+sdir+"stich_cp_clean_linefind.pto","optimising");
+		}
+		else
+		{
+			push_message("\n---------------\n["+run_time+"] skip optimising......\n---------------\n");
+			//textEdit->setText(textEdit->toPlainText()+tr("\n skip optimising......\n\n"));
+
+		}
+
+
+
+
+		this->execexternal(myprocess,
+			"./pano_modify --canvas=20%% --crop=AUTO -o "+sdir+"stich_cp_clean_linefind_optimised_mod.pto "+sdir+"stich_cp_clean_linefind_optimised.pto ","modifying");
+
+		this->execexternal(myprocess,
+			"./nona -g  -z LZW -r ldr -m TIFF_m -o "+sdir+"temp  "+sdir+"stich_cp_clean_linefind_optimised_mod.pto ","resampling");
+
+
+		if(this->execexternal(myprocess,
+			"./enblend --compression=LZW  -o "+sdir+"final_output.tif -- "+sdir+"temp*.tif --gpu -m 12000","Enblending")==0)
+		{
+			end_time=QDateTime::currentDateTime();
+			this->push_message("\n---------------\nSuccessfully processed in "+run_time);
+			this->push_message("\nfrom "+start_time.toString("yyyy-MM-dd hh:mm:ss ddd")+" to "+end_time.toString("yyyy-MM-dd hh:mm:ss ddd"));
+			statusBar()->showMessage("Successfully processed from"+start_time.toString("yyyy-MM-dd hh:mm:ss ddd")+" to "+end_time.toString("yyyy-MM-dd hh:mm:ss ddd"));
+		};
+	}
+	else
+	{
+		end_time=QDateTime::currentDateTime();
+		this->push_message("\n---------------\nNot all the images are conncted. "+run_time);
+		this->push_message("\nfrom "+start_time.toString("yyyy-MM-dd hh:mm:ss ddd")+" to "+end_time.toString("yyyy-MM-dd hh:mm:ss ddd"));
+		statusBar()->showMessage("Processing failed.  :(");
+	}
+
+	timer->stop();
+	pBar->setValue(0);
+		
+
+
+}
 //---------------------------------------------------------------------
 //  imageview class implementation
 //
