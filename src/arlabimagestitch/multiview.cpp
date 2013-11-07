@@ -310,6 +310,17 @@ void multiview::newFile()
 		return;
 	}
 
+
+	myprocess = new QProcess(this);
+
+	connect(myprocess, SIGNAL(readyReadStandardOutput()),
+		this, SLOT(outlog()));
+
+	this->execexternal(myprocess,
+			"./gpsfilter -o "+sdir+"belts.log -g "+gpsfileName+" -s "+sdir,"processing GPSFilting");
+
+
+
 	
 
 
@@ -619,6 +630,7 @@ void multiview::count_time()
 
 void multiview::process()
 {
+	processAct->setEnabled(false);
 	 time_count=1;
 	timer->start(1000);
 	QDateTime start_time=QDateTime::currentDateTime();
@@ -749,6 +761,7 @@ void multiview::process()
 
 	timer->stop();
 	pBar->setValue(0);
+	processAct->setEnabled(true);
 		
 
 
