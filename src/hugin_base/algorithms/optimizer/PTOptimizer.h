@@ -224,11 +224,11 @@ void AutoOptimise::OptimiseVisitor::discover_vertex(Vertex v, const Graph & g)
     UIntSet imgs;
     imgs.insert(v);
     //        VariableMapVector vars(1);
-#ifdef DEBUG
+//#ifdef DEBUG
     std::cerr << "before optim "<< v << " : ";
     printVariableMap(std::cerr, m_pano.getImageVariables(v));
     std::cerr << std::endl;
-#endif
+//#endif
     
     // collect all optimized neighbours
     typename boost::graph_traits<CPGraph>::adjacency_iterator ai;
@@ -240,9 +240,9 @@ void AutoOptimise::OptimiseVisitor::discover_vertex(Vertex v, const Graph & g)
             if ( (get(boost::vertex_color, g))[*ai] != boost::color_traits<boost::default_color_type>::white()) {
                 // image has been already optimized, use as anchor
                 imgs.insert(unsigned(*ai));
-                DEBUG_DEBUG("non white neighbour " << (*ai));
+                 std::cerr << "DEBUG " << DEBUG_HEADER <<"non white neighbour " << (*ai)<< std::endl; //DEBUG_DEBUG("non white neighbour " << (*ai));
             } else {
-                DEBUG_DEBUG("white neighbour " << (*ai));
+                std::cerr << "DEBUG " << DEBUG_HEADER <<"white neighbour " << (*ai)<< std::endl;//DEBUG_DEBUG("white neighbour " << (*ai));
             }
         }
     }
@@ -265,15 +265,15 @@ void AutoOptimise::OptimiseVisitor::discover_vertex(Vertex v, const Graph & g)
     localPano.setOptimizeVector(optvec);
     
     if ( imgs.size() > 1) {
-        DEBUG_DEBUG("optimising image " << v << ", with " << imgs.size() -1 << " already optimised neighbour imgs.");
+        std::cerr << "DEBUG " << DEBUG_HEADER <<"optimising image " << v << ", with " << imgs.size() -1 << " already optimised neighbour imgs."<< std::endl;//DEBUG_DEBUG("optimising image " << v << ", with " << imgs.size() -1 << " already optimised neighbour imgs.");
         
         PTools::optimize(localPano);
         m_pano.updateVariables(unsigned(v), localPano.getImageVariables(currImg));
-#ifdef DEBUG
+//#ifdef DEBUG
         std::cerr << "after optim " << v << " : ";
         printVariableMap(std::cerr, m_pano.getImageVariables(v));
         std::cerr << std::endl;
-#endif
+//#endif
     }
 
     delete &localPano;
