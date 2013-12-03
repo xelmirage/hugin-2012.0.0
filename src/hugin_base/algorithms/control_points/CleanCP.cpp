@@ -81,9 +81,9 @@ UIntSet getCPoutsideLimit_pair(Panorama pano, double n)
                     imgopt.insert("r");
                     imgopt.insert("p");
                     imgopt.insert("y");
-                    optvec.push_back(imgopt);
+                    optvec.push_back(imgopt);cout<<endl<<"optimise between "<<image1<<" and "<<image2<<endl;
                     clean.setOptimizeVector(optvec);
-                    PTools::optimize(clean);
+                    PTools::optimize(clean);cout<<endl<<"end of optimise between "<<image1<<" and "<<image2<<endl;
                     cpl.clear();
                     cpl=clean.getCtrlPoints();
                     //calculate statistic and determine limit

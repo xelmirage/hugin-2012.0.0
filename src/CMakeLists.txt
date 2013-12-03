@@ -62,3 +62,5 @@ ENDIF(wxWidgets_FOUND)
 
 add_subdirectory(hugin_cpfind)
 add_subdirectory(translations)
+add_subdirectory(arlabimagestitch)
+add_subdirectory(split_blend)
