@@ -34,5 +34,55 @@ static void usage(const char * name)
 }
 int main(int argc, char *argv[])
 {
+	// parse arguments
+    const char * optstring = "o:";
+    int c;
+	string output;
+	while ((c = getopt (argc, argv, optstring)) != -1)
+	{
+		switch (c) {
+		case 'o':
+			output = optarg;
+			break;
+		default:
+			abort ();
+		}
+	}
+
+	if (argc - optind != 1) {
+		usage(argv[0]);
+		return 1;
+	}
+
+	string input=argv[optind];
+	Panorama pano;
+	ifstream prjfile(input.c_str());
+	if (!prjfile.good()) {
+		cerr << "could not open script : " << input << endl;
+		return 1;
+	}
+
+	pano.setFilePrefix(hugin_utils::getPathPrefix(input));
+	DocumentData::ReadWriteError err = pano.readData(prjfile);
+	if (err != DocumentData::SUCCESSFUL) {
+		cerr << "error while parsing panos tool script: " << input << endl;
+		cerr << "DocumentData::ReadWriteError code: " << err << endl;
+		return 1;
+	}
+	PanoramaOptions opt = pano.getOptions();
+	vigra::Rect2D roi=opt.getROI();
+	vigra::Size2D size=opt.getSize();
+	cout << "crop to " << roi.left() << "," << roi.top() << "," << roi.right() << "," << roi.bottom() << endl;
+	cout<<"size:"<<roi.right()-roi.left()<<"x"<<roi.bottom()-roi.top()<<endl;
+	
+	UIntSet activeImgs = pano.getActiveImages();
+	for(UIntSet::iterator it=activeImgs.begin();it!=activeImgs.end();++it)
+	{
+		cout<<*it<<",";
+	}
+	cout<<endl;
+
+
+
 	return 0;
 }
