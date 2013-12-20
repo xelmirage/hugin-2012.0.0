@@ -205,7 +205,9 @@ bool SplitBlendPanel::StitchProject(wxString scriptFile, wxString outname,
 		opts.setROI(vigra::Rect2D(vigra::Size2D(300,150)));
 		pano.setOptions(opts);*/
         // copy pto file to temporary file
-        m_currentPTOfn = wxFileName::CreateTempFileName(tempDir+wxT("huginpto_"));
+		wxFileName tempdiff(scriptFile);
+
+		m_currentPTOfn = wxFileName::CreateTempFileName(tempDir+tempdiff.GetName()+wxT("_"));
         if(m_currentPTOfn.size() == 0) {
             wxLogError(_("Could not create temporary file"));
         }

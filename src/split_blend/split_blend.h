@@ -48,17 +48,18 @@ public:
     void OnAbout(wxCommandEvent& event);
     /** sets, if existing output file should be automatic overwritten */
     void SetOverwrite(bool doOverwrite);
-
+	
+	
 private:
-
+	SplitBlendPanel* m_stitchPanel;
     bool m_isStitching;
     wxString m_scriptFile;
     bool m_deleteOnExit;
 
     void OnProcessTerminate(wxProcessEvent & event);
     void OnCancel(wxCommandEvent & event);
-
-    SplitBlendPanel * m_stitchPanel;
+	
+   // SplitBlendPanel * m_stitchPanel;
 
     DECLARE_EVENT_TABLE()
 };
