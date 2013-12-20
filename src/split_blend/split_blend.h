@@ -43,16 +43,16 @@ public:
     bool SplitBlend(wxString scriptFile, wxString outname,
                        HuginBase::PanoramaMakefilelibExport::PTPrograms progs,
                        bool doDeleteOnExit);
-
+	
     void OnQuit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     /** sets, if existing output file should be automatic overwritten */
     void SetOverwrite(bool doOverwrite);
-	
+	bool m_isStitching;
 	
 private:
 	SplitBlendPanel* m_stitchPanel;
-    bool m_isStitching;
+    
     wxString m_scriptFile;
     bool m_deleteOnExit;
 
@@ -101,6 +101,7 @@ class split_blend_App : public wxApp
 #endif
 
 private:
+	vector<SplitBlendFrame*> frames;
     wxLocale m_locale;
 #ifdef __WXMAC__
     wxString m_macFileNameToOpenOnStart;

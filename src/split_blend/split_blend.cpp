@@ -3,7 +3,7 @@
 
 vigra::Size2D calc_split(vigra::Rect2D view,int num)
 {
-	const int maxlimit=4;
+	const int maxlimit=200;
 	vigra::Size2D slice_matrix;
 	if (num<maxlimit)
 	{
@@ -520,15 +520,16 @@ bool split_blend_App::OnInit()
 	{
 		//::wxMessageBox(*it+"\n"+*it_out,"output");
 		frame = new SplitBlendFrame(NULL, wxT("SplitBlender"), wxDefaultPosition, wxSize(640,600) );
+		frames.push_back(frame);
 		frame->Show( true );
 		SetTopWindow( frame );
 		frame->SetTitle(wxString::Format(_("%s - Stitching"), basename.GetName().c_str()));
 		frame->SetOverwrite(parser.Found(wxT("w")));
-		frame->SetSize(wxSize(640,480));
+		frame->SetSize(wxSize(640,640));
 		bool n = frame->SplitBlend(*it,*it_out, progs, parser.Found(wxT("d")));
 		
 		if (!n) return n;
-
+		
 		
 		cmd+=*it_out;
 		//int pid=m_stitchPanel->GetPid();
@@ -539,6 +540,7 @@ bool split_blend_App::OnInit()
 		++it_out;
 
 	}
+	
 
 
 
