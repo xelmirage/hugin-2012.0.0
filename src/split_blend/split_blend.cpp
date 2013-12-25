@@ -3,7 +3,7 @@
 
 vigra::Size2D calc_split(vigra::Rect2D view,int num)
 {
-	const int maxlimit=4;
+	const int maxlimit=200;
 	vigra::Size2D slice_matrix;
 	if (num<maxlimit)
 	{
@@ -212,21 +212,21 @@ void SplitBlendFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 void SplitBlendFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
 	DEBUG_TRACE("");
-	/*if (m_isStitching) {
+	if (m_isStitching) {
 		m_stitchPanel->CancelStitch();
 		m_isStitching = false;
-	}*/
+	}
 	Close();
 }
 void SplitBlendFrame::OnCancel(wxCommandEvent& WXUNUSED(event))
 {
 	DEBUG_TRACE("");
-	/*if (m_isStitching) {
+	if (m_isStitching) {
 		m_stitchPanel->CancelStitch();
 		m_isStitching = false;
 	} else {
 		Close();
-	}*/
+	}
 }
 
 void SplitBlendFrame::OnProcessTerminate(wxProcessEvent & event)
@@ -268,6 +268,111 @@ bool SplitBlendFrame::SplitBlend(wxString scriptFile, wxString outname,
 	HuginBase::PanoramaMakefilelibExport::PTPrograms progs, bool doDeleteOnExit)
 {
 	
+	int num;
+	HuginBase::Panorama pano;
+	ifstream prjfile((const char *)scriptFile.mb_str(HUGIN_CONV_FILENAME));
+	if (!prjfile.good()) {
+		cerr << "could not open script : " <<scriptFile << endl;
+		return 1;
+	}
+
+	pano.setFilePrefix(hugin_utils::getPathPrefix(scriptFile.ToStdString()));
+	DocumentData::ReadWriteError err = pano.readData(prjfile);
+	if (err != DocumentData::SUCCESSFUL) {
+		cerr << "error while parsing panos tool script: " << scriptFile << endl;
+		cerr << "DocumentData::ReadWriteError code: " << err << endl;
+		return 1;
+	}
+	PanoramaOptions opt = pano.getOptions();
+	vigra::Rect2D roi=opt.getROI();
+	vigra::Size2D size=opt.getSize();
+	
+	num=::getImagesinROI(pano,pano.getActiveImages()).size();
+	int active=pano.getActiveImages().size();
+	
+
+	//::wxMessageBox("crop to "+ lexical_cast<string>(roi.left()) +"," + lexical_cast<string>( roi.top()) + "," +  lexical_cast<string>(roi.right()) + "," +  lexical_cast<string>(roi.bottom()) ,
+		//"size:"+ lexical_cast<string>(roi.right()-roi.left())+"x"+ lexical_cast<string>(roi.bottom()-roi.top())+"In roi:"+ lexical_cast<string>(num));
+	cout << "crop to " << roi.left() << "," << roi.top() << "," << roi.right() << "," << roi.bottom() << endl;
+	cout<<"size:"<<roi.right()-roi.left()<<"x"<<roi.bottom()-roi.top()<<endl;
+
+
+	vigra::Size2D slices;
+	slices=calc_split(roi,num);
+
+	int slice_height=(roi.bottom()-roi.top())/slices.height();
+	int slice_width=(roi.right()-roi.left())/slices.width();
+	vector<string> parts;
+	vector<string> outparts;
+	int top,bottom,left,right;
+	for(int i=0;i<slices.width();++i)
+	{
+		for(int j=0;j<slices.height();++j)
+		{
+			left=roi.left()+i*slice_width;
+			right=roi.left()+(i+1)*slice_width+10;
+			if (right>roi.right())
+			{
+				right=roi.right();
+			}
+
+			top=roi.top()+j*slice_height;
+			bottom=roi.top()+(j+1)*slice_height+10;
+			if(bottom>roi.bottom())
+			{
+				bottom=roi.bottom();
+			}
+			cout<<"--------------"<<i<<"---"<<j<<"------------"<<endl;
+			cout << "crop to " << left << "," << right << "," << top << "," << bottom << endl;
+			cout<<"size:"<<right-left<<"x"<<bottom-top<<endl;
+			HuginBase::Panorama temp_pano=pano;
+			PanoramaOptions temp_opt = temp_pano.getOptions();
+			vigra::Rect2D  temp_roi=opt.getROI();
+
+			vigra::Point2D upperleft,lowerright;
+			upperleft.x=left;
+			upperleft.y=top;
+			lowerright.x=right;
+			lowerright.y=bottom;
+			temp_roi.setUpperLeft(upperleft);
+			temp_roi.setLowerRight(lowerright);
+
+			temp_opt.setROI(temp_roi);
+
+			temp_pano.setOptions(temp_opt);
+			temp_pano=temp_pano.getSubset(::getImagesinROI(temp_pano,temp_pano.getActiveImages()));
+			string out_suffix=lexical_cast<string>(i)+"_"+lexical_cast<string>(j);
+			string output=scriptFile.substr(0,scriptFile.length()-4).append("_dist_"+out_suffix+".pto");
+
+			ofstream of(output.c_str());
+
+			temp_pano.writeData(of);
+			parts.push_back(output);
+			outparts.push_back(output+".tif");
+			cout<<"j finish,out to "<<output<<endl;
+
+		}
+
+		cout<<"i finish"<<endl;
+	}
+
+	vector<string>::iterator it,it_out;
+	it=parts.begin();
+	it_out=outparts.begin();
+	wxString cmd=progs.enblend+progs.enblend_opts+" -o "+outname+" ";
+
+	/*for(it=parts.begin();it!=parts.end();++it)
+	{
+	}*/
+	
+
+
+
+
+
+
+
+
 	 if (! m_stitchPanel->StitchProject(scriptFile, outname, progs)) {
         return false;
     }
@@ -420,29 +525,36 @@ bool split_blend_App::OnInit()
 
 	wxFileName basename(scriptFile);
 
-	int num;
-	HuginBase::Panorama pano;
-	ifstream prjfile((const char *)scriptFile.mb_str(HUGIN_CONV_FILENAME));
-	if (!prjfile.good()) {
-		cerr << "could not open script : " <<scriptFile << endl;
-		return 1;
-	}
-
-	pano.setFilePrefix(hugin_utils::getPathPrefix(scriptFile.ToStdString()));
-	DocumentData::ReadWriteError err = pano.readData(prjfile);
-	if (err != DocumentData::SUCCESSFUL) {
-		cerr << "error while parsing panos tool script: " << scriptFile << endl;
-		cerr << "DocumentData::ReadWriteError code: " << err << endl;
-		return 1;
-	}
-	PanoramaOptions opt = pano.getOptions();
-	vigra::Rect2D roi=opt.getROI();
-	vigra::Size2D size=opt.getSize();
 	
-	num=::getImagesinROI(pano,pano.getActiveImages()).size();
-	int active=pano.getActiveImages().size();
+	//SplitBlendFrame* frame;
+	//for(it=parts.begin();it!=parts.end();++it)
+	//{
+	//	//::wxMessageBox(*it+"\n"+*it_out,"output");
+	//	frame = new SplitBlendFrame(NULL, wxT("SplitBlender"), wxDefaultPosition, wxSize(640,600) );
+	//	frames.push_back(frame);
+	//	frame->Show( true );
+	//	SetTopWindow( frame );
+	//	frame->SetTitle(wxString::Format(_("%s - Stitching"), basename.GetName().c_str()));
+	//	frame->SetOverwrite(parser.Found(wxT("w")));
+	//	frame->SetSize(wxSize(640,640));
+	//	bool n = frame->SplitBlend(*it,*it_out, progs, parser.Found(wxT("d")));
+	//	
+	//	if (!n) return n;
+	//	
+	//	
+	//	cmd+=*it_out;
+	//	//int pid=m_stitchPanel->GetPid();
+	//	//while(wxProcess::Exists(pid))
+	//	////{
+	//		//cout<<"processing......."<<endl;
+	//	//}
+	//	++it_out;
+
+	//}
 	
 
+<<<<<<< HEAD
+=======
 	//::wxMessageBox("crop to "+ lexical_cast<string>(roi.left()) +"," + lexical_cast<string>( roi.top()) + "," +  lexical_cast<string>(roi.right()) + "," +  lexical_cast<string>(roi.bottom()) ,
 		//"size:"+ lexical_cast<string>(roi.right()-roi.left())+"x"+ lexical_cast<string>(roi.bottom()-roi.top())+"In roi:"+ lexical_cast<string>(num));
 	cout << "crop to " << roi.left() << "," << roi.top() << "," << roi.right() << "," << roi.bottom() << endl;
@@ -520,15 +632,16 @@ bool split_blend_App::OnInit()
 	{
 		//::wxMessageBox(*it+"\n"+*it_out,"output");
 		frame = new SplitBlendFrame(NULL, wxT("SplitBlender"), wxDefaultPosition, wxSize(640,600) );
+		frames.push_back(frame);
 		frame->Show( true );
 		SetTopWindow( frame );
 		frame->SetTitle(wxString::Format(_("%s - Stitching"), basename.GetName().c_str()));
 		frame->SetOverwrite(parser.Found(wxT("w")));
-		frame->SetSize(wxSize(640,480));
+		frame->SetSize(wxSize(640,640));
 		bool n = frame->SplitBlend(*it,*it_out, progs, parser.Found(wxT("d")));
 		
 		if (!n) return n;
-
+		
 		
 		cmd+=*it_out;
 		//int pid=m_stitchPanel->GetPid();
@@ -539,7 +652,9 @@ bool split_blend_App::OnInit()
 		++it_out;
 
 	}
+	
 
+>>>>>>> 0681f4cfae90b5132a14d7dded7ff8886189aba0
 
 
 
