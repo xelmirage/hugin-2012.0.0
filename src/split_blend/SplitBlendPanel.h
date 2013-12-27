@@ -66,6 +66,7 @@ public:
                        HuginBase::PanoramaMakefilelibExport::PTPrograms progs);
     bool DetectProject(wxString scriptFile, 
                        HuginBase::AssistantMakefilelibExport::AssistantPrograms progs);
+	bool FinalBlend(wxString cmd);
     void CancelStitch();
 	bool IsPaused();
 	void SetOverwrite(bool over = true);
@@ -79,6 +80,7 @@ public:
 private:
 	bool m_paused;
 	bool m_overwrite;
+	
     wxString m_currentPTOfn;
     wxString m_currentMakefn;
     void OnProcessTerminate(wxProcessEvent & event);

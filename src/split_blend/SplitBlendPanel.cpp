@@ -378,6 +378,26 @@ bool SplitBlendPanel::DetectProject(wxString scriptFile,
     return true;
 }
 
+bool SplitBlendPanel::FinalBlend(wxString cmd)
+{
+	try {
+		if (m_execPanel->ExecWithRedirect(cmd) == -1)
+        {
+            wxMessageBox(wxString::Format(_("Error while running assistant\n%s"), cmd.c_str()),
+                         _("Error during running assistant"),  wxICON_ERROR | wxOK );
+        }
+
+	} 
+	catch (std::exception & e)
+	{
+		cerr << "caught exception: " << e.what() << std::endl;
+		wxMessageBox(wxString(e.what(), wxConvLocal),
+			_("Error during running assistant"), wxICON_ERROR | wxOK );
+	}
+
+	return true;
+}
+
 void SplitBlendPanel::OnProcessTerminate(wxProcessEvent & event)
 {
     DEBUG_TRACE("");

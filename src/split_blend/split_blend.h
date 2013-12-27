@@ -22,6 +22,7 @@
 #include "base_wx/platform.h"
 #include "base_wx/wxPlatform.h"
 #include "SplitBlendPanel.h"
+#include "MainFrame.h"
 //#include<boost/lexical_cast.hpp>
 // somewhere SetDesc gets defined.. this breaks wx/cmdline.h on OSX
 #ifdef SetDesc
@@ -33,6 +34,8 @@ using namespace std;
 using namespace hugin_utils;
 using namespace HuginBase;
 using namespace AppBase;
+
+
 
 
 class SplitBlendFrame: public wxFrame
@@ -49,6 +52,8 @@ public:
     /** sets, if existing output file should be automatic overwritten */
     void SetOverwrite(bool doOverwrite);
 	bool m_isStitching;
+	bool m_isFinished;
+	
 	
 private:
 	vector<SplitBlendPanel*> stitchPanels;
@@ -104,10 +109,56 @@ class split_blend_App : public wxApp
 private:
 	vector<SplitBlendFrame*> frames;
     wxLocale m_locale;
+	void split_blend_App::OnProcessTerminate(wxProcessEvent & event);
 #ifdef __WXMAC__
     wxString m_macFileNameToOpenOnStart;
 #endif
+	DECLARE_EVENT_TABLE();
 
 };
 
 
+BEGIN_EVENT_TABLE(split_blend_App, wxApp)
+    EVT_END_PROCESS(-1, split_blend_App::OnProcessTerminate)
+END_EVENT_TABLE()
+
+
+class MainFrame: public wxFrame
+{
+public:
+    MainFrame(wxWindow * parent, const wxString& title, const wxPoint& pos, const wxSize& size);
+
+    bool SplitBlend(wxString scriptFile, wxString outname,
+                       HuginBase::PanoramaMakefilelibExport::PTPrograms progs,
+                       bool doDeleteOnExit);
+	
+    void OnQuit(wxCommandEvent& event);
+    void OnAbout(wxCommandEvent& event);
+    /** sets, if existing output file should be automatic overwritten */
+    void SetOverwrite(bool doOverwrite);
+	bool m_isStitching;
+	
+private:
+	int finish_count;
+	vector<SplitBlendFrame*> stitchFrames;
+	SplitBlendPanel* m_stitchPanel;
+    
+    wxString m_scriptFile;
+    bool m_deleteOnExit;
+	bool all_set;
+	wxString cmd;
+    void OnProcessTerminate(wxProcessEvent & event);
+    void OnCancel(wxCommandEvent & event);
+	vigra::Size2D MainFrame::calc_split(vigra::Rect2D view,int num);
+   // SplitBlendPanel * m_stitchPanel;
+
+    DECLARE_EVENT_TABLE()
+};
+
+
+BEGIN_EVENT_TABLE(MainFrame, wxFrame)
+    EVT_MENU(ID_Quit,  MainFrame::OnQuit)
+    EVT_MENU(ID_About, MainFrame::OnAbout)
+    EVT_BUTTON(wxID_CANCEL, MainFrame::OnCancel)
+    EVT_END_PROCESS(-1, MainFrame::OnProcessTerminate)
+END_EVENT_TABLE()
