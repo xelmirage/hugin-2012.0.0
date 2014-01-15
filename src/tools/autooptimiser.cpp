@@ -203,7 +203,11 @@ int main(int argc, char *argv[])
         cerr << "Panorama have to have control points to optimise positions" << endl;
         return 1;
     };
-    if (doPairwise && ! doAutoOpt) {
+
+
+	
+	
+	if (doPairwise && ! doAutoOpt) {
         // do pairwise optimisation
         set<string> optvars;
         optvars.insert("r");

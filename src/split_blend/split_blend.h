@@ -22,7 +22,7 @@
 #include "base_wx/platform.h"
 #include "base_wx/wxPlatform.h"
 #include "SplitBlendPanel.h"
-#include "MainFrame.h"
+
 //#include<boost/lexical_cast.hpp>
 // somewhere SetDesc gets defined.. this breaks wx/cmdline.h on OSX
 #ifdef SetDesc

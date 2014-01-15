@@ -129,7 +129,7 @@ bool SplitBlendFrame::SplitBlend(wxString scriptFile, wxString outname,
 }
 void SplitBlendFrame::SetOverwrite(bool doOverwrite)
 {
-
+	 m_stitchPanel->SetOverwrite(doOverwrite);
 }
 split_blend_App::split_blend_App()
 {

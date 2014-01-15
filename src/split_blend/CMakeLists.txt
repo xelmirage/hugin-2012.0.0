@@ -1,7 +1,7 @@
 
 
 
-add_executable(Split_blend split_blend.cpp split_blend.h)
+add_executable(Split_blend split_blend.cpp split_blend.h SplitBlendPanel.cpp SplitBlendPanel.h)
 
 TARGET_LINK_LIBRARIES(Split_blend 
 huginbase huginbasewx 
