@@ -4,6 +4,8 @@
 
 
 
+
+
 SplitBlendFrame::SplitBlendFrame(wxWindow * parent, const wxString& title, const wxPoint& pos, const wxSize& size)
 	: wxFrame(parent, -1, title, pos, size), m_isStitching(false)
 {
@@ -358,10 +360,46 @@ void MainFrame::SetOverwrite(bool doOverwrite)
 void MainFrame::OnProcessTerminate(wxProcessEvent & event)
 {
 	
-	vector<SplitBlendFrame*>::iterator it;
+	//vector<SplitBlendFrame*>::iterator it;
 	bool can_start=true;
+	SplitBlendFrame* frame;
 
 	++finish_count;
+	--onProcess;
+	if(it!=parts.end())
+	{
+		frame = new SplitBlendFrame(NULL, wxT("SplitBlender"), wxDefaultPosition, wxSize(640,600) );
+		stitchFrames.push_back(frame);
+		frame->Show( true );
+//		SetTopWindow( frame );
+		frame->SetTitle(wxString::Format(_("%s - Stitching"), (*it)));
+		frame->SetOverwrite(true);
+		frame->SetSize(wxSize(640,640));
+		frame->SetParent(this);
+		bool n = frame->SplitBlend(*it,*it_out, _progs,_doDeleteOnExit);
+		
+		//if (!n) return n;
+		//aExecutor.execute(new StitchRunnable(*it,*it_out,this,progs,doDeleteOnExit));
+
+//		
+//		
+		//cmd+=*it_out;
+		//int pid=m_stitchPanel->GetPid();
+		//while(wxProcess::Exists(pid))
+		////{
+			//cout<<"processing......."<<endl;
+		//}
+
+
+
+
+		++it;
+		++it_out;
+		++onProcess;
+	}
+
+
+
 	if(finish_count==stitchFrames.size())
 	{
 		::wxMessageBox(cmd,"command");
@@ -400,7 +438,7 @@ void MainFrame::OnCancel(wxCommandEvent & event)
 }
 vigra::Size2D MainFrame::calc_split(vigra::Rect2D view,int num)
 {
-	const int maxlimit=200;
+	const int maxlimit=4;
 	vigra::Size2D slice_matrix;
 	if (num<maxlimit)
 	{
@@ -446,6 +484,8 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 	HuginBase::PanoramaMakefilelibExport::PTPrograms progs,
 	bool doDeleteOnExit)
 {
+	_progs=progs;
+	_doDeleteOnExit=doDeleteOnExit;
 	wxFileName basename(scriptFile);
 	
 	int num;
@@ -482,8 +522,7 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 
 	int slice_height=(roi.bottom()-roi.top())/slices.height();
 	int slice_width=(roi.right()-roi.left())/slices.width();
-	vector<string> parts;
-	vector<string> outparts;
+	
 	int top,bottom,left,right;
 	for(int i=0;i<slices.width();++i)
 	{
@@ -536,7 +575,7 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 		cout<<"i finish"<<endl;
 	}
 
-	vector<string>::iterator it,it_out;
+	
 	
 	cmd=progs.enblend+progs.enblend_opts+" -o "+outname+".tif ";
 	
@@ -557,6 +596,11 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 	frame->SetSize(wxSize(320,240));
 	frame->SetParent(this);
 	bool n = frame->SplitBlend(*it,*it_out, progs, doDeleteOnExit);*/
+	int _cores=getCPUCount();
+
+
+	PoolExecutor aExecutor(_cores);
+	onProcess=0;
 
 	for(it=parts.begin();it!=parts.end();++it)
 	{
@@ -572,19 +616,32 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 		bool n = frame->SplitBlend(*it,*it_out, progs,doDeleteOnExit);
 		
 		if (!n) return n;
-		
-		
+		//aExecutor.execute(new StitchRunnable(*it,*it_out,this,progs,doDeleteOnExit));
+
+//		
+//		
 		//cmd+=*it_out;
 		//int pid=m_stitchPanel->GetPid();
 		//while(wxProcess::Exists(pid))
 		////{
 			//cout<<"processing......."<<endl;
 		//}
-		++it_out;
 
+
+
+
+
+		++it_out;
+		++onProcess;
+		if(onProcess>=_cores)
+		{
+			++it;
+			break;
+		}
 	}
 	all_set=true;
-
+	//aExecutor.wait();
 
 
 }
+

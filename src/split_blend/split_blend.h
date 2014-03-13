@@ -23,6 +23,9 @@
 #include "base_wx/wxPlatform.h"
 #include "SplitBlendPanel.h"
 
+#include "zthread/Runnable.h"
+#include "zthread/PoolExecutor.h"
+//#include "Utils.h"
 //#include<boost/lexical_cast.hpp>
 // somewhere SetDesc gets defined.. this breaks wx/cmdline.h on OSX
 #ifdef SetDesc
@@ -34,7 +37,7 @@ using namespace std;
 using namespace hugin_utils;
 using namespace HuginBase;
 using namespace AppBase;
-
+using namespace ZThread;
 
 
 
@@ -151,7 +154,18 @@ private:
     void OnCancel(wxCommandEvent & event);
 	vigra::Size2D MainFrame::calc_split(vigra::Rect2D view,int num);
    // SplitBlendPanel * m_stitchPanel;
+	
+	
+	HuginBase::PanoramaMakefilelibExport::PTPrograms _progs;
+	bool _doDeleteOnExit;
+	
+	
+	int onProcess;
 
+	vector<string> parts;
+	vector<string> outparts;
+
+	vector<string>::iterator it,it_out;
     DECLARE_EVENT_TABLE()
 };
 
@@ -162,3 +176,34 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_BUTTON(wxID_CANCEL, MainFrame::OnCancel)
     EVT_END_PROCESS(-1, MainFrame::OnProcessTerminate)
 END_EVENT_TABLE()
+
+
+class StitchRunnable:public Runnable
+{
+public:
+	StitchRunnable(string pName,string oName,wxWindowBase* pParent,HuginBase::PanoramaMakefilelibExport::PTPrograms prog,bool dDOE):
+	  ptoName(pName),outName(oName),parent(pParent),progs(prog), doDeleteOnExit(dDOE){};
+
+	void run()
+	{
+		//TRACE_IMG("begin stitching "+ ptoName);
+		frame = new SplitBlendFrame(NULL, wxT("SplitBlender"), wxDefaultPosition, wxSize(640,600) );
+		frame->Show( true );
+		frame->SetTitle(wxString::Format(_("%s - Stitching"), ptoName));
+		frame->SetOverwrite(true);
+		frame->SetSize(wxSize(640,640));
+		frame->SetParent(parent);
+
+		bool n = frame->SplitBlend(ptoName,outName, progs,doDeleteOnExit);
+
+	}
+private:
+	wxWindowBase* parent;
+	string ptoName,outName;
+	HuginBase::PanoramaMakefilelibExport::PTPrograms progs;
+	bool doDeleteOnExit;
+	bool n;
+	SplitBlendFrame* frame;
+
+
+};
