@@ -12,7 +12,7 @@
 
 #include <hugin_config.h>
 #include <hugin_version.h>
-
+#include <hugin_utils/stl_utils.h>
 //#include <panodata/Panorama.h>
 //#include <panodata/PTScriptParsing.h>
 #include<hugin_math\hugin_math.h>
@@ -20,15 +20,37 @@
 #include<boost/algorithm/string.hpp>
 #include<boost/lexical_cast.hpp>
 #include<boost/filesystem.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 #include <exiv2/image.hpp>
 #include <exiv2/exif.hpp>
 #include <cassert>
-
+#include "zthread/Runnable.h"
+#include "zthread/PoolExecutor.h"
+//#include "Utils.h"
 using namespace std;
 using namespace boost;
-
+using namespace ZThread;    
 int UTMNorthing;
 int UTMEasting;
+
+class runexif : public ZThread::Runnable
+{
+private:
+	string cmd;
+	string name;
+public:
+	runexif(string cmd,string name):cmd(cmd),name(name){}
+	void run()
+	{
+		cout<<name<<endl;
+		std::system(cmd.c_str());
+		
+	}
+};
+
+
 struct dist
 {
 	int id;
@@ -348,6 +370,8 @@ bool is_next_valid(int id,int step)
 }
 void build_belt(string outfile)
 {
+	int _cores=hugin_utils::getCPUCount();
+	boost::thread_group threads;
 	POINTSLV::iterator belt_iterator;
 	int row_step=1;    //选取照片的间隔
 	DISTS dists;
@@ -358,7 +382,7 @@ void build_belt(string outfile)
 	string _outputFile=outfile;
 	ofstream belt_out(_outputFile.c_str());
 	POINTSL::iterator i;
-
+	ZThread::PoolExecutor aExecutor(_cores);
 	for(i=pointsL.begin();i!=pointsL.end()-1;++i)
 	{
 		if(!i->selected)
@@ -501,8 +525,10 @@ void build_belt(string outfile)
 
 					string cmd="exiftool -F -m -overwrite_original -UserComment=\""+tag+"\" "
 						+images[(row_iterator->id-1)];
+					//threads.add_thread(new boost::thread(boost::bind(&run,cmd)));
+					//std::system(cmd.c_str());
 
-					std::system(cmd.c_str());
+					aExecutor.execute(new runexif(cmd,images[(row_iterator->id-1)]));
 
 				}
 				cout<<endl;
@@ -518,17 +544,18 @@ void build_belt(string outfile)
 				cout<<endl;
 
 
-
+				aExecutor.wait();
 
 				//belt_out<<endl;
 				
 
 
 
-				
+				//threads.join_all();
 			
 		
 		}	
+
 
 	}
 
@@ -558,9 +585,11 @@ static void usage(const char* name)
 
 int main(int argc,char* argv[])
 {
+	int _cores=hugin_utils::getCPUCount();
 	int c;
 	int optionIndex = 0;
 	std::string				_inputFile="",line="",_outputFile="",_inputDIR="";
+	ZThread::PoolExecutor aExecutor(_cores);
 
 	
 	const char* optstring = "o:s:g:h";
@@ -712,13 +741,17 @@ int main(int argc,char* argv[])
 			+"\" -UserComment=\"thrown\" "
 			+images[j];
 		
-		std::system(cmd.c_str());
+		aExecutor.execute(new runexif(cmd,images[j]));
+		//threads.add_thread(new boost::thread(boost::bind(&run,cmd)));
+		//std::system(cmd.c_str());
 
 		cout<<images[j]<<endl;
 		//image->writeMetadata();
 		j++;
 
 	}
+	aExecutor.wait();
+	//threads.join_all();
 	POINTSL::iterator i;
 	PointL minPoint(0,minx,miny,0,0);
 	for(i=pointsL.begin();i!=pointsL.end();++i)
