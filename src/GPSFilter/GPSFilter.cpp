@@ -499,7 +499,7 @@ void build_belt(string outfile)
 
 
 
-					string cmd="exiftool -F -m -UserComment=\""+tag+" "
+					string cmd="exiftool -F -m -overwrite_original -UserComment=\""+tag+"\" "
 						+images[(row_iterator->id-1)];
 
 					std::system(cmd.c_str());
