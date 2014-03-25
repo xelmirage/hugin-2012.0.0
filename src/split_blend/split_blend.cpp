@@ -438,7 +438,7 @@ void MainFrame::OnCancel(wxCommandEvent & event)
 }
 vigra::Size2D MainFrame::calc_split(vigra::Rect2D view,int num)
 {
-	const int maxlimit=4;
+	const int maxlimit=200;
 	vigra::Size2D slice_matrix;
 	if (num<maxlimit)
 	{
@@ -463,12 +463,12 @@ vigra::Size2D MainFrame::calc_split(vigra::Rect2D view,int num)
 			if (SliceRatio<0.5)
 			{
 				slice_matrix.setWidth(slice_matrix.width()-1);
-				slice_matrix.setHeight(slice_matrix.height()+1);
+				slice_matrix.setHeight(slice_matrix.height()+2);
 
 			}
 			else if (SliceRatio>2)
 			{
-				slice_matrix.setWidth(slice_matrix.width()+1);
+				slice_matrix.setWidth(slice_matrix.width()+2);
 				slice_matrix.setHeight(slice_matrix.height()-1);
 			}
 			SliceRatio=(width/slice_matrix.width())/(height/slice_matrix.height());

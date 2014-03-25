@@ -240,12 +240,13 @@ RemappedPanoImage<ImageType, AlphaType>*
         vigra::importImage(ffInfo, vigra::destImage(ffImg));
     }
     // remap the image
-    
+	std::cout<<imgNr<<",";
     remapImage(srcImg, srcAlpha, ffImg,
                pano.getSrcImage(imgNr), opts,
                outputROI,
                *m_remapped,
                progress);
+	std::cout<<endl;
     return m_remapped;
 }
 

@@ -43,7 +43,7 @@
 #include <boost/thread/thread.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
-
+#include <math.h>
 
 namespace vigra_ext
 {
@@ -120,7 +120,7 @@ void transformImageIntern(vigra::triple<SrcImageIterator, SrcImageIterator, SrcA
     prog.pushTask(AppBase::ProgressTask("Remapping", "", 1.0/(yend-ystart)));
 
     vigra::Diff2D srcSize = src.second - src.first;
-
+	double srcCenterx=srcSize.x/2,srcCentery=srcCentery=srcSize.y/2;
     vigra_ext::ImageInterpolator<SrcImageIterator, SrcAccessor, Interpolator>
                                  interpol (src, interp, warparound);
 
@@ -130,7 +130,7 @@ void transformImageIntern(vigra::triple<SrcImageIterator, SrcImageIterator, SrcA
     AlphaImageIterator ydm(alpha.first);
     // loop over the image and transform
     typename SrcAccessor::value_type tempval;
-
+	
     for(int y=ystart; y < yend; ++y, ++yd.y, ++ydm.y)
     {
         // create x iterators
@@ -139,11 +139,15 @@ void transformImageIntern(vigra::triple<SrcImageIterator, SrcImageIterator, SrcA
         for(int x=xstart; x < xend; ++x, ++xd.x, ++xdm.x)
         {
             double sx,sy;
-            if (transform.transformImgCoord(sx,sy,x,y)) {
-                if (interpol.operator()(sx, sy, tempval)){
-                    // apply pixel transform and write to output
-                    dest.third.set( zeroNegative(pixelTransform(tempval, hugin_utils::FDiff2D(sx, sy))), xd);
-                    alpha.second.set(pixelTransform.hdrWeight(tempval, vigra::UInt8(255)), xdm);
+			if (transform.transformImgCoord(sx,sy,x,y)) {
+				if((abs(sx-srcCenterx)<0.5)&&(abs(sy-srcCentery)<0.5))
+				{
+					std::cout<<x<<","<<y<<",";
+				}
+				if (interpol.operator()(sx, sy, tempval)){
+					// apply pixel transform and write to output
+					dest.third.set( zeroNegative(pixelTransform(tempval, hugin_utils::FDiff2D(sx, sy))), xd);
+					alpha.second.set(pixelTransform.hdrWeight(tempval, vigra::UInt8(255)), xdm);
                 } else {
                     alpha.second.set(0, xdm);
                 }
@@ -175,7 +179,7 @@ struct TransformImageIntern
     std::pair<AlphaImageIterator, AlphaAccessor> alpha;
     const TRANSFORM & transform;
     const PixelTransform & pixelTransform;
-    vigra::Diff2D destUL;
+    vigra::Diff2D destUL,centerTransed;
     Interpolator interp;
     bool warparound;
     AppBase::MultiProgressDisplay & prog;
@@ -561,7 +565,7 @@ void transformImageInternMT(vigra::triple<SrcImageIterator, SrcImageIterator, Sr
     if (destSize.y < (int) nThreads) {
         nThreads = destSize.y;
     }
-
+	
     if (nThreads == 1) {
         transformImageIntern(src, dest, alpha, transform, pixelTransform,
                                   destUL, interp, warparound, prog);
