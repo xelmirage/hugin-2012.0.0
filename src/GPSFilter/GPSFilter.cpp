@@ -1,7 +1,6 @@
 // GPSFilter.cpp : 定义控制台应用程序的入口点。
 //
 
-#include "targetver.h"
 
 #include <stdio.h>
 #include <tchar.h>
@@ -490,14 +489,20 @@ void build_belt(string outfile)
 						}
 					}
 					//cout<<endl<<tag<<endl;
-					Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(images[(row_iterator->id-1)]);
+					/*	Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(images[(row_iterator->id-1)]);
 					assert (image.get() != 0);
 					image->readMetadata();
 					Exiv2::ExifData &exifData = image->exifData();
 					exifData["Exif.Photo.UserComment"]
 					= "charset=Ascii "+tag;
-					image->writeMetadata();
+					image->writeMetadata();*/
 
+
+
+					string cmd="exiftool -F -m -UserComment=\""+tag+" "
+						+images[(row_iterator->id-1)];
+
+					std::system(cmd.c_str());
 
 				}
 				cout<<endl;
@@ -639,7 +644,7 @@ int main(int argc,char* argv[])
 	if ( !filesystem::exists( full_path ) )  
 	{   
 		std::cout << "找不到配置文件目录,请检查该目录是否存在:"  ;
-		std::cout << full_path.native_file_string() << std::endl; 
+		std::cout << full_path.string() << std::endl; 
 		return -1;
 	} 
 	images.clear();
@@ -695,14 +700,22 @@ int main(int argc,char* argv[])
 		}
 
 
-		Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(images[j]);
-		assert (image.get() != 0);
-		image->readMetadata();
-		Exiv2::ExifData &exifData = image->exifData();
-		exifData["Exif.Photo.UserComment"]
-		= "charset=Ascii thrown";
+		//Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(images[j]);
+		//assert (image.get() != 0);
+		//image->readMetadata();
+		//Exiv2::ExifData &exifData = image->exifData();
+		//exifData["Exif.Photo.UserComment"]
+		//= "charset=Ascii thrown";
+		
+		string cmd="exiftool -F -m -overwrite_original -GPSLongitude=\""+ lexical_cast<string>(SplitVec[4])
+			+"\"  -GPSLatitude=\""+ lexical_cast<string>(SplitVec[5])
+			+"\" -UserComment=\"thrown\" "
+			+images[j];
+		
+		std::system(cmd.c_str());
+
 		cout<<images[j]<<endl;
-		image->writeMetadata();
+		//image->writeMetadata();
 		j++;
 
 	}
