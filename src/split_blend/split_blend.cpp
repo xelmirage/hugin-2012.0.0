@@ -599,7 +599,7 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 	int _cores=getCPUCount();
 
 
-	PoolExecutor aExecutor(_cores);
+	//PoolExecutor aExecutor(_cores);
 	onProcess=0;
 
 	for(it=parts.begin();it!=parts.end();++it)
