@@ -33,6 +33,11 @@
 #endif
 
 #include <wx/cmdline.h>
+
+#include <libxml/parser.h>
+
+#include <libxml/tree.h>
+
 using namespace std;
 using namespace hugin_utils;
 using namespace HuginBase;
@@ -153,8 +158,9 @@ private:
     void OnProcessTerminate(wxProcessEvent & event);
     void OnCancel(wxCommandEvent & event);
 	vigra::Size2D MainFrame::calc_split(vigra::Rect2D view,int num);
-   // SplitBlendPanel * m_stitchPanel;
-	
+	void insertNewImageToKml(string name,xmlNodePtr* unode,vigra::Point2D upperleft,vigra::Point2D lowerright);
+		// SplitBlendPanel * m_stitchPanel;
+	string xytogps(int x,int y);
 	
 	HuginBase::PanoramaMakefilelibExport::PTPrograms _progs;
 	bool _doDeleteOnExit;

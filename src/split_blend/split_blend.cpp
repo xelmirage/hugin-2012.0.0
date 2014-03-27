@@ -480,6 +480,58 @@ vigra::Size2D MainFrame::calc_split(vigra::Rect2D view,int num)
 		return slice_matrix;
 	}
 }
+
+string MainFrame::xytogps(int x,int y)
+{
+	double latitude=47.5722256384-0.0000017544*x-0.0000005952*y;
+	double longitude= 87.8209535664 + 0.0000008831*x  -0.0000025883*y;
+	string out;
+	out.clear();
+	out.append(::lexical_cast<string>(longitude));
+	out.append(",");
+	out.append(::lexical_cast<string>(latitude));
+	out.append(",0 ");
+	return out;
+
+}
+
+
+void MainFrame::insertNewImageToKml(string name,xmlNodePtr* unode,vigra::Point2D upperleft,vigra::Point2D lowerright)
+{
+	xmlNodePtr node =xmlNewNode(NULL, BAD_CAST "GroundOverlay");
+	xmlAddChild(*unode,node);
+	xmlNewTextChild(node, NULL, BAD_CAST "name", BAD_CAST name.c_str());
+	xmlNodePtr icon =xmlNewNode(NULL, BAD_CAST "Icon");
+	xmlAddChild(node,icon);
+	xmlNewTextChild(icon, NULL, BAD_CAST "href", BAD_CAST name.c_str());
+	xmlNewTextChild(icon, NULL, BAD_CAST "viewBoundScale", BAD_CAST "0.75");
+	xmlNodePtr llq =xmlNewNode(NULL, BAD_CAST "gx:LatLonQuad");
+	xmlAddChild(node,llq);
+	string coords;
+	coords.clear();
+	string temp;
+	temp.clear();
+	
+	
+	temp=xytogps(upperleft.x,lowerright.y);
+	coords+=temp;
+
+	temp=xytogps(lowerright.x,lowerright.y);
+	coords+=temp;
+
+	temp=xytogps(lowerright.x,upperleft.y);
+	coords+=temp;
+
+	temp=xytogps(upperleft.x,upperleft.y);
+	coords+=temp;
+
+	xmlNewTextChild(llq, NULL, BAD_CAST "coordinates", BAD_CAST coords.c_str());
+
+
+}
+
+
+
 bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 	HuginBase::PanoramaMakefilelibExport::PTPrograms progs,
 	bool doDeleteOnExit)
@@ -522,6 +574,28 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 
 	int slice_height=(roi.bottom()-roi.top())/slices.height();
 	int slice_width=(roi.right()-roi.left())/slices.width();
+	//string kmlname=scriptFile.substr(0,scriptFile.length()-4).append(".kml");
+	//std::ofstream kml(kmlname);
+
+
+	xmlDocPtr doc=xmlNewDoc(BAD_CAST"1.0");
+
+	xmlNodePtr kml=xmlNewNode(NULL,BAD_CAST"kml");
+	xmlDocSetRootElement(doc,kml);
+
+	xmlNewProp(kml,BAD_CAST"xmlns",BAD_CAST "http://www.opengis.net/kml/2.2");
+	xmlNewProp(kml,BAD_CAST"xmlns:gx",BAD_CAST "http://www.google.com/kml/ext/2.2");
+	xmlNewProp(kml,BAD_CAST"xmlns:kml",BAD_CAST "http://www.opengis.net/kml/2.2" );
+	xmlNewProp(kml,BAD_CAST"xmlns:atom",BAD_CAST "http://www.w3.org/2005/Atom");
+
+
+	
+	xmlNodePtr Folder = xmlNewNode(NULL,BAD_CAST"Folder");
+	xmlAddChild(kml,Folder);
+	
+
+	xmlNewTextChild(Folder, NULL, BAD_CAST "name", BAD_CAST "uav");  
+    xmlNewTextChild(Folder, NULL, BAD_CAST "open", BAD_CAST "1");  
 	
 	int top,bottom,left,right;
 	for(int i=0;i<slices.width();++i)
@@ -562,13 +636,29 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 			temp_pano=temp_pano.getSubset(::getImagesinROI(temp_pano,temp_pano.getActiveImages()));
 			string out_suffix=lexical_cast<string>(i)+"_"+lexical_cast<string>(j);
 			string output=scriptFile.substr(0,scriptFile.length()-4).append("_dist_"+out_suffix+".pto");
-
+			
 			ofstream of(output.c_str());
 
 			temp_pano.writeData(of);
 			parts.push_back(output);
-			outparts.push_back(output+".tif");
+
+
+			boost::filesystem::path outpath(outname);
+			boost::filesystem::path oname=(output+".tif");
+			string outpart=outpath.branch_path().string()+"/"+oname.filename().string();
+
+			outparts.push_back(outpart);
+			//outparts.push_back(output+".tif");
 			cout<<"j finish,out to "<<output<<endl;
+
+			
+
+			insertNewImageToKml(outpart+".tif",
+				&Folder,upperleft,lowerright);
+
+
+
+
 
 		}
 
@@ -579,6 +669,12 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 	
 	cmd=progs.enblend+progs.enblend_opts+" -o "+outname+".tif ";
 	
+	int nRel = xmlSaveFile(outname+".kml ",doc);
+
+	 xmlFreeDoc(doc);
+
+
+
 	SplitBlendFrame* frame;
 
 	for(it=outparts.begin();it!=outparts.end();++it)

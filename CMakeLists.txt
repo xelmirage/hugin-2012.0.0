@@ -169,6 +169,14 @@ IF (WIN32)
 ENDIF(WIN32)
 
 ##
+## XML library
+##
+FIND_PACKAGE(LibXml2 REQUIRED)
+ADD_DEFINITIONS(${LIBXML2_DEFINITIONS})
+INCLUDE_DIRECTORIES(${LIBXML2_INCLUDE_DIR})
+
+
+##
 ## wxWidgets
 ##
 #  This must come before FINDs for tiff, jpeg, png, zlib to enable

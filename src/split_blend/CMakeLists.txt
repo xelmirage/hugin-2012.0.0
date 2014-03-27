@@ -1,11 +1,14 @@
 
 
 
+
+
 add_executable(Split_blend split_blend.cpp split_blend.h SplitBlendPanel.cpp SplitBlendPanel.h)
 
 TARGET_LINK_LIBRARIES(Split_blend 
 huginbase huginbasewx 
 ${Boost_LIBRARIES}
-${wxWidgets_LIBRARIES})
+${wxWidgets_LIBRARIES}
+${LIBXML2_LIBRARIES})
 
 install(TARGETS Split_blend DESTINATION ${BINDIR})
