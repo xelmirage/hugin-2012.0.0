@@ -438,7 +438,7 @@ void MainFrame::OnCancel(wxCommandEvent & event)
 }
 vigra::Size2D MainFrame::calc_split(vigra::Rect2D view,int num)
 {
-	const int maxlimit=200;
+	const int maxlimit=10;
 	vigra::Size2D slice_matrix;
 	if (num<maxlimit)
 	{
@@ -653,7 +653,7 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 
 			
 
-			insertNewImageToKml(outpart+".tif",
+			insertNewImageToKml(oname.string()+".tif",
 				&Folder,upperleft,lowerright);
 
 
