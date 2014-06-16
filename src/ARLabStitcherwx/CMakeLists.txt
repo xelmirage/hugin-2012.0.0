@@ -1,0 +1,21 @@
+
+
+
+
+
+add_executable(ARLabStitcherwx WIN32 ARLabStitcherwx.cpp ARLabStitcherwx.h ARLabStitcherwx_app.cpp ARLabStitcherwx_app.h ARLabStitcherwxMainFrame.h ARLabStitcherwxMainFrame.cpp ARLabStitcherwx_rc.rc)
+
+TARGET_LINK_LIBRARIES(ARLabStitcherwx 
+huginbase huginbasewx 
+${Boost_LIBRARIES}
+${wxWidgets_LIBRARIES}
+)
+if(WIN32)
+   set_target_properties(ARLabStitcherwx PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:WINDOWS")
+
+   set_target_properties(ARLabStitcherwx PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:WINDOWS")
+
+   set_target_properties(ARLabStitcherwx PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
+   set_target_properties(ARLabStitcherwx PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:WINDOWS")
+endif(WIN32)
+install(TARGETS ARLabStitcherwx DESTINATION ${BINDIR})
