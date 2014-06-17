@@ -9,8 +9,9 @@
 #include <math.h>
 #include<vector>
 #include <getopt.h>
-
+#include <wx/wxprec.h>
 #include <hugin_config.h>
+#include "base_wx/huginConfig.h"
 #include <hugin_version.h>
 #include <hugin_utils/stl_utils.h>
 //#include <panodata/Panorama.h>
@@ -34,7 +35,7 @@ using namespace boost;
 using namespace ZThread;    
 int UTMNorthing;
 int UTMEasting;
-
+wxString huginExeDir;
 class runexif : public ZThread::Runnable
 {
 private:
@@ -590,7 +591,7 @@ int main(int argc,char* argv[])
 	int optionIndex = 0;
 	std::string				_inputFile="",line="",_outputFile="",_inputDIR="";
 	ZThread::PoolExecutor aExecutor(_cores);
-
+	huginExeDir = getExePath(argv[0]);
 	
 	const char* optstring = "o:s:g:h";
 	static struct option longOptions[] =
@@ -736,7 +737,7 @@ int main(int argc,char* argv[])
 		//exifData["Exif.Photo.UserComment"]
 		//= "charset=Ascii thrown";
 		
-		string cmd="exiftool -F -m -overwrite_original -GPSLongitude=\""+ lexical_cast<string>(SplitVec[4])
+		string cmd=huginExeDir.ToStdString()+"\\exiftool -F -m -overwrite_original -GPSLongitude=\""+ lexical_cast<string>(SplitVec[4])
 			+"\"  -GPSLatitude=\""+ lexical_cast<string>(SplitVec[5])
 			+"\" -UserComment=\"thrown\" "
 			+images[j];

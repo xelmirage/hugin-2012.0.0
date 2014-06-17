@@ -22,6 +22,7 @@
 #include <wx/icon.h>
 #include <wx/menu.h>
 #include <wx/listbox.h>
+#include <wx/listctrl.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/statbmp.h>
@@ -33,6 +34,7 @@
 #define wxID_New 1000
 #define wxID_Exit 1001
 #define wxID_Process 1002
+#define wxID_ListBoxPicList 1003
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -52,6 +54,7 @@ class MainFrame : public wxFrame
 		wxSplitterWindow* m_splitter3;
 		wxPanel* m_panel13;
 		wxListBox* m_listBoxPicList;
+		wxListCtrl* m_listCtrlPicList;
 		wxPanel* m_panel14;
 		wxStaticBitmap* m_bitmappreview;
 	

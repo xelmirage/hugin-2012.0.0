@@ -58,18 +58,21 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* bSizer26;
 	bSizer26 = new wxBoxSizer( wxVERTICAL );
 	
-	m_listBoxPicList = new wxListBox( m_panel13, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
+	m_listBoxPicList = new wxListBox( m_panel13, wxID_ListBoxPicList, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE ); 
 	bSizer26->Add( m_listBoxPicList, 1, wxALL|wxEXPAND, 5 );
+	
+	m_listCtrlPicList = new wxListCtrl( m_panel13, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
+	bSizer26->Add( m_listCtrlPicList, 1, wxALL|wxEXPAND, 5 );
 	
 	
 	m_panel13->SetSizer( bSizer26 );
 	m_panel13->Layout();
 	m_panel14 = new wxPanel( m_splitter3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxALWAYS_SHOW_SB|wxDOUBLE_BORDER|wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer27;
-	bSizer27 = new wxBoxSizer( wxHORIZONTAL );
+	bSizer27 = new wxBoxSizer( wxVERTICAL );
 	
 	m_bitmappreview = new wxStaticBitmap( m_panel14, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer27->Add( m_bitmappreview, 0, wxALL|wxEXPAND, 5 );
+	bSizer27->Add( m_bitmappreview, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	
 	m_panel14->SetSizer( bSizer27 );
