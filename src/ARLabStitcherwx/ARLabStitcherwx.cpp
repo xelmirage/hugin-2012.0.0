@@ -72,7 +72,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	bSizer27 = new wxBoxSizer( wxVERTICAL );
 	
 	m_bitmappreview = new wxStaticBitmap( m_panel14, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer27->Add( m_bitmappreview, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	bSizer27->Add( m_bitmappreview, 1, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	
 	m_panel14->SetSizer( bSizer27 );
@@ -85,7 +85,32 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_panel15->SetSizer( bSizer9 );
 	m_panel15->Layout();
 	bSizer9->Fit( m_panel15 );
-	m_splitter4->Initialize( m_panel15 );
+	m_panel5 = new wxPanel( m_splitter4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer6;
+	bSizer6 = new wxBoxSizer( wxVERTICAL );
+	
+	m_splitter5 = new wxSplitterWindow( m_panel5, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
+	m_splitter5->Connect( wxEVT_IDLE, wxIdleEventHandler( MainFrame::m_splitter5OnIdle ), NULL, this );
+	
+	m_panel7 = new wxPanel( m_splitter5, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer81;
+	bSizer81 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_textCtrlProgress = new wxTextCtrl( m_panel7, wxID_ANY, _("asdf"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer81->Add( m_textCtrlProgress, 1, wxALL|wxEXPAND, 5 );
+	
+	
+	m_panel7->SetSizer( bSizer81 );
+	m_panel7->Layout();
+	bSizer81->Fit( m_panel7 );
+	m_splitter5->Initialize( m_panel7 );
+	bSizer6->Add( m_splitter5, 1, wxEXPAND, 5 );
+	
+	
+	m_panel5->SetSizer( bSizer6 );
+	m_panel5->Layout();
+	bSizer6->Fit( m_panel5 );
+	m_splitter4->SplitHorizontally( m_panel15, m_panel5, 0 );
 	bSizer8->Add( m_splitter4, 1, wxEXPAND, 5 );
 	
 	

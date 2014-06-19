@@ -38,5 +38,7 @@ enum
 
 BEGIN_EVENT_TABLE(ARLabStitcherwxMainFrame,MainFrame)
 	EVT_MENU(wxID_New,ARLabStitcherwxMainFrame::newProcess)
+	EVT_MENU(wxID_Process,ARLabStitcherwxMainFrame::process)
 	EVT_LISTBOX(wxID_ListBoxPicList,ARLabStitcherwxMainFrame::ListBoxPicListClick )
+	//EVT_TIMER(wxID_TimerProcess,ARLabStitcherwxMainFrame::process)
 END_EVENT_TABLE()

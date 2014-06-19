@@ -25,14 +25,17 @@ class ARLabStitcherwxMainFrame : public MainFrame
 		/** Constructor */
 		ARLabStitcherwxMainFrame( wxWindow* parent,wxString Dir );
 		void newProcess(wxCommandEvent& WXUNUSED(event));
+		void process(wxCommandEvent& WXUNUSED(event));
 		void ListBoxPicListClick(wxCommandEvent& e);
+		void count_time(::wxTimerEvent& e);
 	//// end generated class members
 private:
 	
 	std::string sdir,gpsfileName ;
 	MyExecPanel * m_execPanel;
 	DECLARE_EVENT_TABLE()
-	wxString ExeDir;
+	wxString ExeDir,run_time;
+	int time_count;
 	
 };
 

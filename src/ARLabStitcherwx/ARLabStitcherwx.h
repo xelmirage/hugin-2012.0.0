@@ -27,6 +27,7 @@
 #include <wx/panel.h>
 #include <wx/statbmp.h>
 #include <wx/splitter.h>
+#include <wx/textctrl.h>
 #include <wx/frame.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -57,6 +58,10 @@ class MainFrame : public wxFrame
 		wxListCtrl* m_listCtrlPicList;
 		wxPanel* m_panel14;
 		wxStaticBitmap* m_bitmappreview;
+		wxPanel* m_panel5;
+		wxSplitterWindow* m_splitter5;
+		wxPanel* m_panel7;
+		wxTextCtrl* m_textCtrlProgress;
 	
 	public:
 		wxBoxSizer* bSizer7;
@@ -75,6 +80,12 @@ class MainFrame : public wxFrame
 		{
 			m_splitter3->SetSashPosition( 0 );
 			m_splitter3->Disconnect( wxEVT_IDLE, wxIdleEventHandler( MainFrame::m_splitter3OnIdle ), NULL, this );
+		}
+		
+		void m_splitter5OnIdle( wxIdleEvent& )
+		{
+			m_splitter5->SetSashPosition( 0 );
+			m_splitter5->Disconnect( wxEVT_IDLE, wxIdleEventHandler( MainFrame::m_splitter5OnIdle ), NULL, this );
 		}
 	
 };

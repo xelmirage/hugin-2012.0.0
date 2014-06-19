@@ -4,11 +4,11 @@ ARLabStitcherwxMainFrame::ARLabStitcherwxMainFrame( wxWindow* parent ,wxString D
 	:
 MainFrame( parent )
 {
-	m_execPanel= new MyExecPanel(MainFrame::m_splitter4);
+	m_execPanel= new MyExecPanel(MainFrame::m_splitter5);
 
-	MainFrame::m_splitter4->SplitHorizontally( m_panel15, m_execPanel, 0 );
+	MainFrame::m_splitter5->SplitHorizontally( m_panel7, m_execPanel, 0 );
 	ExeDir=Dir;
-	
+	//MainFrame::m_timerprocess->SetOwner(this);
 }
 void ARLabStitcherwxMainFrame::newProcess(wxCommandEvent& WXUNUSED(event))
 {
@@ -76,4 +76,51 @@ void ARLabStitcherwxMainFrame::ListBoxPicListClick(wxCommandEvent& e)
 	MainFrame::m_bitmappreview->ClearBackground();
 	MainFrame::m_bitmappreview->ResetConstraints();
 	MainFrame::m_bitmappreview->SetBitmap(preimg);
+}
+void ARLabStitcherwxMainFrame::process(wxCommandEvent& WXUNUSED(event))
+{
+	std::string cmd;
+	wxFileName beltlog(sdir+"belts.log");
+//	MainFrame::m_timerprocess.Start(1000);
+	if(!beltlog.FileExists())
+	{
+		cmd=ExeDir+wxT("\\gpsfilter -o ")+sdir+wxT("\\belts.log -g ")+gpsfileName+wxT(" -s ")+sdir;
+
+		if (m_execPanel->ExecWithRedirect(cmd) == -1) 
+		{
+			wxMessageBox(wxString::Format(_("Error running \n%s"), cmd.c_str()),
+				_("Error running command"),  wxICON_ERROR | wxOK );
+			return;
+		}
+		//"gpsfilter -o "+sdir+"belts.log -g "+gpsfileName+" -s "+sdir,"processing GPSFilting");
+	}
+	else
+	{
+		//push_message("\n---------------\n["+run_time+"] skip filting......\n---------------\n");
+		//textEdit->setText(textEdit->toPlainText()+tr("\n skip filting......\n\n"));
+		//QMessageBox::information(NULL, "Existing results","skip GPSFilting", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+	}
+
+
+}
+void ARLabStitcherwxMainFrame::count_time(::wxTimerEvent& e)
+{
+	time_count++;
+	int day,hour,minute,second;
+	day=time_count/24/3600;
+	hour=(time_count/3600)%24;
+	minute=(time_count/60)%60;
+	second=time_count%60;
+
+	run_time.clear();
+	
+	run_time+=wxString::Format(wxT("%d"),day)+wxT(" d ");
+	run_time+=wxString::Format(wxT("%d"),hour)+wxT(" h ");
+	run_time+=wxString::Format(wxT("%d"),minute)+wxT(" m ");
+	run_time+=wxString::Format(wxT("%d"),second)+wxT(" s ");
+
+	
+
+	
 }
