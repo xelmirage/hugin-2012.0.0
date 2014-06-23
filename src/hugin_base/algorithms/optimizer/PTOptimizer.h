@@ -265,7 +265,7 @@ void AutoOptimise::OptimiseVisitor::discover_vertex(Vertex v, const Graph & g)
     localPano.setOptimizeVector(optvec);
     
     if ( imgs.size() > 1) {
-        //DEBUG_DEBUG("optimising image " << v << ", with " << imgs.size() -1 << " already optimised neighbour imgs.");
+        DEBUG_DEBUG("optimising image " << v << ", with " << imgs.size() -1 << " already optimised neighbour imgs.");
         
         PTools::optimize(localPano);
         m_pano.updateVariables(unsigned(v), localPano.getImageVariables(currImg));
