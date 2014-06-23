@@ -160,8 +160,9 @@ void ARLabStitcherwxMainFrame::count_time(::wxTimerEvent& e)
 void ARLabStitcherwxMainFrame::push_message(wxString message)
 {
 	
-	m_textCtrlProgress->SetValue(
-		m_textCtrlProgress->GetValue()+message);
+	//m_textCtrlProgress->SetValue(
+	//	m_textCtrlProgress->GetValue()+message);
+	m_textCtrlProgress->AppendText(message);
 }
 int ARLabStitcherwxMainFrame::execexternal(wxString command,wxString message)
 {
