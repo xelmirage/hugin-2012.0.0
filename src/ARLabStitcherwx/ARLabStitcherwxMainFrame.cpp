@@ -4,6 +4,8 @@ ARLabStitcherwxMainFrame::ARLabStitcherwxMainFrame( wxWindow* parent ,wxString D
 	:
 MainFrame( parent )
 {
+	time_count=0;
+	
 	m_execPanel= new MyExecPanel(MainFrame:: m_notebookProgressOut);
 	//m_execPanel->SetId(wxID_execPanel);
 	
@@ -125,7 +127,10 @@ void ARLabStitcherwxMainFrame::ListBoxPicListClick(wxCommandEvent& e)
 }
 void ARLabStitcherwxMainFrame::processcmd(wxCommandEvent& WXUNUSED(event))
 {
+	MainFrame::m_timerprocess.Start(1000);
+	::Sleep(1200);
 	phase=-1;
+
 	process();
 	
 	//MainFrame::m_timerprocess.Stop();
@@ -154,6 +159,7 @@ void ARLabStitcherwxMainFrame::count_time(::wxTimerEvent& e)
 
 void ARLabStitcherwxMainFrame::push_message(wxString message)
 {
+	
 	m_textCtrlProgress->SetValue(
 		m_textCtrlProgress->GetValue()+message);
 }
@@ -185,18 +191,18 @@ void ARLabStitcherwxMainFrame::process(void)
 	wxFileName beltlog(sdir+"\\belts.log");
 	wxFileName stitch(sdir+"\\stitch.pto");
 	wxFileName stitch_cp(sdir+"\\stitch_cp.pto");
-	wxFileName stitch_cp_clean(sdir+"//stich_cp_clean.pto");
-	wxFileName stitch_cp_clean_line(sdir+"//stich_cp_clean_linefind.pto");
-
+	wxFileName stitch_cp_clean(sdir+"\\stitch_cp_clean.pto");
+	wxFileName stitch_cp_clean_line(sdir+"\\stitch_cp_clean_linefind.pto");
+	
 	++phase;
 	switch (phase)
 	{
 	case 0://GPSFilting
+		::Sleep(1200);
 		MainFrame::m_textCtrlProgress->Clear();
 		this->m_execPanel->ClearText();
 		time_count=0;
-		MainFrame::m_timerprocess.Start(1000);
-		::Sleep(1200);
+		
 		if(!beltlog.FileExists())
 		{
 			cmd=ExeDir+wxT("\\gpsfilter -o ")+sdir+wxT("\\belts.log -g ")+gpsfileName+wxT(" -s ")+sdir;
@@ -208,6 +214,8 @@ void ARLabStitcherwxMainFrame::process(void)
 		}
 		else
 		{
+			++phase;
+			
 			push_message(wxT("\n---------------\n[")+run_time+wxT("] skip filting......\n---------------\n"));
 			//textEdit->setText(textEdit->toPlainText()+tr("\n skip filting......\n\n"));
 			//QMessageBox::information(NULL, "Existing results","skip GPSFilting", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
@@ -230,6 +238,8 @@ void ARLabStitcherwxMainFrame::process(void)
 		}
 		else
 		{
+			++phase;
+			
 			push_message("\n---------------\n["+run_time+"] skip generating project......\n---------------\n");
 			//textEdit->setText(textEdit->toPlainText()+tr("\n skip generating pto......\n\n"));
 
@@ -251,6 +261,8 @@ void ARLabStitcherwxMainFrame::process(void)
 		}
 		else
 		{
+			++phase;
+			
 			push_message("\n---------------\n["+run_time+"] skip finding control points......\n---------------\n");
 			//textEdit->setText(textEdit->toPlainText()+tr("\n skip finding control points......\n\n"));
 
@@ -265,7 +277,7 @@ void ARLabStitcherwxMainFrame::process(void)
 
 		if(!stitch_cp_clean.FileExists())
 		{
-			cmd=ExeDir+wxT("//cpclean -o")+sdir+wxT("stitch_cp_clean.pto ")+sdir+wxT("//stich_cp.pto");
+			cmd=ExeDir+wxT("\\cpclean -o")+sdir+wxT("\\stitch_cp_clean.pto ")+sdir+wxT("\\stitch_cp.pto");
 			if(execexternal(cmd,wxT("Cleaning Control Points"))!=0)
 			{
 				return;
@@ -274,6 +286,8 @@ void ARLabStitcherwxMainFrame::process(void)
 		}
 		else
 		{
+			++phase;
+			
 			push_message("\n---------------\n["+run_time+"] skip cleaning control points......\n---------------\n");
 			//textEdit->setText(textEdit->toPlainText()+tr("\n skip cleaning control points......\n\n"));
 		}
@@ -283,7 +297,7 @@ void ARLabStitcherwxMainFrame::process(void)
 		if(!stitch_cp_clean_line.FileExists())
 		{
 
-			cmd=ExeDir+"//linefind -o "+sdir+"stich_cp_clean_linefind.pto "+sdir+"stich_cp_clean.pto";
+			cmd=ExeDir+"\\linefind -o "+sdir+"\\stitch_cp_clean_linefind.pto "+sdir+"\\stitch_cp_clean.pto";
 			if(execexternal(cmd,wxT("Finding vertical lines"))!=0)
 			{
 				return;
@@ -292,22 +306,24 @@ void ARLabStitcherwxMainFrame::process(void)
 		}
 		else
 		{
+			++phase;
+			
 			push_message("\n---------------\n["+run_time+"] skip finding vertical lines......\n---------------\n");
 			//textEdit->setText(textEdit->toPlainText()+tr("\n skip finding vertical lines......\n\n"));
 
 
 		}
-		
+
 
 	case 5:
-
-		cmd=ExeDir+"//checkpto "+sdir+"//stich_cp_clean_linefind.pto";
+		
+		cmd=ExeDir+"\\checkpto "+sdir+"\\stitch_cp_clean_linefind.pto";
 		if(execexternal(cmd,wxT("checking project"))!=0)
-			{
-				return;
-			}
-			break;
+		{
+			return;
+		}
 		break;
+
 	default:
 		::wxMessageBox(wxT("Ö´ÐÐÍê³É"));
 		MainFrame::m_timerprocess.Stop();
