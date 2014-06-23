@@ -22,12 +22,13 @@
 #include <wx/icon.h>
 #include <wx/menu.h>
 #include <wx/listbox.h>
-#include <wx/listctrl.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/statbmp.h>
 #include <wx/splitter.h>
 #include <wx/textctrl.h>
+#include <wx/notebook.h>
+#include <wx/timer.h>
 #include <wx/frame.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -35,7 +36,10 @@
 #define wxID_New 1000
 #define wxID_Exit 1001
 #define wxID_Process 1002
-#define wxID_ListBoxPicList 1003
+#define wxID_Panel6 1003
+#define wxID_ListBoxPicList 1004
+#define wxID_NoteBookProgressOut 1005
+#define wxID_TimerProcess 1006
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -55,13 +59,13 @@ class MainFrame : public wxFrame
 		wxSplitterWindow* m_splitter3;
 		wxPanel* m_panel13;
 		wxListBox* m_listBoxPicList;
-		wxListCtrl* m_listCtrlPicList;
 		wxPanel* m_panel14;
 		wxStaticBitmap* m_bitmappreview;
 		wxPanel* m_panel5;
-		wxSplitterWindow* m_splitter5;
+		wxNotebook* m_notebookProgressOut;
 		wxPanel* m_panel7;
 		wxTextCtrl* m_textCtrlProgress;
+		wxTimer m_timerprocess;
 	
 	public:
 		wxBoxSizer* bSizer7;
@@ -80,12 +84,6 @@ class MainFrame : public wxFrame
 		{
 			m_splitter3->SetSashPosition( 0 );
 			m_splitter3->Disconnect( wxEVT_IDLE, wxIdleEventHandler( MainFrame::m_splitter3OnIdle ), NULL, this );
-		}
-		
-		void m_splitter5OnIdle( wxIdleEvent& )
-		{
-			m_splitter5->SetSashPosition( 0 );
-			m_splitter5->Disconnect( wxEVT_IDLE, wxIdleEventHandler( MainFrame::m_splitter5OnIdle ), NULL, this );
 		}
 	
 };

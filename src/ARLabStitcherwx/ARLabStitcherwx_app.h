@@ -29,16 +29,11 @@ IMPLEMENT_APP(ARLabStitcherwxApp)
 //BEGIN_EVENT_TABLE(ARLabStitcherwxMainFrame,wxFrame)
 //	EVT_MENU(ID_Quit,)
 //WND_EVENT_TABLE()
-enum
-{
-	ID_Quit,
-	ID_About,
-
-};
 
 BEGIN_EVENT_TABLE(ARLabStitcherwxMainFrame,MainFrame)
 	EVT_MENU(wxID_New,ARLabStitcherwxMainFrame::newProcess)
-	EVT_MENU(wxID_Process,ARLabStitcherwxMainFrame::process)
+	EVT_MENU(wxID_Process,ARLabStitcherwxMainFrame::processcmd)
 	EVT_LISTBOX(wxID_ListBoxPicList,ARLabStitcherwxMainFrame::ListBoxPicListClick )
-	//EVT_TIMER(wxID_TimerProcess,ARLabStitcherwxMainFrame::process)
+	EVT_TIMER(wxID_TimerProcess,ARLabStitcherwxMainFrame::count_time)
+	EVT_END_PROCESS(-1, ARLabStitcherwxMainFrame::end_process)
 END_EVENT_TABLE()

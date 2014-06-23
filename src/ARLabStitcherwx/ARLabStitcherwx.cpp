@@ -39,7 +39,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
 	
-	m_panel6 = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_panel6 = new wxPanel( this, wxID_Panel6, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
 	
@@ -60,9 +60,6 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	m_listBoxPicList = new wxListBox( m_panel13, wxID_ListBoxPicList, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE ); 
 	bSizer26->Add( m_listBoxPicList, 1, wxALL|wxEXPAND, 5 );
-	
-	m_listCtrlPicList = new wxListCtrl( m_panel13, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
-	bSizer26->Add( m_listCtrlPicList, 1, wxALL|wxEXPAND, 5 );
 	
 	
 	m_panel13->SetSizer( bSizer26 );
@@ -89,22 +86,21 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
 	
-	m_splitter5 = new wxSplitterWindow( m_panel5, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D );
-	m_splitter5->Connect( wxEVT_IDLE, wxIdleEventHandler( MainFrame::m_splitter5OnIdle ), NULL, this );
-	
-	m_panel7 = new wxPanel( m_splitter5, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_notebookProgressOut = new wxNotebook( m_panel5, wxID_NoteBookProgressOut, wxDefaultPosition, wxDefaultSize, 0 );
+	m_panel7 = new wxPanel( m_notebookProgressOut, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer81;
 	bSizer81 = new wxBoxSizer( wxHORIZONTAL );
 	
-	m_textCtrlProgress = new wxTextCtrl( m_panel7, wxID_ANY, _("asdf"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_textCtrlProgress = new wxTextCtrl( m_panel7, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_LEFT|wxTE_MULTILINE|wxTE_NOHIDESEL|wxTE_READONLY );
 	bSizer81->Add( m_textCtrlProgress, 1, wxALL|wxEXPAND, 5 );
 	
 	
 	m_panel7->SetSizer( bSizer81 );
 	m_panel7->Layout();
 	bSizer81->Fit( m_panel7 );
-	m_splitter5->Initialize( m_panel7 );
-	bSizer6->Add( m_splitter5, 1, wxEXPAND, 5 );
+	m_notebookProgressOut->AddPage( m_panel7, _("a page"), false );
+	
+	bSizer6->Add( m_notebookProgressOut, 1, wxEXPAND | wxALL, 5 );
 	
 	
 	m_panel5->SetSizer( bSizer6 );
@@ -122,6 +118,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	this->SetSizer( bSizer7 );
 	this->Layout();
+	m_timerprocess.SetOwner( this, wxID_TimerProcess );
 	
 	this->Centre( wxBOTH );
 }

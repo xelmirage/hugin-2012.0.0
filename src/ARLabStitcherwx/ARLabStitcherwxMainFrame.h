@@ -21,25 +21,52 @@ using namespace std;
 /** Implementing MainFrame */
 class ARLabStitcherwxMainFrame : public MainFrame
 {
-	public:
-		/** Constructor */
-		ARLabStitcherwxMainFrame( wxWindow* parent,wxString Dir );
-		void newProcess(wxCommandEvent& WXUNUSED(event));
-		void process(wxCommandEvent& WXUNUSED(event));
-		void ListBoxPicListClick(wxCommandEvent& e);
-		void count_time(::wxTimerEvent& e);
+public:
+	/** Constructor */
+	ARLabStitcherwxMainFrame( wxWindow* parent,wxString Dir );
+	void newProcess(wxCommandEvent& WXUNUSED(event));
+	void processcmd(wxCommandEvent& WXUNUSED(event));
+	void ListBoxPicListClick(wxCommandEvent& e);
+	void count_time(::wxTimerEvent& e);
+	void end_process(::wxProcessEvent& e);
+	void throw_to_parent(wxProcessEvent& e);
+
+
+
+
+	void push_message(wxString message);
+	int execexternal(wxString command,wxString tickmessage);
+	
 	//// end generated class members
 private:
+
 	
-	std::string sdir,gpsfileName ;
+
 	MyExecPanel * m_execPanel;
-	DECLARE_EVENT_TABLE()
+
+
+	//std::string phasename;
+	std::string sdir,gpsfileName ;
 	wxString ExeDir,run_time;
 	int time_count;
+	int phase;
+	std::string phasename[9];
+
 	
+	
+	DECLARE_EVENT_TABLE()
+
+public:
+	void process(void);
 };
 
+enum
+{
+	ID_Quit,
+	ID_About,
+	//wxID_execPanel=900,
 
+};
 
 
 #endif // __ARLabStitcherwxMainFrame__

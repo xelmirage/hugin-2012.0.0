@@ -487,7 +487,10 @@ void MyExecPanel::OnTimer(wxTimerEvent& WXUNUSED(event))
 	}
 #endif
 }
-
+void MyExecPanel::ClearText()
+{
+	this->m_textctrl->Clear();
+}
 void MyExecPanel::OnProcessTerminated(MyPipedProcess *process, int pid, int status)
 {
     DEBUG_TRACE("process terminated: pid " << pid << " exit code:" << status);

@@ -70,7 +70,7 @@ public:
 
     // polling output of async processes
     void OnTimer(wxTimerEvent& event);
-
+	void ClearText();
     // for MyPipedProcess
     void OnProcessTerminated(MyPipedProcess *process, int pid, int status);
     //wxListBox *GetLogListBox() const { return m_lbox; }

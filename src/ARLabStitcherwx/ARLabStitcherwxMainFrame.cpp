@@ -4,11 +4,57 @@ ARLabStitcherwxMainFrame::ARLabStitcherwxMainFrame( wxWindow* parent ,wxString D
 	:
 MainFrame( parent )
 {
-	m_execPanel= new MyExecPanel(MainFrame::m_splitter5);
-
-	MainFrame::m_splitter5->SplitHorizontally( m_panel7, m_execPanel, 0 );
+	m_execPanel= new MyExecPanel(MainFrame:: m_notebookProgressOut);
+	//m_execPanel->SetId(wxID_execPanel);
+	
+	//MainFrame::m_splitter5->SplitHorizontally( m_panel7, m_execPanel, 0 );
 	ExeDir=Dir;
+	MainFrame::m_notebookProgressOut->SetPageText(0,wxT("Working Progress"));
 	//MainFrame::m_timerprocess->SetOwner(this);
+	MainFrame::m_notebookProgressOut->AddPage(m_execPanel,wxT("Program Progress"));
+	//::wxMessageBox(m_execPanel->GetParent()->GetName());
+
+	MainFrame::m_notebookProgressOut->
+		GetEventHandler()->
+		Bind(wxEVT_END_PROCESS,&ARLabStitcherwxMainFrame::throw_to_parent,this);
+
+	MainFrame::m_panel5->
+		GetEventHandler()->
+		Bind(wxEVT_END_PROCESS,&ARLabStitcherwxMainFrame::throw_to_parent,this);
+
+	MainFrame::m_splitter4->
+		GetEventHandler()->
+		Bind(wxEVT_END_PROCESS,&ARLabStitcherwxMainFrame::throw_to_parent,this);
+
+	MainFrame::m_panel6->
+		GetEventHandler()->
+		Bind(wxEVT_END_PROCESS,&ARLabStitcherwxMainFrame::throw_to_parent,this);
+	
+	
+
+	phasename[0]="gpsfilter";
+	phasename[1]="cpfind";
+	phasename[2]="cpclean";
+	phasename[3]="linefind";
+	phasename[4]="checkpto";
+	phasename[5]="optimise";
+	phasename[6]="modify";
+	phasename[7]="nona";
+	phasename[8]="blend";
+
+	sdir="f:\\kl\\part";
+	gpsfileName="f:\\kl\\part\\02.txt";
+	
+}
+void ARLabStitcherwxMainFrame::throw_to_parent(wxProcessEvent& e)
+{
+	
+	if(((wxWindow*)e.GetEventObject())->GetParent())
+	{
+		//wxMessageBox(((wxWindow*)e.GetEventObject())->GetName()+"\n"+((wxWindow*)e.GetEventObject())->GetParent()->GetName());
+		e.SetEventObject(((wxWindow*)e.GetEventObject())->GetParent());
+		((wxWindow*)e.GetEventObject())->GetParent()->GetParent()->GetEventHandler()->ProcessEvent( e );
+	}
 }
 void ARLabStitcherwxMainFrame::newProcess(wxCommandEvent& WXUNUSED(event))
 {
@@ -77,31 +123,12 @@ void ARLabStitcherwxMainFrame::ListBoxPicListClick(wxCommandEvent& e)
 	MainFrame::m_bitmappreview->ResetConstraints();
 	MainFrame::m_bitmappreview->SetBitmap(preimg);
 }
-void ARLabStitcherwxMainFrame::process(wxCommandEvent& WXUNUSED(event))
+void ARLabStitcherwxMainFrame::processcmd(wxCommandEvent& WXUNUSED(event))
 {
-	std::string cmd;
-	wxFileName beltlog(sdir+"belts.log");
-//	MainFrame::m_timerprocess.Start(1000);
-	if(!beltlog.FileExists())
-	{
-		cmd=ExeDir+wxT("\\gpsfilter -o ")+sdir+wxT("\\belts.log -g ")+gpsfileName+wxT(" -s ")+sdir;
-
-		if (m_execPanel->ExecWithRedirect(cmd) == -1) 
-		{
-			wxMessageBox(wxString::Format(_("Error running \n%s"), cmd.c_str()),
-				_("Error running command"),  wxICON_ERROR | wxOK );
-			return;
-		}
-		//"gpsfilter -o "+sdir+"belts.log -g "+gpsfileName+" -s "+sdir,"processing GPSFilting");
-	}
-	else
-	{
-		//push_message("\n---------------\n["+run_time+"] skip filting......\n---------------\n");
-		//textEdit->setText(textEdit->toPlainText()+tr("\n skip filting......\n\n"));
-		//QMessageBox::information(NULL, "Existing results","skip GPSFilting", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-
-	}
-
+	phase=-1;
+	process();
+	
+	//MainFrame::m_timerprocess.Stop();
 
 }
 void ARLabStitcherwxMainFrame::count_time(::wxTimerEvent& e)
@@ -123,4 +150,167 @@ void ARLabStitcherwxMainFrame::count_time(::wxTimerEvent& e)
 	
 
 	
+}
+
+void ARLabStitcherwxMainFrame::push_message(wxString message)
+{
+	m_textCtrlProgress->SetValue(
+		m_textCtrlProgress->GetValue()+message);
+}
+int ARLabStitcherwxMainFrame::execexternal(wxString command,wxString message)
+{
+	push_message("\n---------------\n["+run_time+"] start "+message+"\n---------------\n");
+	if (m_execPanel->ExecWithRedirect(command) == -1) 
+	{
+		wxMessageBox(wxString::Format(_("Error running \n%s"), command.c_str()),
+			_("Error running command"),  wxICON_ERROR | wxOK );
+		return -1;
+	}
+
+	//push_message("\n---------------\n["+run_time+"] "+message+" finished\n---------------\n");
+
+	return 0;
+}
+void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
+{
+	
+	push_message("\n---------------\n["+run_time+"] "+phasename[phase]+" finished\n---------------\n");
+	process();
+	//wxMessageBox("\n---------------\n["+run_time+"] GPSFILTER finished\n---------------\n");
+}
+
+void ARLabStitcherwxMainFrame::process(void)
+{
+	std::string cmd;
+	wxFileName beltlog(sdir+"\\belts.log");
+	wxFileName stitch(sdir+"\\stitch.pto");
+	wxFileName stitch_cp(sdir+"\\stitch_cp.pto");
+	wxFileName stitch_cp_clean(sdir+"//stich_cp_clean.pto");
+	wxFileName stitch_cp_clean_line(sdir+"//stich_cp_clean_linefind.pto");
+
+	++phase;
+	switch (phase)
+	{
+	case 0://GPSFilting
+		MainFrame::m_textCtrlProgress->Clear();
+		this->m_execPanel->ClearText();
+		time_count=0;
+		MainFrame::m_timerprocess.Start(1000);
+		::Sleep(1200);
+		if(!beltlog.FileExists())
+		{
+			cmd=ExeDir+wxT("\\gpsfilter -o ")+sdir+wxT("\\belts.log -g ")+gpsfileName+wxT(" -s ")+sdir;
+
+			if (execexternal(cmd,wxT("Filting GPS data"))!=0)
+				return;
+			//"gpsfilter -o "+sdir+"belts.log -g "+gpsfileName+" -s "+sdir,"processing GPSFilting");
+			break;
+		}
+		else
+		{
+			push_message(wxT("\n---------------\n[")+run_time+wxT("] skip filting......\n---------------\n"));
+			//textEdit->setText(textEdit->toPlainText()+tr("\n skip filting......\n\n"));
+			//QMessageBox::information(NULL, "Existing results","skip GPSFilting", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+		}
+		
+	case 1://CPFind
+
+		
+
+		if(!stitch.FileExists())
+		{
+			cmd=ExeDir+wxT("\\pto_gen ")+sdir+wxT("\\*.jpg -o")+sdir+wxT("\\stitch.pto --gps -f 1");
+			if(execexternal(cmd,wxT("generating progejc"))!=0)
+			{
+				return;
+			}
+			break;
+
+		}
+		else
+		{
+			push_message("\n---------------\n["+run_time+"] skip generating project......\n---------------\n");
+			//textEdit->setText(textEdit->toPlainText()+tr("\n skip generating pto......\n\n"));
+
+		}
+
+
+	case 2:
+
+		
+
+		if(!stitch_cp.FileExists())
+		{
+			cmd=ExeDir+wxT("\\cpfindgps001 -o ")+sdir+wxT("\\stitch_cp.pto ")+sdir+wxT("\\stitch.pto --gps");
+			if(execexternal(cmd,wxT("Finding Control Points"))!=0)
+			{
+				return;
+			}
+				break;
+		}
+		else
+		{
+			push_message("\n---------------\n["+run_time+"] skip finding control points......\n---------------\n");
+			//textEdit->setText(textEdit->toPlainText()+tr("\n skip finding control points......\n\n"));
+
+		}
+
+
+	
+
+
+	case 3:
+		
+
+		if(!stitch_cp_clean.FileExists())
+		{
+			cmd=ExeDir+wxT("//cpclean -o")+sdir+wxT("stitch_cp_clean.pto ")+sdir+wxT("//stich_cp.pto");
+			if(execexternal(cmd,wxT("Cleaning Control Points"))!=0)
+			{
+				return;
+			}
+			break;
+		}
+		else
+		{
+			push_message("\n---------------\n["+run_time+"] skip cleaning control points......\n---------------\n");
+			//textEdit->setText(textEdit->toPlainText()+tr("\n skip cleaning control points......\n\n"));
+		}
+		
+	case 4:
+		
+		if(!stitch_cp_clean_line.FileExists())
+		{
+
+			cmd=ExeDir+"//linefind -o "+sdir+"stich_cp_clean_linefind.pto "+sdir+"stich_cp_clean.pto";
+			if(execexternal(cmd,wxT("Finding vertical lines"))!=0)
+			{
+				return;
+			}
+			break;
+		}
+		else
+		{
+			push_message("\n---------------\n["+run_time+"] skip finding vertical lines......\n---------------\n");
+			//textEdit->setText(textEdit->toPlainText()+tr("\n skip finding vertical lines......\n\n"));
+
+
+		}
+		
+
+	case 5:
+
+		cmd=ExeDir+"//checkpto "+sdir+"//stich_cp_clean_linefind.pto";
+		if(execexternal(cmd,wxT("checking project"))!=0)
+			{
+				return;
+			}
+			break;
+		break;
+	default:
+		::wxMessageBox(wxT("Ö´ÐÐÍê³É"));
+		MainFrame::m_timerprocess.Stop();
+	}
+
 }
