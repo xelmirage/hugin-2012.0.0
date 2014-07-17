@@ -123,10 +123,13 @@ class IMPEX Transform
 
         ///
         ~Transform();
-        
+
+		
+		
+		
     private:
         // private, no copy constructor for the pt structures yet.
-        Transform(const Transform &);
+		Transform(const Transform & );
         Transform & operator=(const Transform &);
 
         

@@ -164,6 +164,69 @@ void transformImageIntern(vigra::triple<SrcImageIterator, SrcImageIterator, SrcA
     prog.popTask();
 }
 
+template <class SrcImageIterator, class SrcAccessor,
+          class DestImageIterator, class DestAccessor,
+          class TRANSFORM,
+          class PixelTransform,
+          class AlphaImageIterator, class AlphaAccessor,
+          class Interpolator>
+			  vigra::Diff2D transformImageIntern_findCenter(vigra::triple<SrcImageIterator, SrcImageIterator, SrcAccessor> src,
+                          vigra::triple<DestImageIterator, DestImageIterator, DestAccessor> dest,
+                          std::pair<AlphaImageIterator, AlphaAccessor> alpha,
+                          TRANSFORM & transform,
+                          PixelTransform & pixelTransform,
+                          vigra::Diff2D destUL,
+                          Interpolator interp,
+                          bool warparound,
+                          AppBase::MultiProgressDisplay & prog)
+{
+    vigra::Diff2D destSize = dest.second - dest.first;
+	vigra::Diff2D center(-1,-1);
+    int xstart = destUL.x;
+    int xend   = destUL.x + destSize.x;
+    int ystart = destUL.y;
+    int yend   = destUL.y + destSize.y;
+
+    prog.pushTask(AppBase::ProgressTask("Remapping", "", 1.0/(yend-ystart)));
+
+    vigra::Diff2D srcSize = src.second - src.first;
+	double srcCenterx=srcSize.x/2,srcCentery=srcCentery=srcSize.y/2;
+    vigra_ext::ImageInterpolator<SrcImageIterator, SrcAccessor, Interpolator>
+                                 interpol (src, interp, warparound);
+
+    // create dest y iterator
+    DestImageIterator yd(dest.first);
+    // create mask y iterator
+    AlphaImageIterator ydm(alpha.first);
+    // loop over the image and transform
+    typename SrcAccessor::value_type tempval;
+	
+    for(int y=ystart; y < yend; ++y, ++yd.y, ++ydm.y)
+    {
+        // create x iterators
+        DestImageIterator xd(yd);
+        AlphaImageIterator xdm(ydm);
+        for(int x=xstart; x < xend; ++x, ++xd.x, ++xdm.x)
+        {
+			double sx,sy;
+			if (transform.transformImgCoord(sx,sy,x,y)) {
+				if((abs(sx-srcCenterx)<0.5)&&(abs(sy-srcCentery)<0.5))
+				{
+					center.x=x;
+					center.y=y;
+				}
+			}
+          
+        }
+        if (destSize.y > 100) {
+            if ((y-ystart)%(destSize.y/20) == 0) {
+                prog.setProgress(((double)y-ystart)/destSize.y);
+            }
+        }
+    }
+    prog.popTask();
+	return center;
+}
 
 /** functor version (for threaded remapping) */
 template <class SrcImageIterator, class SrcAccessor,
@@ -206,6 +269,98 @@ struct TransformImageIntern
     }
 };
 
+static boost::mutex center_mutex;
+
+/** functor version (for threaded remapping) */
+template <class SrcImageIterator, class SrcAccessor,
+          class DestImageIterator, class DestAccessor,
+          class TRANSFORM,
+          class PixelTransform,
+          class AlphaImageIterator, class AlphaAccessor,
+          class Interpolator>
+struct TransformImageIntern_findCenter
+{
+    vigra::triple<SrcImageIterator, SrcImageIterator, SrcAccessor> src;
+    vigra::triple<DestImageIterator, DestImageIterator, DestAccessor> dest;
+    std::pair<AlphaImageIterator, AlphaAccessor> alpha;
+    const TRANSFORM & transform;
+    const PixelTransform & pixelTransform;
+    vigra::Diff2D destUL,centerTransed;
+    Interpolator interp;
+    bool warparound;
+    AppBase::MultiProgressDisplay & prog;
+	vigra::Diff2D* center;
+	boost::thread_group* threads;
+
+    TransformImageIntern_findCenter(vigra::triple<SrcImageIterator, SrcImageIterator, SrcAccessor> src,
+                              vigra::triple<DestImageIterator, DestImageIterator, DestAccessor> dest,
+                              std::pair<AlphaImageIterator, AlphaAccessor> alpha,
+                              const TRANSFORM & transform,
+                              const PixelTransform & pixelTransform,
+                              vigra::Diff2D destUL,
+                              Interpolator interp,
+                              bool warparound,
+                              AppBase::MultiProgressDisplay & prog,
+							  vigra::Diff2D* center,
+							  boost::thread_group* threads)
+    : src(src), dest(dest), alpha(alpha), transform(transform), pixelTransform(pixelTransform), destUL(destUL), interp(interp), warparound(warparound),
+      prog(prog),center(center),threads(threads)
+    {
+    }
+
+    void operator()()
+    {
+		DEBUG_DEBUG("Starting threaded remap, destUL: " << destUL <<  " area: " << dest.second - dest.first);
+		vigra::Diff2D destSize = dest.second - dest.first;
+
+		int xstart = destUL.x;
+		int xend   = destUL.x + destSize.x;
+		int ystart = destUL.y;
+		int yend   = destUL.y + destSize.y;
+
+		 prog.pushTask(AppBase::ProgressTask("Finding Center", "", 1.0/(yend-ystart)));
+
+
+		 vigra::Diff2D srcSize = src.second - src.first;
+		 double srcCenterx=srcSize.x/2,srcCentery=srcCentery=srcSize.y/2;
+
+
+
+
+
+		for(int y=ystart; y < yend; ++y)
+		{
+			for(int x=xstart; x < xend; ++x)
+			{
+				double sx,sy;
+				if ( transform.transformImgCoord(sx,sy,x,y)) {
+					//cout<<sx<<","<<sy<<",";
+					if((abs(sx-srcCenterx)<0.5)&&(abs(sy-srcCentery)<0.5))
+					{
+						//std::cout<<x<<","<<y<<",";
+						center_mutex.lock();
+						center->x=x;
+						center->y=y;
+						center_mutex.unlock();
+						threads->interrupt_all();
+						return ;
+					}
+
+				}
+			}
+		}/*
+		 DEBUG_DEBUG("find end");*/
+
+
+
+
+
+
+
+
+        DEBUG_DEBUG("Finished threaded remap, destUL: " << destUL <<  " area: " << dest.second - dest.first);
+    }
+};
 
 /** transform input images with alpha channel */
 template <class SrcImageIterator, class SrcAccessor,
@@ -540,90 +695,173 @@ void transformImageAlphaInternMT(vigra::triple<SrcImageIterator, SrcImageIterato
     DEBUG_DEBUG("Threads joined");
 }
 
-template <class SrcImageIterator, class SrcAccessor,
-          class DestImageIterator, class DestAccessor,
-          class TRANSFORM,
-          class PixelTransform,
-          class AlphaImageIterator, class AlphaAccessor,
-          class Interpolator>
-void transformImageInternMT(vigra::triple<SrcImageIterator, SrcImageIterator, SrcAccessor> src,
-                            vigra::triple<DestImageIterator, DestImageIterator, DestAccessor> dest,
-                            std::pair<AlphaImageIterator, AlphaAccessor> alpha,
-                            TRANSFORM & transform,
-                            PixelTransform & pixelTransform,
-                            vigra::Diff2D destUL,
-                            Interpolator interp,
-                            bool warparound,
-                            AppBase::MultiProgressDisplay & prog)
-{
-    // divide output image into multiple areas
-    unsigned int nThreads = ThreadManager::get().getNThreads();
+		  template <class SrcImageIterator, class SrcAccessor,
+		  class DestImageIterator, class DestAccessor,
+		  class TRANSFORM,
+		  class PixelTransform,
+		  class AlphaImageIterator, class AlphaAccessor,
+		  class Interpolator>
+			  void transformImageInternMT(vigra::triple<SrcImageIterator, SrcImageIterator, SrcAccessor> src,
+			  vigra::triple<DestImageIterator, DestImageIterator, DestAccessor> dest,
+			  std::pair<AlphaImageIterator, AlphaAccessor> alpha,
+			  TRANSFORM & transform,
+			  PixelTransform & pixelTransform,
+			  vigra::Diff2D destUL,
+			  Interpolator interp,
+			  bool warparound,
+			  AppBase::MultiProgressDisplay & prog)
+		  {
+			  // divide output image into multiple areas
+			  unsigned int nThreads = ThreadManager::get().getNThreads();
 
-    vigra::Diff2D destSize = dest.second - dest.first;
+			  vigra::Diff2D destSize = dest.second - dest.first;
 
-    // limit amount of threads if only a few lines are given.
-    if (destSize.y < (int) nThreads) {
-        nThreads = destSize.y;
-    }
-	
-    if (nThreads == 1) {
-        transformImageIntern(src, dest, alpha, transform, pixelTransform,
-                                  destUL, interp, warparound, prog);
-        return;
-    }
+			  // limit amount of threads if only a few lines are given.
+			  if (destSize.y < (int) nThreads) {
+				  nThreads = destSize.y;
+			  }
 
-    DEBUG_DEBUG("creating " << nThreads << " threads for remapping");
+			  if (nThreads == 1) {
+				  transformImageIntern(src, dest, alpha, transform, pixelTransform,
+					  destUL, interp, warparound, prog);
+				  return;
+			  }
 
-    unsigned int chunkSize = destSize.y / nThreads;
-// DGSW FIXME - Unreferenced
-//	unsigned int lastChunkSize = destSize.y - (nThreads-1) * chunkSize;
+			  DEBUG_DEBUG("creating " << nThreads << " threads for remapping");
 
-    // create a threads to remap each area
-    boost::thread_group threads;
+			  unsigned int chunkSize = destSize.y / nThreads;
+			  // DGSW FIXME - Unreferenced
+			  //	unsigned int lastChunkSize = destSize.y - (nThreads-1) * chunkSize;
 
-    // create first thread with progress counter
-    DestImageIterator destStart = dest.first;
-    DestImageIterator destEnd = dest.second;
-    destEnd.y -= destSize.y - chunkSize;
-    AlphaImageIterator destAStart = alpha.first;
+			  // create a threads to remap each area
+			  boost::thread_group threads;
 
-    typedef TransformImageIntern<SrcImageIterator, SrcAccessor, DestImageIterator, DestAccessor,
-                                      TRANSFORM, PixelTransform, AlphaImageIterator, AlphaAccessor, Interpolator> RFunctor;
+			  // create first thread with progress counter
+			  DestImageIterator destStart = dest.first;
+			  DestImageIterator destEnd = dest.second;
+			  destEnd.y -= destSize.y - chunkSize;
+			  AlphaImageIterator destAStart = alpha.first;
 
-    std::vector< AppBase::DummyMultiProgressDisplay> dummyProgs(nThreads-1);
-    unsigned int i;
-    for (i = 0; i < nThreads-1; ++i) {
+			  typedef TransformImageIntern<SrcImageIterator, SrcAccessor, DestImageIterator, DestAccessor,
+				  TRANSFORM, PixelTransform, AlphaImageIterator, AlphaAccessor, Interpolator> RFunctor;
 
-        RFunctor t(src, vigra::triple<DestImageIterator, DestImageIterator, DestAccessor>(destStart, destEnd, dest.third),
-                   vigra::pair<AlphaImageIterator, AlphaAccessor>(destAStart, alpha.second), 
-                   transform, pixelTransform, destUL, interp, warparound, dummyProgs[i]);
-        boost::function0<void> f;
-        f = t;
-    	DEBUG_DEBUG("Starting thread " << i);
-        threads.create_thread(f);
+			  std::vector< AppBase::DummyMultiProgressDisplay> dummyProgs(nThreads-1);
+			  unsigned int i;
+			  for (i = 0; i < nThreads-1; ++i) {
 
-        destStart.y += chunkSize;
-        destEnd.y += chunkSize;
-        destAStart.y += chunkSize;
-        destUL.y += chunkSize;
-    }
-    // last chunk
-    destEnd = dest.second;
-    // remap last chunk in current thread.
-    if (i == nThreads-1) {
-        DEBUG_DEBUG("remapping in main thread, destUL: " << destUL <<  " area: " << dest.second - dest.first);
-        transformImageIntern( src,
-                              vigra::triple<DestImageIterator, DestImageIterator, DestAccessor>(destStart, destEnd, dest.third),
-                              vigra::pair<AlphaImageIterator, AlphaAccessor>(destAStart, alpha.second), 
-                              transform, pixelTransform, destUL, interp, warparound, prog);
-    }
+				  RFunctor t(src, vigra::triple<DestImageIterator, DestImageIterator, DestAccessor>(destStart, destEnd, dest.third),
+					  vigra::pair<AlphaImageIterator, AlphaAccessor>(destAStart, alpha.second), 
+					  transform, pixelTransform, destUL, interp, warparound, dummyProgs[i]);
+				  boost::function0<void> f;
+				  f = t;
+				  DEBUG_DEBUG("Starting thread " << i);
+				  threads.create_thread(f);
 
-    DEBUG_DEBUG("Waiting for threads to join");
-    threads.join_all();
-    DEBUG_DEBUG("Threads joined");
-}
+				  destStart.y += chunkSize;
+				  destEnd.y += chunkSize;
+				  destAStart.y += chunkSize;
+				  destUL.y += chunkSize;
+			  }
+			  // last chunk
+			  destEnd = dest.second;
+			  // remap last chunk in current thread.
+			  if (i == nThreads-1) {
+				  DEBUG_DEBUG("remapping in main thread, destUL: " << destUL <<  " area: " << dest.second - dest.first);
+				  transformImageIntern( src,
+					  vigra::triple<DestImageIterator, DestImageIterator, DestAccessor>(destStart, destEnd, dest.third),
+					  vigra::pair<AlphaImageIterator, AlphaAccessor>(destAStart, alpha.second), 
+					  transform, pixelTransform, destUL, interp, warparound, prog);
+			  }
 
+			  DEBUG_DEBUG("Waiting for threads to join");
+			  threads.join_all();
+			  DEBUG_DEBUG("Threads joined");
+		  }
 
+		  template <class SrcImageIterator, class SrcAccessor,
+		  class DestImageIterator, class DestAccessor,
+		  class TRANSFORM,
+		  class PixelTransform,
+		  class AlphaImageIterator, class AlphaAccessor,
+		  class Interpolator>
+			  vigra::Diff2D transformImageInternMT_findCenter(vigra::triple<SrcImageIterator, SrcImageIterator, SrcAccessor> src,
+			  vigra::triple<DestImageIterator, DestImageIterator, DestAccessor> dest,
+			  std::pair<AlphaImageIterator, AlphaAccessor> alpha,
+			  TRANSFORM & transform,
+			  PixelTransform & pixelTransform,
+			  vigra::Diff2D destUL,
+			  Interpolator interp,
+			  bool warparound,
+			  AppBase::MultiProgressDisplay & prog)
+		  {
+			  vigra::Diff2D center(-1,-1);
+			  // divide output image into multiple areas
+			  unsigned int nThreads = ThreadManager::get().getNThreads();
+
+			  vigra::Diff2D destSize = dest.second - dest.first;
+
+			  // limit amount of threads if only a few lines are given.
+			  if (destSize.y < (int) nThreads) {
+				  nThreads = destSize.y;
+			  }
+
+			  if (nThreads == 1) {
+				  center=transformImageIntern_findCenter(src, dest, alpha, transform, pixelTransform,
+					  destUL, interp, warparound, prog);
+				  return center;
+			  }
+
+			  DEBUG_DEBUG("creating " << nThreads << " threads for center findding");
+
+			  unsigned int chunkSize = destSize.y / nThreads;
+			  // DGSW FIXME - Unreferenced
+			  //	unsigned int lastChunkSize = destSize.y - (nThreads-1) * chunkSize;
+
+			  // create a threads to remap each area
+			  boost::thread_group threads;
+
+			  // create first thread with progress counter
+			  DestImageIterator destStart = dest.first;
+			  DestImageIterator destEnd = dest.second;
+			  destEnd.y -= destSize.y - chunkSize;
+			  AlphaImageIterator destAStart = alpha.first;
+
+			  typedef TransformImageIntern_findCenter<SrcImageIterator, SrcAccessor, DestImageIterator, DestAccessor,
+				  TRANSFORM, PixelTransform, AlphaImageIterator, AlphaAccessor, Interpolator> RFunctor;
+
+			  std::vector< AppBase::DummyMultiProgressDisplay> dummyProgs(nThreads-1);
+			  unsigned int i;
+			  for (i = 0; i < nThreads-1; ++i) {
+
+				  RFunctor t(src, vigra::triple<DestImageIterator, DestImageIterator, DestAccessor>(destStart, destEnd, dest.third),
+					  vigra::pair<AlphaImageIterator, AlphaAccessor>(destAStart, alpha.second), 
+					  transform, pixelTransform, destUL, interp, warparound, dummyProgs[i],&center,&threads);
+				  boost::function0<void> f;
+				  f = t;
+				  DEBUG_DEBUG("Starting thread " << i);
+				  threads.create_thread(f);
+
+				  destStart.y += chunkSize;
+				  destEnd.y += chunkSize;
+				  destAStart.y += chunkSize;
+				  destUL.y += chunkSize;
+			  }
+			  // last chunk
+			  destEnd = dest.second;
+			  // remap last chunk in current thread.
+			  if (i == nThreads-1) {
+				  DEBUG_DEBUG("remapping in main thread, destUL: " << destUL <<  " area: " << dest.second - dest.first);
+				  transformImageIntern_findCenter( src,
+					  vigra::triple<DestImageIterator, DestImageIterator, DestAccessor>(destStart, destEnd, dest.third),
+					  vigra::pair<AlphaImageIterator, AlphaAccessor>(destAStart, alpha.second), 
+					  transform, pixelTransform, destUL, interp, warparound, prog);
+			  }
+
+			  DEBUG_DEBUG("Waiting for threads to join");
+			  threads.join_all();
+			  DEBUG_DEBUG("Threads joined");
+			  return center;
+		  }
 /** Transform an image into the panorama
  *
  *  It can be used for partial transformations as well, if the boundig
@@ -710,7 +948,74 @@ void transformImage(vigra::triple<SrcImageIterator, SrcImageIterator, SrcAccesso
                                  progress);
 	break;
     }
-}
+};
+
+
+		  template <class SrcImageIterator, class SrcAccessor,
+		  class DestImageIterator, class DestAccessor,
+		  class AlphaImageIterator, class AlphaAccessor,
+		  class TRANSFORM,
+		  class PixelTransform>
+			  vigra::Diff2D transformImage_findCenter(vigra::triple<SrcImageIterator, SrcImageIterator, SrcAccessor> src,
+			  vigra::triple<DestImageIterator, DestImageIterator, DestAccessor> dest,
+			  std::pair<AlphaImageIterator, AlphaAccessor> alpha,
+			  vigra::Diff2D destUL,
+			  TRANSFORM & transform,
+			  PixelTransform & pixelTransform,
+			  bool warparound,
+			  Interpolator interpol,
+			  AppBase::MultiProgressDisplay & progress)
+		  {
+			  vigra::Diff2D center(-1,-1);
+			  switch (interpol) {
+			  case INTERP_CUBIC:
+				  DEBUG_DEBUG("using cubic interpolator");
+				  center=transformImageInternMT_findCenter(src, dest, alpha, transform, pixelTransform, destUL,
+					  vigra_ext::interp_cubic(), warparound,
+					  progress);
+				  break;
+			  case INTERP_SPLINE_16:
+				  DEBUG_DEBUG("interpolator: spline16");
+				  transformImageInternMT(src, dest, alpha, transform, pixelTransform, destUL,
+					  vigra_ext::interp_spline16(), warparound,
+					  progress);
+				  break;
+			  case INTERP_SPLINE_36:
+				  DEBUG_DEBUG("interpolator: spline36");
+				  transformImageInternMT(src, dest, alpha, transform, pixelTransform, destUL,
+					  vigra_ext::interp_spline36(), warparound,
+					  progress);
+				  break;
+			  case INTERP_SPLINE_64:
+				  DEBUG_DEBUG("interpolator: spline64");
+				  transformImageInternMT(src, dest, alpha, transform, pixelTransform, destUL,
+					  vigra_ext::interp_spline64(), warparound,
+					  progress);
+				  break;
+			  case INTERP_SINC_256:
+				  DEBUG_DEBUG("interpolator: sinc 256");
+				  transformImageInternMT(src, dest, alpha, transform, pixelTransform, destUL,
+					  vigra_ext::interp_sinc<8>(), warparound,
+					  progress);
+				  break;
+			  case INTERP_BILINEAR:
+				  transformImageInternMT(src, dest, alpha, transform, pixelTransform, destUL,
+					  vigra_ext::interp_bilin(), warparound,
+					  progress);
+				  break;
+			  case INTERP_NEAREST_NEIGHBOUR:
+				  transformImageInternMT(src, dest, alpha, transform, pixelTransform, destUL,
+					  vigra_ext::interp_nearest(), warparound,
+					  progress);
+				  break;
+			  case INTERP_SINC_1024:
+				  transformImageInternMT(src, dest, alpha, transform, pixelTransform, destUL,
+					  vigra_ext::interp_sinc<32>(), warparound,
+					  progress);
+				  break;
+			  }
+			  return center;
+		  }
 
 /** Transform image, and respect a possible alpha channel */
 template <class SrcImageIterator, class SrcAccessor,

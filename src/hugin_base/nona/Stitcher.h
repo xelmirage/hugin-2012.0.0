@@ -210,8 +210,9 @@ public:
 
     virtual void stitch(const PanoramaOptions & opts, UIntSet & images,
                         const std::string & basename,
-                        SingleImageRemapper<ImageType, AlphaType> & remapper)
+                        SingleImageRemapper<ImageType, AlphaType> & remapper,bool findcenter=false)
     {
+		
         Base::stitch(opts, images, basename, remapper);
         DEBUG_ASSERT(opts.outputFormat == PanoramaOptions::TIFF_multilayer
                      || opts.outputFormat == PanoramaOptions::TIFF_m
@@ -227,23 +228,39 @@ public:
         Base::m_progress.pushTask(AppBase::ProgressTask("Remapping", "", 1.0/(nImg)));
         // remap each image and save
         int i=0;
+		vigra::Diff2D center;
         for (UIntSet::const_iterator it = images.begin();
              it != images.end(); ++it)
-        {
-            // get a remapped image.
-            RemappedPanoImage<ImageType, AlphaType> *
-                remapped = remapper.getRemapped(Base::m_pano, opts, *it, 
-                                                Base::m_rois[i], Base::m_progress);
-            try {
-                saveRemapped(*remapped, *it, Base::m_pano.getNrOfImages(), opts);
-            } catch (vigra::PreconditionViolation & e) {
-                // this can be thrown, if an image
-                // is completely out of the pano
-                std::cerr << e.what();
-            }
-            // free remapped image
-            remapper.release(remapped);
-            i++;
+		{
+			if (!findcenter)
+			{
+				// get a remapped image.
+				RemappedPanoImage<ImageType, AlphaType> *
+					remapped = remapper.getRemapped(Base::m_pano, opts, *it, 
+					Base::m_rois[i], Base::m_progress);
+				try {
+					saveRemapped(*remapped, *it, Base::m_pano.getNrOfImages(), opts);
+				} catch (vigra::PreconditionViolation & e) {
+					// this can be thrown, if an image
+					// is completely out of the pano
+					std::cerr << e.what();
+				}
+				// free remapped image
+				remapper.release(remapped);
+				i++;
+			}
+			else
+			{
+				
+				
+				RemappedPanoImage<ImageType, AlphaType> *
+					remapped=remapper.findCenter(Base::m_pano, opts, *it, 
+					Base::m_rois[i], Base::m_progress,&center);
+				if (center.x!=-1&&center.y!=-1)
+				{
+					cout<<center.x<<","<<center.y<<endl;
+				}
+			}
         }
         Base::m_progress.popTask();
         finalizeOutputFile(opts);

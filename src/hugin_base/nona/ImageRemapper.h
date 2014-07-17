@@ -45,21 +45,30 @@ namespace Nona {
             /** create a remapped pano image.
              *
              *  The image ownership is transferred to the caller.
-             */
-            virtual RemappedPanoImage<ImageType,AlphaType>* getRemapped(const PanoramaData & pano,
-                                                                        const PanoramaOptions & opts,
-                                                                        unsigned int imgNr,
-                                                                        vigra::Rect2D outputROI,
-                                                                        AppBase::MultiProgressDisplay& progress) = 0;
-            
-            virtual ~SingleImageRemapper() {};
-            
-            
-        public:
-            ///
-            virtual	void release(RemappedPanoImage<ImageType,AlphaType>* d) = 0;
-        
-    };
+			 */
+			virtual RemappedPanoImage<ImageType,AlphaType>* getRemapped(const PanoramaData & pano,
+				const PanoramaOptions & opts,
+				unsigned int imgNr,
+				vigra::Rect2D outputROI,
+				AppBase::MultiProgressDisplay& progress) = 0;
+		
+			virtual RemappedPanoImage<ImageType, AlphaType>* findCenter(const PanoramaData & pano, 
+				const PanoramaOptions & opts,
+				unsigned int imgNr, 
+				vigra::Rect2D outputROI,
+				AppBase::MultiProgressDisplay & progress,vigra::Diff2D* center) =0 ;
+			 
+
+
+			virtual ~SingleImageRemapper() {};
+
+
+	public:
+		///
+		virtual	void release(RemappedPanoImage<ImageType,AlphaType>* d) = 0;
+		
+
+	};
 
 
     /** functor to create a remapped image, loads image from disk */
@@ -99,7 +108,18 @@ namespace Nona {
     typedef std::vector<float> LUT;
 
 
-    public:
+	public:
+		///
+
+		virtual  RemappedPanoImage<ImageType, AlphaType>*
+		findCenter(const PanoramaData & pano, const PanoramaOptions & opts,
+			unsigned int imgNr, vigra::Rect2D outputROI,
+			AppBase::MultiProgressDisplay & progress,vigra::Diff2D* center);
+
+
+
+
+
         ///
         void loadImage(const PanoramaOptions & opts,
                      vigra::ImageImportInfo & info, ImageType & srcImg,
@@ -250,6 +270,101 @@ RemappedPanoImage<ImageType, AlphaType>*
     return m_remapped;
 }
 
+template <typename ImageType, typename AlphaType>
+RemappedPanoImage<ImageType, AlphaType>*
+    FileRemapper<ImageType,AlphaType>::findCenter(const PanoramaData & pano, const PanoramaOptions & opts,
+                              unsigned int imgNr, vigra::Rect2D outputROI,
+                               AppBase::MultiProgressDisplay & progress,vigra::Diff2D* center)
+{
+    typedef typename ImageType::value_type PixelType;
+    
+    //typedef typename vigra::NumericTraits<PixelType>::RealPromote RPixelType;
+    //        typedef typename vigra::BasicImage<RPixelType> RImportImageType;
+    typedef typename vigra::BasicImage<float> FlatImgType;
+    
+    FlatImgType ffImg;
+    AlphaType srcAlpha;
+    
+    // choose image type...
+    const SrcPanoImage & img = pano.getImage(imgNr);
+    
+    vigra::Size2D origSrcSize = img.getSize();
+    // DGSW FIXME - Unreferenced
+    //		const PT::VariableMap & srcVars = pano.getImageVariables(imgNr);
+    //		const Lens & lens = pano.getLens(img.getLensNr());
+    
+    vigra::Size2D destSize(opts.getWidth(), opts.getHeight());
+    
+    m_remapped = new RemappedPanoImage<ImageType, AlphaType>;
+    
+    // load image
+    
+    vigra::ImageImportInfo info(img.getFilename().c_str());
+
+    int width = info.width();
+    int height = info.height();
+
+    if (opts.remapUsingGPU) {
+        // Extend image width to multiple of 8 for fast GPU transfers.
+        const int r = width % 8;
+        if (r != 0) width += 8 - r;
+    }
+
+    ImageType srcImg(width, height);
+    m_remapped->m_ICCProfile = info.getICCProfile();
+    
+    if (info.numExtraBands() > 0) {
+        srcAlpha.resize(width, height);
+    }
+    //int nb = info.numBands() - info.numExtraBands();
+    bool alpha = info.numExtraBands() > 0;
+    std::string type = info.getPixelType();
+    
+    SrcPanoImage src = pano.getSrcImage(imgNr);
+    
+    // import the image
+    progress.setMessage(std::string("loading ") + hugin_utils::stripPath(img.getFilename()));
+    
+    if (alpha) {
+        vigra::importImageAlpha(info, vigra::destImage(srcImg),
+                                vigra::destImage(srcAlpha));
+    } else {
+        vigra::importImage(info, vigra::destImage(srcImg));
+    }
+    // check if the image needs to be scaled to 0 .. 1,
+    // this only works for int -> float, since the image
+    // has already been loaded into the output container
+    double maxv = vigra_ext::getMaxValForPixelType(info.getPixelType());
+    if (maxv != vigra_ext::LUTTraits<PixelType>::max()) {
+        double scale = ((double)vigra_ext::LUTTraits<PixelType>::max()) /  maxv;
+        //std::cout << "Scaling input image (pixel type: " << info.getPixelType() << " with: " << scale << std::endl;
+        transformImage(vigra::srcImageRange(srcImg), destImage(srcImg),
+                       vigra::functor::Arg1()*vigra::functor::Param(scale));
+    }
+    
+    // load flatfield, if needed.
+    if (img.getVigCorrMode() & SrcPanoImage::VIGCORR_FLATFIELD) {
+        // load flatfield image.
+        vigra::ImageImportInfo ffInfo(img.getFlatfieldFilename().c_str());
+        progress.setMessage(std::string("flatfield vignetting correction ") + hugin_utils::stripPath(img.getFilename()));
+        vigra_precondition(( ffInfo.numBands() == 1),
+                           "flatfield vignetting correction: "
+                           "Only single channel flatfield images are supported\n");
+        ffImg.resize(ffInfo.width(), ffInfo.height());
+        vigra::importImage(ffInfo, vigra::destImage(ffImg));
+    }
+    // remap the image
+	std::cout<<imgNr<<","<<pano.getSrcImage(imgNr).getFilename()<<",";
+	vigra::Diff2D center1(-1,-1);
+    center1=remapImage_findCenter(srcImg, srcAlpha, ffImg,
+               pano.getSrcImage(imgNr), opts,
+               outputROI,
+               *m_remapped,
+               progress);
+	std::cout<<endl;
+	*center=center1;
+    return m_remapped;
+}
 
 /// load a flatfield image and apply the correction
 template <class FFType, class SrcIter, class SrcAccessor, class DestIter, class DestAccessor>
