@@ -260,7 +260,7 @@ RemappedPanoImage<ImageType, AlphaType>*
         vigra::importImage(ffInfo, vigra::destImage(ffImg));
     }
     // remap the image
-	std::cout<<imgNr<<","<<pano.getSrcImage(imgNr).getFilename()<<",";
+	//std::cout<<imgNr<<","<<pano.getSrcImage(imgNr).getFilename()<<",";
     remapImage(srcImg, srcAlpha, ffImg,
                pano.getSrcImage(imgNr), opts,
                outputROI,

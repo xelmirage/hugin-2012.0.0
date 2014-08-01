@@ -190,6 +190,7 @@ class IMPEX PanoramaOptions
 
         virtual void reset()
         {
+			
             m_projectionFormat = EQUIRECTANGULAR;
             m_hfov = 360;
             m_size = vigra::Size2D(3000, 1500);
@@ -226,6 +227,7 @@ class IMPEX PanoramaOptions
             outputHDRBlended = false;
             outputHDRLayers = false;
             outputHDRStacks = false;
+			find_center=false;
 
             outputLayersCompression = "LZW";
             outputImageType = "tif";
@@ -388,7 +390,7 @@ class IMPEX PanoramaOptions
         bool outputHDRBlended;         ///< save blended panorama (HDR)
         bool outputHDRLayers;          ///< save remapped layers (HDR)
         bool outputHDRStacks;          ///< save image stacks (HDR)
-
+		bool find_center;
         std::string outputLayersCompression;
         std::string outputImageType;
         std::string outputImageTypeCompression;
@@ -407,7 +409,7 @@ class IMPEX PanoramaOptions
         std::string outputPixelType;
 
         pano_projection_features m_projFeatures;
-
+		
     private:
         static const std::string fileformatNames[];
         static const std::string fileformatExt[];

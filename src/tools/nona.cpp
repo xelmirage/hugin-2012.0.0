@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
 {
     
     // parse arguments
-    const char * optstring = "z:cho:i:t:m:p:r:e:vg";
+    const char * optstring = "z:cho:i:t:m:p:r:e:vgf";
     int c;
     
     opterr = 0;
@@ -187,10 +187,13 @@ int main(int argc, char *argv[])
     int verbose = 0;
     bool useGPU = false;
     string outputPixelType;
-    
+    bool find_center=false;
     while ((c = getopt (argc, argv, optstring)) != -1)
     {
         switch (c) {
+			 case 'f':
+                find_center = true;
+                break;
             case 'o':
                 basename = optarg;
                 break;
@@ -310,7 +313,7 @@ int main(int argc, char *argv[])
         cerr << "Error: unknown output format: " << outputFormat << endl;
         return 1;
     }
-
+	opts.find_center=find_center;
     if (outputPixelType.size() > 0) {
         opts.outputPixelType = outputPixelType;
     }
