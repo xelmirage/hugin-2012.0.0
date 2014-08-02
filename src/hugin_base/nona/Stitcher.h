@@ -271,18 +271,22 @@ namespace HuginBase {
 								Base::m_rois[i], Base::m_progress,&center);
 							//cout<<Base::m_pano.getSrcImage(*it).getFilename()<<endl;
 
-							Exiv2::Image::AutoPtr image_exiv = Exiv2::ImageFactory::open(Base::m_pano.getSrcImage(*it).getFilename());
-							assert (image_exiv.get() != 0);
-							image_exiv->readMetadata();
-							Exiv2::ExifData &exifData = image_exiv->exifData();
-							Exiv2::Exifdatum latitude=exifData["Exif.GPSInfo.GPSLatitude"];
-							Exiv2::Exifdatum longitude=exifData["Exif.GPSInfo.GPSLongitude"];
-							
-							float lat=datum_to_float(latitude);
-							float lon=datum_to_float(longitude);
+
 
 							if (center.x!=-1&&center.y!=-1)
+
 							{
+
+								Exiv2::Image::AutoPtr image_exiv = Exiv2::ImageFactory::open(Base::m_pano.getSrcImage(*it).getFilename());
+								assert (image_exiv.get() != 0);
+								image_exiv->readMetadata();
+								Exiv2::ExifData &exifData = image_exiv->exifData();
+								Exiv2::Exifdatum latitude=exifData["Exif.GPSInfo.GPSLatitude"];
+								Exiv2::Exifdatum longitude=exifData["Exif.GPSInfo.GPSLongitude"];
+
+								float lat=datum_to_float(latitude);
+								float lon=datum_to_float(longitude);
+								cout<<(*it)<<" "<<center.x<<" "<<center.y<<" "<<lon<<" "<<lat<<endl;
 								out<<(*it)<<" "<<center.x<<" "<<center.y<<" "<<lon<<" "<<lat<<endl;
 							}
 						}
