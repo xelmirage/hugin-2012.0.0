@@ -212,6 +212,7 @@ template <class SrcImageIterator, class SrcAccessor,
 			if (transform.transformImgCoord(sx,sy,x,y)) {
 				if((abs(sx-srcCenterx)<0.5)&&(abs(sy-srcCentery)<0.5))
 				{
+//					std::cout<<x<<","<<y<<endl;
 					center.x=x;
 					center.y=y;
 				}
@@ -720,7 +721,7 @@ void transformImageAlphaInternMT(vigra::triple<SrcImageIterator, SrcImageIterato
 			  if (destSize.y < (int) nThreads) {
 				  nThreads = destSize.y;
 			  }
-
+			 
 			  if (nThreads == 1) {
 				  transformImageIntern(src, dest, alpha, transform, pixelTransform,
 					  destUL, interp, warparound, prog);
@@ -804,7 +805,7 @@ void transformImageAlphaInternMT(vigra::triple<SrcImageIterator, SrcImageIterato
 			  if (destSize.y < (int) nThreads) {
 				  nThreads = destSize.y;
 			  }
-
+			  
 			  if (nThreads == 1) {
 				  center=transformImageIntern_findCenter(src, dest, alpha, transform, pixelTransform,
 					  destUL, interp, warparound, prog);

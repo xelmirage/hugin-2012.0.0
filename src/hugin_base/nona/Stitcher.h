@@ -289,6 +289,9 @@ namespace HuginBase {
 								cout<<(*it)<<" "<<center.x<<" "<<center.y<<" "<<lon<<" "<<lat<<endl;
 								out<<(*it)<<" "<<center.x<<" "<<center.y<<" "<<lon<<" "<<lat<<endl;
 							}
+
+							remapper.release(remapped);
+							i++;
 						}
 						out.close();
 					}

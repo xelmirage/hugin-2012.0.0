@@ -266,7 +266,8 @@ RemappedPanoImage<ImageType, AlphaType>*
                outputROI,
                *m_remapped,
                progress);
-	std::cout<<endl;
+
+
     return m_remapped;
 }
 
@@ -354,15 +355,16 @@ RemappedPanoImage<ImageType, AlphaType>*
         vigra::importImage(ffInfo, vigra::destImage(ffImg));
     }
     // remap the image
-	std::cout<<imgNr<<","<<pano.getSrcImage(imgNr).getFilename()<<",";
+	
 	vigra::Diff2D center1(-1,-1);
     center1=remapImage_findCenter(srcImg, srcAlpha, ffImg,
                pano.getSrcImage(imgNr), opts,
                outputROI,
                *m_remapped,
                progress);
-	std::cout<<endl;
-	*center=center1;
+	
+	center->x=center1.x;
+	center->y=center1.y;
     return m_remapped;
 }
 
