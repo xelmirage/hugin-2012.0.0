@@ -145,12 +145,13 @@ public:
     /** sets, if existing output file should be automatic overwritten */
     void SetOverwrite(bool doOverwrite);
 	bool m_isStitching;
-	
+	bool superOverlay;
 private:
 	int finish_count;
 	vector<SplitBlendFrame*> stitchFrames;
 	SplitBlendPanel* m_stitchPanel;
-    
+	
+
     wxString m_scriptFile;
     bool m_deleteOnExit;
 	bool all_set;
@@ -161,10 +162,10 @@ private:
 	void insertNewImageToKml(string name,xmlNodePtr* unode,vigra::Point2D upperleft,vigra::Point2D lowerright);
 		// SplitBlendPanel * m_stitchPanel;
 	string xytogps(int x,int y);
-	
+	void calc_a_b(string name);
 	HuginBase::PanoramaMakefilelibExport::PTPrograms _progs;
 	bool _doDeleteOnExit;
-	
+	double xa,xb,ya,yb;
 	
 	int onProcess;
 

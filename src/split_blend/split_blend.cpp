@@ -193,6 +193,7 @@ bool split_blend_App::OnInit()
 		{ wxCMD_LINE_OPTION, "o", "output",  "output prefix" },
 		{ wxCMD_LINE_SWITCH, "d", "delete",  "delete pto file after stitching" },
 		{ wxCMD_LINE_SWITCH, "w", "overwrite", "overwrite existing files" },
+		{ wxCMD_LINE_SWITCH, "g", "google earth", "generate google earth super overlay" },
 		{ wxCMD_LINE_PARAM,  NULL, NULL, "<project>",
 		wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 		{ wxCMD_LINE_NONE }
@@ -202,6 +203,7 @@ bool split_blend_App::OnInit()
 		{ wxCMD_LINE_OPTION, wxT("o"), wxT("output"),  wxT("output prefix") },
 		{ wxCMD_LINE_SWITCH, wxT("d"), wxT("delete"),  wxT("delete pto file after stitching") },
 		{ wxCMD_LINE_SWITCH, wxT("w"), wxT("overwrite"), wxT("overwrite existing files") },
+		{ wxCMD_LINE_SWITCH, wxT("g"), wxT("google earth"), wxT("generate google earth super overlay") },
 		{ wxCMD_LINE_PARAM,  NULL, NULL, wxT("<project>"),
 		wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 		{ wxCMD_LINE_NONE }
@@ -268,7 +270,7 @@ bool split_blend_App::OnInit()
 		outname = outfn.GetFullPath();
 	}
 
-	
+	bool superOverlay=parser.Found("g");
 
 
 	wxFileName basename(scriptFile);
@@ -277,7 +279,7 @@ bool split_blend_App::OnInit()
 	this->GetEvtHandlerEnabled();
 	MainFrame *frame;
 	frame = new MainFrame(NULL, wxT("SplitBlender"), wxDefaultPosition, wxSize(640,600) );
-	
+	frame->superOverlay=superOverlay;
 	frame->Show( true );
 	frame->SetTitle("SplitBlender");
 	frame->SetOverwrite(parser.Found(wxT("w")));
@@ -435,6 +437,17 @@ void MainFrame::OnProcessTerminate(wxProcessEvent & event)
 }
 void MainFrame::OnCancel(wxCommandEvent & event)
 {
+}
+void MainFrame::calc_a_b(string filename)
+{
+	ifstream data(filename);
+	if (data.bad())
+	{
+		cerr << "ERROR: could not open file: '" <<filename << "'!" << endl;
+		return ;
+	}
+
+
 }
 vigra::Size2D MainFrame::calc_split(vigra::Rect2D view,int num)
 {

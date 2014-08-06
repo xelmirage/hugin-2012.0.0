@@ -35,12 +35,13 @@ MainFrame( parent )
 	
 
 	phasename[0]="gpsfilter";
-	phasename[1]="cpfind";
-	phasename[2]="cpclean";
-	phasename[3]="linefind";
-	phasename[4]="checkpto";
-	phasename[5]="optimise";
-	phasename[6]="modify";
+	phasename[1]="generate pto";
+	phasename[2]="cpfind";
+	phasename[3]="cpclean";
+	phasename[4]="linefind";
+	phasename[5]="checkpto";
+	phasename[6]="optimise";
+
 	phasename[7]="nona";
 	phasename[8]="blend";
 
@@ -194,7 +195,7 @@ void ARLabStitcherwxMainFrame::process(void)
 	wxFileName stitch_cp(sdir+"\\stitch_cp.pto");
 	wxFileName stitch_cp_clean(sdir+"\\stitch_cp_clean.pto");
 	wxFileName stitch_cp_clean_line(sdir+"\\stitch_cp_clean_linefind.pto");
-	
+	wxFileName stitch_cp_clean_line_op(sdir+"\\stitch_cp_clean_linefind_op.pto");
 	++phase;
 	switch (phase)
 	{
@@ -323,6 +324,25 @@ void ARLabStitcherwxMainFrame::process(void)
 		{
 			return;
 		}
+		
+	case 6:
+		if(!stitch_cp_clean_line_op.FileExists())
+		{
+			cmd=ExeDir+"\\autooptimiser -a -s -l -o "+sdir+"\\stitch_cp_clean_linefind_op.pto "+sdir+"\\stitch_cp_clean_linefind.pto";
+			if(execexternal(cmd,wxT("Optimising"))!=0)
+			{
+				return;
+			}
+			break;
+		}
+		else
+		{
+			++phase;
+			push_message("\n---------------\n["+run_time+"] skip optimising......\n---------------\n");
+		}
+		break;
+	case 7:
+
 		break;
 
 	default:
