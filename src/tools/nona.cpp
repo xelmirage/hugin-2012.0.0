@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
     bool overrideExposure = false;
     double exposure=0;
     int verbose = 0;
-    bool useGPU = false;
+    bool useGPU = true;
     string outputPixelType;
     bool find_center=false;
     while ((c = getopt (argc, argv, optstring)) != -1)
@@ -193,6 +193,7 @@ int main(int argc, char *argv[])
         switch (c) {
 			 case 'f':
                 find_center = true;
+				useGPU=false;
                 break;
             case 'o':
                 basename = optarg;
@@ -247,7 +248,7 @@ int main(int argc, char *argv[])
                 abort ();
         }
     }
-
+	
     if (basename == "" || argc - optind <1) {
         usage(argv[0]);
         return 1;

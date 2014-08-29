@@ -621,7 +621,7 @@ int main(int argc,char* argv[])
                 _outputFile=optarg;
 				cout<<"outputfile "<<_outputFile<<endl;
                 break;
-           
+           //H:\demo\belts.log -g h:\demo\02.txt -s h:\demo
             case 'p':
                 {
                   
@@ -645,11 +645,16 @@ int main(int argc,char* argv[])
 				usage(argv[0]);
 				return 0;
 			default:
+				usage(argv[0]);
 				abort ();
 		}
 	 }
 
-
+	 if(argc<2)
+	 {
+		 usage(argv[0]);
+		 return 0;
+	 }
 
 
 
@@ -683,7 +688,7 @@ int main(int argc,char* argv[])
 		filesystem::directory_iterator end_iter;
 		for(filesystem::directory_iterator pos(_inputDIR.c_str());pos!=end_iter;++pos)
 		{
-			if(pos->path().extension()==".JPG"||pos->path().extension()==".jpg")
+			if(pos->path().extension()==".JPG"||pos->path().extension()==".jpg"||pos->path().extension()==".tif")
 				images.push_back(pos->path().string());
 			//cout<<*pos<<"   "<<pos->path().extension()<<   endl;
 		}
@@ -701,23 +706,31 @@ int main(int argc,char* argv[])
 		std::getline(data, line);
 		//cout<<line<<endl;
 		SplitVec.clear();
+		
 		split(SplitVec, line, is_any_of(" "), token_compress_on);
-		yawTemp=lexical_cast<double>(SplitVec[9]);
+		//yawTemp=lexical_cast<double>(SplitVec[8]);
 		//cout<<yawTemp<<","<<endl;
-		YawVec.push_back(yawTemp);
+		if(SplitVec.size()<9) 
+			break;
+		for(int i=0;i<SplitVec.size();++i)
+		{
+			trim(SplitVec[i]);
+		}
 
 		int id;
-		double x,y,yaw,roll;
-		id=lexical_cast<int>(SplitVec[1]);
-		x=lexical_cast<double>(SplitVec[4]);
-		y=lexical_cast<double>(SplitVec[5]);
-		yaw=lexical_cast<double>(SplitVec[9]);
-		roll=lexical_cast<double>(SplitVec[8]);
+		float x,y,yaw,roll;
+		
+		id=lexical_cast<int>(SplitVec[0]);
+		
+		x=lexical_cast<float>(SplitVec[3]);
+		y=lexical_cast<float>(SplitVec[4]);
+		yaw=lexical_cast<float>(SplitVec[8]);
+		roll=lexical_cast<float>(SplitVec[7]);
 		LLtoUTM(x,y);
 		PointL *p=new PointL(id,UTMEasting,UTMNorthing,yaw,roll);
 
 		pointsL.push_back(*p);
-
+		YawVec.push_back(yaw);
 
 		if(minx==0||minx>UTMEasting)
 		{
@@ -737,8 +750,8 @@ int main(int argc,char* argv[])
 		//exifData["Exif.Photo.UserComment"]
 		//= "charset=Ascii thrown";
 		
-		string cmd=huginExeDir.ToStdString()+"\\exiftool -F -m -overwrite_original -GPSLongitude=\""+ lexical_cast<string>(SplitVec[4])
-			+"\"  -GPSLatitude=\""+ lexical_cast<string>(SplitVec[5])
+		string cmd=huginExeDir.ToStdString()+"\\exiftool -F -m -overwrite_original -GPSLongitude=\""+ lexical_cast<string>(SplitVec[3])
+			+"\"  -GPSLatitude=\""+ lexical_cast<string>(SplitVec[4])
 			+"\" -UserComment=\"thrown\" "
 			+images[j];
 		
@@ -767,6 +780,7 @@ int main(int argc,char* argv[])
 	//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).heading(*(i+1))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
 	//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).slope(*(i+1))"<<"    "<<"atan((*i).slope(*(i+1)))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
 	i=pointsL.begin()+1;
+	int inf=10;
 	for(i=pointsL.begin()+1;i!=pointsL.end()-1;++i)
 	{
 		heading=(*(i-1)).heading(*(i));
@@ -774,10 +788,11 @@ int main(int argc,char* argv[])
 		deg1=360-heading/PI*180;
 		heading=(*(i)).heading(*(i+1));
 		deg2=360-heading/PI*180;
-		if((i->yaw/5-floor(i->yaw/5))>=0.5)
-			i->yawint=ceil (i->yaw/5);
+		
+		if((i->yaw/inf-floor(i->yaw/inf))>=0.5)
+			i->yawint=ceil (i->yaw/inf);
 		else
-			i->yawint=floor(i->yaw/5);
+			i->yawint=floor(i->yaw/inf);
 		i->dyaw=abs(deg1-deg2);
 		//out<<(*i).x<<"    "<<(*i).y<<"    "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<endl;
 		//cout<<(*i).x<<"    "<<(*i).y<<"    "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<endl;
@@ -789,15 +804,15 @@ int main(int argc,char* argv[])
 	}
 
 	int most1=findmost(),most2;
-	if (most1>36)
-		most2=most1-36;
+	if (most1>(180/inf))
+		most2=most1-(180/inf);
 	else
-		most2=36+most1;
+		most2=(180/inf)+most1;
 
 
 	for (i=pointsL.begin();i<pointsL.end();++i)
 	{
-		if (( (*i).yawint==most1||(*i).yawint==(most2))&&(*i).dyaw<3)
+		if (( (*i).yawint==most1||(*i).yawint==(most2))&&(*i).dyaw<30)
 		{
 			(*i).selected=true;
 

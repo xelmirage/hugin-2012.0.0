@@ -166,6 +166,7 @@ bool split_blend_App::OnInit()
 
 	PanoramaMakefilelibExport::PTPrograms progs = getPTProgramsConfig(huginExeDir, wxConfigBase::Get());
 	progs.enblend=getProgram(wxConfigBase::Get(),huginExeDir,wxT("multiblend_x64"),wxT("enblend"));
+	
 #else
 	// add the locale directory specified during configure
 	m_locale.AddCatalogLookupPathPrefix(wxT(INSTALL_LOCALE_DIR));
@@ -193,7 +194,7 @@ bool split_blend_App::OnInit()
 		{ wxCMD_LINE_OPTION, "o", "output",  "output prefix" },
 		{ wxCMD_LINE_SWITCH, "d", "delete",  "delete pto file after stitching" },
 		{ wxCMD_LINE_SWITCH, "w", "overwrite", "overwrite existing files" },
-		{ wxCMD_LINE_SWITCH, "g", "google earth", "generate google earth super overlay" },
+		{ wxCMD_LINE_SWITCH, "g", "google_earth", "generate google earth super overlay" },
 		{ wxCMD_LINE_PARAM,  NULL, NULL, "<project>",
 		wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 		{ wxCMD_LINE_NONE }
@@ -249,7 +250,7 @@ bool split_blend_App::OnInit()
 		if (! wxIsAbsolutePath(scriptFile)) {
 			scriptFile = wxGetCwd() + wxFileName::GetPathSeparator() + scriptFile;
 		}
-		::wxMessageBox(scriptFile,"bingo");
+		//::wxMessageBox(scriptFile,"bingo");
 
 	}
 
@@ -404,7 +405,7 @@ void MainFrame::OnProcessTerminate(wxProcessEvent & event)
 
 	if(finish_count==stitchFrames.size())
 	{
-		::wxMessageBox(cmd,"command");
+		//::wxMessageBox(cmd,"command");
 		m_stitchPanel->FinalBlend(cmd);
 
 	}
@@ -438,20 +439,79 @@ void MainFrame::OnProcessTerminate(wxProcessEvent & event)
 void MainFrame::OnCancel(wxCommandEvent & event)
 {
 }
+
 void MainFrame::calc_a_b(string filename)
 {
+	string line;
+	vector<string> SplitVec;
 	ifstream data(filename);
 	if (data.bad())
 	{
 		cerr << "ERROR: could not open file: '" <<filename << "'!" << endl;
 		return ;
 	}
+	int imgNr;
+	vector<vector<double>> mat;
+	mat.clear();
+	while (data.good()) {
+		std::getline(data, line);
+		if(line.length()<2) continue;
+		SplitVec.clear();
+		boost::split(SplitVec,line,is_any_of(" "),token_compress_on);
+		if (SplitVec.size()<=2) continue;
+		imgNr=boost::lexical_cast<int>(SplitVec[0]);
+		vector<double> row;
+		row.clear();
+		float x=boost::lexical_cast<double>(SplitVec[1]);
+		float y=boost::lexical_cast<double>(SplitVec[2]);
+		float lon=boost::lexical_cast<double>(SplitVec[3]);
+		float lat=boost::lexical_cast<double>(SplitVec[4]);
+		row.push_back(x);
+		row.push_back(y);
+		row.push_back(lon);
+		row.push_back(lat);
+		mat.push_back(row);
+	}
+	double *_data;
+	_data = (double*)malloc(3*mat.size()*sizeof(double));
+	double *answer=(double*)malloc(3*(sizeof(double)));
+	for(int i=0;i<mat.size();++i)
+	{
+		*(_data+i*3)=mat[i][0];
+		*(_data+i*3+1)=mat[i][1];
+		*(_data+i*3+2)=mat[i][2];
 
+	}
+	double SquarePoor[4];
+	if (MultipleRegression(_data, mat.size(), 3, answer, SquarePoor) == 0)
+	{
+		xb=answer[0];
+		xa1=answer[1];
+		xa2=answer[2];
+	}
+	else
+	{
 
+	}
+
+	for(int i=0;i<mat.size();++i)
+	{
+		*(_data+i*3)=mat[i][0];
+		*(_data+i*3+1)=mat[i][1];
+		*(_data+i*3+2)=mat[i][3];
+
+	}
+	if (MultipleRegression(_data, mat.size(), 3, answer, SquarePoor) == 0)
+	{
+		yb=answer[0];
+		ya1=answer[1];
+		ya2=answer[2];
+	}
+		
 }
 vigra::Size2D MainFrame::calc_split(vigra::Rect2D view,int num)
 {
-	const int maxlimit=10;
+	const int maxlimit=200;
 	vigra::Size2D slice_matrix;
 	if (num<maxlimit)
 	{
@@ -496,13 +556,15 @@ vigra::Size2D MainFrame::calc_split(vigra::Rect2D view,int num)
 
 string MainFrame::xytogps(int x,int y)
 {
-	double latitude=47.5722256384-0.0000017544*x-0.0000005952*y;
-	double longitude= 87.8209535664 + 0.0000008831*x  -0.0000025883*y;
+	//double latitude=47.5722256384-0.0000017544*x-0.0000005952*y;
+	//double longitude= 87.8209535664 + 0.0000008831*x  -0.0000025883*y;
+	double latitude=yb+ya1*x+ya2*y;
+	double longitude=xb + xa1*x  +xa2*y;
 	string out;
 	out.clear();
-	out.append(::lexical_cast<string>(longitude));
+	out.append(boost::lexical_cast<string>(longitude));
 	out.append(",");
-	out.append(::lexical_cast<string>(latitude));
+	out.append(boost::lexical_cast<string>(latitude));
 	out.append(",0 ");
 	return out;
 
@@ -549,6 +611,7 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 	HuginBase::PanoramaMakefilelibExport::PTPrograms progs,
 	bool doDeleteOnExit)
 {
+	this->calc_a_b(outname.ToStdString()+".tif.coord");
 	_progs=progs;
 	_doDeleteOnExit=doDeleteOnExit;
 	wxFileName basename(scriptFile);
@@ -569,9 +632,10 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 		return 1;
 	}
 	PanoramaOptions opt = pano.getOptions();
+	opt.remapUsingGPU=true;
 	vigra::Rect2D roi=opt.getROI();
 	vigra::Size2D size=opt.getSize();
-
+	pano.setOptions(opt);
 	num=::getImagesinROI(pano,pano.getActiveImages()).size();
 	int active=pano.getActiveImages().size();
 
@@ -644,10 +708,10 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 			temp_roi.setLowerRight(lowerright);
 
 			temp_opt.setROI(temp_roi);
-
+			temp_opt.remapUsingGPU=true;
 			temp_pano.setOptions(temp_opt);
 			temp_pano=temp_pano.getSubset(::getImagesinROI(temp_pano,temp_pano.getActiveImages()));
-			string out_suffix=lexical_cast<string>(i)+"_"+lexical_cast<string>(j);
+			string out_suffix=boost::lexical_cast<string>(i)+"_"+boost::lexical_cast<string>(j);
 			string output=scriptFile.substr(0,scriptFile.length()-4).append("_dist_"+out_suffix+".pto");
 			
 			ofstream of(output.c_str());
@@ -655,18 +719,20 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 			temp_pano.writeData(of);
 			parts.push_back(output);
 
-
+			
 			boost::filesystem::path outpath(outname);
-			boost::filesystem::path oname=(output+".tif");
-			string outpart=outpath.branch_path().string()+"/"+oname.filename().string();
+			
+			boost::filesystem::path oname=(outpath.string()+"_dist_"+out_suffix+".pto.tif");
+			string outpart=outpath.branch_path().string()+"/"+oname.filename().c_str();
 
 			outparts.push_back(outpart);
 			//outparts.push_back(output+".tif");
 			cout<<"j finish,out to "<<output<<endl;
 
 			
-
-			insertNewImageToKml(oname.string()+".tif",
+			string outfilename=oname.filename().string()+".tif";
+			
+			insertNewImageToKml(outfilename,
 				&Folder,upperleft,lowerright);
 
 

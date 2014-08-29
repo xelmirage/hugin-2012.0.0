@@ -73,13 +73,21 @@ public:
 	void ClearText();
     // for MyPipedProcess
     void OnProcessTerminated(MyPipedProcess *process, int pid, int status);
-    //wxListBox *GetLogListBox() const { return m_lbox; }
-    /** save the content of the window into a given log file 
-        @return true if log was saved successful */
-    bool SaveLog(const wxString &filename);
-    
-    virtual ~MyExecPanel();
+	//wxListBox *GetLogListBox() const { return m_lbox; }
+	/** save the content of the window into a given log file 
+	@return true if log was saved successful */
+	bool SaveLog(const wxString &filename);
 
+	virtual ~MyExecPanel();
+
+
+#ifdef HUGIN_EXEC_LISTBOX
+	wxListBox *m_lbox;
+	wxString   m_currLine;
+#else
+	wxTextCtrl *m_textctrl;
+	long m_lastLineStart;
+#endif
 private:
 
     void AddToOutput(wxInputStream & s);
@@ -98,13 +106,7 @@ private:
 
 //    wxString m_output;
 
-#ifdef HUGIN_EXEC_LISTBOX
-    wxListBox *m_lbox;
-    wxString   m_currLine;
-#else
-    wxTextCtrl *m_textctrl;
-    long m_lastLineStart;
-#endif
+
 
     MyProcessesArray m_running;
 

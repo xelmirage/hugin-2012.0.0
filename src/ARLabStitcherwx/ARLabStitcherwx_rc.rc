@@ -14,4 +14,4 @@
 // Bitmap resources
 //
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
-IDB_PNG_NEW     BITMAP         ".\\images\\new.png"
+//IDB_PNG_NEW     BITMAP         ".\\images\\new.png"

@@ -54,6 +54,8 @@
 #include <nona/ImageRemapper.h>
 #include <exiv2/image.hpp>
 #include <exiv2/exif.hpp>
+
+#include<boost/lexical_cast.hpp>
 // calculate distance image for multi file output
 #define STITCHER_CALC_DIST_IMG 0
 
@@ -260,8 +262,8 @@ namespace HuginBase {
 					}
 					else
 					{
-						ofstream out(basename+".coord");
-						if(!out) return;
+						string outline="";
+						
 
 						for (UIntSet::const_iterator it = images.begin();
 							it != images.end(); ++it)
@@ -286,13 +288,26 @@ namespace HuginBase {
 
 								float lat=datum_to_float(latitude);
 								float lon=datum_to_float(longitude);
-								cout<<(*it)<<" "<<center.x<<" "<<center.y<<" "<<lon<<" "<<lat<<endl;
-								out<<(*it)<<" "<<center.x<<" "<<center.y<<" "<<lon<<" "<<lat<<endl;
+								cout<<(*it)<<" "<<center.x<<" "<<center.y<<" "<<setprecision(10)<<lon<<" "<<setprecision(10)<<lat<<endl;
+								//out<<(*it)<<" "<<center.x<<" "<<center.y<<" "<<setprecision(10)<<lon<<" "<<setprecision(10)<<lat<<endl;
+								outline+=boost::lexical_cast<string>((*it))
+									+" "+
+									boost::lexical_cast<string>(center.x)
+									+" "+
+									boost::lexical_cast<string>(center.y)
+									+" "+
+									boost::lexical_cast<string>(lon)
+									+" "+
+									boost::lexical_cast<string>(lat)
+									+"\n";
 							}
-
+							
 							remapper.release(remapped);
 							i++;
 						}
+						ofstream out(basename+".coord");
+						if(!out) return;
+						out<<outline;
 						out.close();
 					}
 					Base::m_progress.popTask();
