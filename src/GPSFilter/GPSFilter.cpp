@@ -814,7 +814,7 @@ int main(int argc,char* argv[])
 	//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).heading(*(i+1))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
 	//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).slope(*(i+1))"<<"    "<<"atan((*i).slope(*(i+1)))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
 	i=pointsL.begin()+1;
-	int inf=5;
+	int inf=30;
 	for(i=pointsL.begin()+1;i!=pointsL.end()-1;++i)
 	{
 		heading=(*(i-1)).heading(*(i));
