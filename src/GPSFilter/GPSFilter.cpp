@@ -415,7 +415,6 @@ void build_belt(string outfile)
 
 
 			vector_pointsL.erase(j);
-			j=vector_pointsL.begin();
 			//continue;
 			//j=vector_pointsL.begin();
 
@@ -506,46 +505,13 @@ void build_belt(string outfile)
 					{
 						if (valid)
 						{
-							//tag+=","+lexical_cast<std::string>((row_iterator+1)->id);
-
-							tag+=",";
-
-
-
+							tag+=","+lexical_cast<std::string>((row_iterator+1)->id);
 						}
 						else
 						{
-
-
-						}
-
-
-						belt_iterator=j+1;
-
-						dists.clear();
-						POINTSL::iterator i1;
-						for(i1=(*belt_iterator).begin();i1!=(*belt_iterator).end();++i1)
-						{
-
-							long d=i->distance(*i1);
-							dist tempDist(i1->id,d,0);
-							dists.push_back(tempDist);
+							tag+=lexical_cast<std::string>((row_iterator+1)->id);
 
 						}
-						sort(dists.begin(),dists.end());
-						for(int ii=0;ii<3;ii++)
-						{
-							/*if (belt_iterator==(j+1)) 
-							{tag+=","+lexical_cast<std::string>(dists[ii].id);}*/
-							//belt_out<<","<<dists[ii].id;
-							//cout<<","<<dists[ii].id;
-							//row.push_back(dists[ii]);
-							tag+=lexical_cast<std::string>(dists[ii].id)+",";
-						}
-
-
-
-
 					}
 					//cout<<endl<<tag<<endl;
 					/*	Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(images[(row_iterator->id-1)]);
@@ -740,7 +706,7 @@ int main(int argc,char* argv[])
 		std::getline(data, line);
 		//cout<<line<<endl;
 		SplitVec.clear();
-		trim(line);
+		
 		split(SplitVec, line, is_any_of(" "), token_compress_on);
 		//yawTemp=lexical_cast<double>(SplitVec[8]);
 		//cout<<yawTemp<<","<<endl;
@@ -814,7 +780,9 @@ int main(int argc,char* argv[])
 	//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).heading(*(i+1))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
 	//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).slope(*(i+1))"<<"    "<<"atan((*i).slope(*(i+1)))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
 	i=pointsL.begin()+1;
+
 	int inf=30;
+
 	for(i=pointsL.begin()+1;i!=pointsL.end()-1;++i)
 	{
 		heading=(*(i-1)).heading(*(i));
