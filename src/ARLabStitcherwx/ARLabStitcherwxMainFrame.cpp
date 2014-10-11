@@ -418,6 +418,7 @@ void ARLabStitcherwxMainFrame::process(void)
 
 
 	case 9:
+		HuginBase::Panorama pano;
 		
 		GLPreviewFrame* gl_preview_frame = new GLPreviewFrame(this, pano);
 
