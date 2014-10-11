@@ -6,6 +6,7 @@ MainFrame( parent )
 {
 	time_count=0;
 	
+	GLPreviewFrame* gl_preview_frame = new GLPreviewFrame(this, pano);
 	m_execPanel= new MyExecPanel(MainFrame:: m_notebookProgressOut);
 	//m_execPanel->SetId(wxID_execPanel);
 	
@@ -415,7 +416,13 @@ void ARLabStitcherwxMainFrame::process(void)
 		}
 		this->change_status();
 
+
 	case 9:
+		
+		GLPreviewFrame* gl_preview_frame = new GLPreviewFrame(this, pano);
+
+
+
 		while((!stitch_cp_clean_line_op_crop.FileExists())||(!gps_connect.FileExists()))
 		{
 		}
