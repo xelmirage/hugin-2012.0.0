@@ -517,9 +517,9 @@ void PreviewIdentifyTool::MouseButtonEvent(wxMouseEvent & e)
         if (constantOn) {
                 // when there are only two images with indicators shown, show the
                 // control point editor with those images when left clicked.
-                MainFrame::Get()->ShowCtrlPointEditor(*(image_set.begin()),
+               /* MainFrame::Get()->ShowCtrlPointEditor(*(image_set.begin()),
                                                       *(++image_set.begin()));
-                MainFrame::Get()->Raise();
+                MainFrame::Get()->Raise();*/
         }
     }
 
@@ -541,7 +541,7 @@ void PreviewIdentifyTool::UpdateWithNewImageSet(std::set<unsigned int> new_image
     // If we are currently showing indicators for some of the images, we want
     // to work out which ones are not in the new set, so we can set their
     // buttons back to the system colour.
-    UIntSet difference;
+    PT::UIntSet difference;
     difference.clear();
     if(image_set.size()>0)
     {
@@ -558,7 +558,7 @@ void PreviewIdentifyTool::UpdateWithNewImageSet(std::set<unsigned int> new_image
     };
     if (difference.size()>0)
     {
-        for (UIntSet::iterator iterator = difference.begin(); iterator != difference.end(); iterator++)
+        for (PT::UIntSet::iterator iterator = difference.begin(); iterator != difference.end(); iterator++)
         {
             DEBUG_ASSERT(*iterator < helper->GetPanoramaPtr()->getNrOfImages());
             // reset this button to its default system colour.
@@ -585,7 +585,7 @@ void PreviewIdentifyTool::UpdateWithNewImageSet(std::set<unsigned int> new_image
     };
     if (difference.size()>0)
     {
-        for (UIntSet::iterator iterator = difference.begin(); iterator != difference.end(); iterator++)
+        for (PT::UIntSet::iterator iterator = difference.begin(); iterator != difference.end(); iterator++)
         {
             DEBUG_ASSERT(*iterator < helper->GetPanoramaPtr()->getNrOfImages());
             // get notification of when this is about to be drawn.

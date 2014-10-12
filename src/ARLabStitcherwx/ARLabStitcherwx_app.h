@@ -13,6 +13,8 @@
 class ARLabStitcherwxApp: public wxApp
 {
     virtual bool OnInit();
+public:
+
 };
 
 DECLARE_APP(ARLabStitcherwxApp)

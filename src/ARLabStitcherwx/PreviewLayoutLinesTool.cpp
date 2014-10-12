@@ -368,8 +368,8 @@ void PreviewLayoutLinesTool::MouseButtonEvent(wxMouseEvent & e)
     if (m_holdOnNear && e.LeftUp() && m_useNearestLine) {
         m_holdOnNear = false;
         LineDetails & line = m_lines[m_nearestLine];
-        MainFrame::Get()->ShowCtrlPointEditor(line.image1, line.image2);
-        MainFrame::Get()->Raise();
+        /*MainFrame::Get()->ShowCtrlPointEditor(line.image1, line.image2);
+        MainFrame::Get()->Raise();*/
     }
 
     if (m_useNearestLine && e.LeftUp()) {
@@ -390,7 +390,7 @@ void PreviewLayoutLinesTool::updateLineInformation()
     // loop over all control points to count them and get error statistics.
     for (unsigned int cpi = 0 ; cpi < numberOfControlPoints ; cpi++)
     {
-        const ControlPoint & cp = pano.getCtrlPoint(cpi);
+        const PT::ControlPoint & cp = pano.getCtrlPoint(cpi);
         unsigned int low_index, high_index;
         if (cp.image1Nr < cp.image2Nr)
         {
