@@ -26,7 +26,7 @@
 #include <config.h>
 
 #include "base_wx/platform.h"
-#include "MainFrame.h"
+#include "ARLabStitcherwxMainFrame.h"
 #include "GreatCircles.h"
 
 #include <wx/platform.h>

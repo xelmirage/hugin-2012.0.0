@@ -1,12 +1,21 @@
 #include "ARLabStitcherwxMainFrame.h"
 
+
+#include <config.h>
+#include <hugin_version.h>
+
+#include "base_wx/huginConfig.h"
+#include<hugin/GLPreviewFrame.h>
+
+using namespace PT;
+using namespace std;
+using namespace hugin_utils;
 ARLabStitcherwxMainFrame::ARLabStitcherwxMainFrame( wxWindow* parent ,wxString Dir)
 	:
 MainFrame( parent )
 {
 	time_count=0;
 	
-	GLPreviewFrame* gl_preview_frame = new GLPreviewFrame(this, pano);
 	m_execPanel= new MyExecPanel(MainFrame:: m_notebookProgressOut);
 	//m_execPanel->SetId(wxID_execPanel);
 	
@@ -237,6 +246,12 @@ void ARLabStitcherwxMainFrame::process(void)
 	wxFileName stitch_cp_clean_line_op_crop(sdir+"\\stitch_cp_clean_linefind_op_crop.pto");
 	wxFileName ofile(this->outfileName);
 	++phase;
+
+	PT::Panorama  p;
+	PT::Panorama & pano(p);
+
+	GLPreviewFrame* gl_preview_frame = new GLPreviewFrame(this, pano);
+
 	switch (phase)
 	{
 	case 0://GPSFilting
@@ -418,9 +433,7 @@ void ARLabStitcherwxMainFrame::process(void)
 
 
 	case 9:
-		HuginBase::Panorama pano;
 		
-		GLPreviewFrame* gl_preview_frame = new GLPreviewFrame(this, pano);
 
 
 

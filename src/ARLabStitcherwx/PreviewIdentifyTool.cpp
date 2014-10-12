@@ -27,7 +27,7 @@
 
 #include "base_wx/platform.h"
 #include "GLPreviewFrame.h"
-#include "MainFrame.h"
+#include "ARLabStitcherwxMainFrame.h"
 
 #include <wx/platform.h>
 
