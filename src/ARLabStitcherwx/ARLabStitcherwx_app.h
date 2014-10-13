@@ -14,6 +14,9 @@ class ARLabStitcherwxApp: public wxApp
 {
     virtual bool OnInit();
 public:
+	static ARLabStitcherwxMainFrame* getMainFrame();
+	ARLabStitcherwxMainFrame* frame;
+	static ARLabStitcherwxApp* m_this;
 
 };
 

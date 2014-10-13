@@ -45,7 +45,10 @@ public:
 
 	void push_message(wxString message);
 	int execexternal(wxString command,wxString tickmessage);
-	
+
+	GLPreviewFrame * getGLPreview();
+	GLPreviewFrame * gl_preview_frame;
+
 	//// end generated class members
 private:
 

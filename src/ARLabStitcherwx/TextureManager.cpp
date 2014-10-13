@@ -707,7 +707,7 @@ void TextureManager::TextureInfo::DefineLevels(int min,
         // After that, redraw the preview.
         m_imageRequest->ready.connect(1,
             boost::bind(&GLPreviewFrame::redrawPreview,
-                        huginApp::getMainFrame()->getGLPreview()));
+			ARLabStitcherwxApp::getMainFrame()->getGLPreview()));
         
         // make a temporary placeholder image.
         GLubyte placeholder_image[64][64][4];
