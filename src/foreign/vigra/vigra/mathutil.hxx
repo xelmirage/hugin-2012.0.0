@@ -45,7 +45,7 @@
 #include "tuple.hxx"
 #include "sized_int.hxx"
 #include "numerictraits.hxx"
-#include<algorithm>
+
 /*! \page MathConstants Mathematical Constants
 
     <TT>M_PI, M_SQRT2</TT>
