@@ -38,13 +38,13 @@
 #include "panoinc.h"
 
 #include "base_wx/platform.h"
-#include "hugin/config_defaults.h"
-#include "hugin/PreviewFrame.h"
-#include "hugin/huginApp.h"
-#include "hugin/PreviewPanel.h"
-#include "hugin/ImagesPanel.h"
-#include "hugin/CommandHistory.h"
-#include "hugin/TextKillFocusHandler.h"
+#include "config_defaults.h"
+#include "PreviewFrame.h"
+#include "ARLabStitcherwx_app.h"
+#include "PreviewPanel.h"
+#include "ImagesPanel.h"
+#include "CommandHistory.h"
+#include "TextKillFocusHandler.h"
 
 #include <vigra_ext/ImageTransforms.h>
 
@@ -349,7 +349,7 @@ PreviewFrame::PreviewFrame(wxFrame * frame, PT::Panorama &pano)
 
     // set the minimize icon
 #ifdef __WXMSW__
-    wxIcon myIcon(huginApp::Get()->GetXRCPath() + wxT("data/hugin.ico"),wxBITMAP_TYPE_ICO);
+    wxIcon myIcon( wxT("images/pictures.ico"),wxBITMAP_TYPE_ICO);
 #else
     wxIcon myIcon(huginApp::Get()->GetXRCPath() + wxT("data/hugin.png"),wxBITMAP_TYPE_PNG);
 #endif

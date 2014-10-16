@@ -5,7 +5,7 @@
 #include <hugin_version.h>
 
 #include "base_wx/huginConfig.h"
-#include<hugin/GLPreviewFrame.h>
+#include<GLPreviewFrame.h>
 
 using namespace PT;
 using namespace std;

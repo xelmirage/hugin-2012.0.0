@@ -46,13 +46,13 @@
 
 #include "base_wx/platform.h"
 #include "base_wx/MyProgressDialog.h"
-#include "hugin/config_defaults.h"
-#include "hugin/GLPreviewFrame.h"
+#include "config_defaults.h"
+#include "GLPreviewFrame.h"
 #include "hugin/huginApp.h"
-#include "hugin/ImagesPanel.h"
-#include "hugin/CommandHistory.h"
-#include "hugin/GLViewer.h"
-#include "hugin/TextKillFocusHandler.h"
+#include "ImagesPanel.h"
+#include "CommandHistory.h"
+#include "GLViewer.h"
+#include "TextKillFocusHandler.h"
 
 extern "C" {
 #include <pano13/queryfeature.h>
