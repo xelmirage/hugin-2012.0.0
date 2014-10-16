@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun  5 2014)
+// C++ code generated with wxFormBuilder (version Feb 26 2014)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -29,7 +29,6 @@
 #include <wx/textctrl.h>
 #include <wx/notebook.h>
 #include <wx/timer.h>
-#include <wx/toolbar.h>
 #include <wx/frame.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -67,8 +66,6 @@ class MainFrame : public wxFrame
 		wxPanel* m_panel7;
 		wxTextCtrl* m_textCtrlProgress;
 		wxTimer m_timerprocess;
-		wxToolBar* m_toolBar1;
-		wxToolBarToolBase* m_tool1; 
 	
 	public:
 		wxBoxSizer* bSizer7;

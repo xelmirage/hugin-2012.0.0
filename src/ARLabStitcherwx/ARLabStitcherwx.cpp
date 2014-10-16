@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun  5 2014)
+// C++ code generated with wxFormBuilder (version Feb 26 2014)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -119,11 +119,6 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	this->SetSizer( bSizer7 );
 	this->Layout();
 	m_timerprocess.SetOwner( this, wxID_TimerProcess );
-	m_toolBar1 = this->CreateToolBar( wxTB_HORIZONTAL, wxID_ANY ); 
-	m_tool1 = m_toolBar1->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/new.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
-	
-	m_toolBar1->Realize(); 
-	
 	
 	this->Centre( wxBOTH );
 }
