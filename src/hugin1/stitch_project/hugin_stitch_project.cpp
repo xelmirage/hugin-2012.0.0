@@ -51,7 +51,7 @@
 #endif
 
 #include <wx/cmdline.h>
-#include<vld.h>
+
 using namespace vigra;
 using namespace PT;
 using namespace std;
