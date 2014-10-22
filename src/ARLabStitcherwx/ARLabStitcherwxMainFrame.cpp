@@ -5,18 +5,18 @@ ARLabStitcherwxMainFrame::ARLabStitcherwxMainFrame( wxWindow* parent ,wxString D
 MainFrame( parent )
 {
 	time_count=0;
-	
+	MyExecPanel * m_execPanel1l= new MyExecPanel(MainFrame::m_notebook4);
 	m_execPanel= new MyExecPanel(MainFrame:: m_notebookProgressOut);
 	//m_execPanel->SetId(wxID_execPanel);
 	
 	//MainFrame::m_splitter5->SplitHorizontally( m_panel7, m_execPanel, 0 );
 	ExeDir=Dir;
-	MainFrame::m_notebookProgressOut->SetPageText(0,wxT("Working Progress"));
+	MainFrame::m_notebookProgressOut->SetPageText(0,wxT("处理状态"));
 	//MainFrame::m_timerprocess->SetOwner(this);
-	MainFrame::m_notebookProgressOut->AddPage(m_execPanel,wxT("Program Progress"));
+	MainFrame::m_notebookProgressOut->AddPage(m_execPanel,wxT("子步骤状态"));
 	//::wxMessageBox(m_execPanel->GetParent()->GetName());
-	
-	MainFrame::m_notebookProgressOut->
+	MainFrame::m_notebook4->SetPageText(0,wxT("工程文件管理"));
+	MainFrame::m_notebook4->AddPage(m_execPanel1l,wxT("工程信息显示"));
 		GetEventHandler()->
 		Bind(wxEVT_END_PROCESS,&ARLabStitcherwxMainFrame::throw_to_parent,this);
 
@@ -66,7 +66,7 @@ void ARLabStitcherwxMainFrame::newProcess(wxCommandEvent& WXUNUSED(event))
 	wxStringList fileList;
 	//::wxDirDialog
 	wxDirDialog dd(this,_("选择图像目录"),"", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
-
+	
 	//图像目录
 	if(dd.ShowModal()== wxID_CANCEL)
 		return;
@@ -240,6 +240,7 @@ void ARLabStitcherwxMainFrame::process(void)
 	{
 	case 0://GPSFilting
 		::Sleep(1200);
+		MainFrame::m_gauge3->SetValue(10);
 		MainFrame::m_textCtrlProgress->Clear();
 		this->m_execPanel->ClearText();
 		time_count=0;
@@ -263,9 +264,11 @@ void ARLabStitcherwxMainFrame::process(void)
 
 		}
 		
+		
 	case 1://CPFind
 
-		
+		MainFrame::m_gauge3->SetValue(20);
+
 
 		if(!stitch.FileExists())
 		{
@@ -285,9 +288,9 @@ void ARLabStitcherwxMainFrame::process(void)
 			//textEdit->setText(textEdit->toPlainText()+tr("\n skip generating pto......\n\n"));
 
 		}
-
-
+		
 	case 2:
+		MainFrame::m_gauge3->SetValue(30);
 
 		
 
@@ -314,7 +317,8 @@ void ARLabStitcherwxMainFrame::process(void)
 
 
 	case 3:
-		
+		MainFrame::m_gauge3->SetValue(40);
+
 
 		if(!stitch_cp_clean.FileExists())
 		{
@@ -334,7 +338,8 @@ void ARLabStitcherwxMainFrame::process(void)
 		}
 		
 	case 4:
-		
+		MainFrame::m_gauge3->SetValue(50);
+
 		if(!stitch_cp_clean_line.FileExists())
 		{
 
@@ -357,7 +362,8 @@ void ARLabStitcherwxMainFrame::process(void)
 
 
 	case 5:
-		
+		MainFrame::m_gauge3->SetValue(60);
+
 		cmd=ExeDir+"\\checkpto "+sdir+"\\stitch_cp_clean_linefind.pto";
 		if(execexternal(cmd,wxT("工程检查"))!=0)
 		{
@@ -365,6 +371,8 @@ void ARLabStitcherwxMainFrame::process(void)
 		}
 		
 	case 6:
+		MainFrame::m_gauge3->SetValue(70);
+
 		if(!stitch_cp_clean_line_op.FileExists())
 		{
 			cmd=ExeDir+"\\autooptimiser -a -s -l -o "+sdir+"\\stitch_cp_clean_linefind_op.pto "+sdir+"\\stitch_cp_clean_linefind.pto";
@@ -381,6 +389,8 @@ void ARLabStitcherwxMainFrame::process(void)
 		}
 	
 	case 7:
+		MainFrame::m_gauge3->SetValue(80);
+
 		if(!gps_connect.FileExists())
 		{
 			cmd=ExeDir+"\\nona -f "+sdir+"\\stitch_cp_clean_linefind_op.pto -o "+this->outfileName;
@@ -399,6 +409,8 @@ void ARLabStitcherwxMainFrame::process(void)
 	
 	case 8:
 	
+		MainFrame::m_gauge3->SetValue(90);
+
 		if(!stitch_cp_clean_line_op_crop.FileExists())
 		{
 			cmd=ExeDir+"\\pano_modify --crop=auto "+sdir+"\\stitch_cp_clean_linefind_op.pto -o "+sdir+"\\stitch_cp_clean_linefind_op_crop.pto";
@@ -416,6 +428,8 @@ void ARLabStitcherwxMainFrame::process(void)
 		this->change_status();
 
 	case 9:
+		MainFrame::m_gauge3->SetValue(95);
+
 		while((!stitch_cp_clean_line_op_crop.FileExists())||(!gps_connect.FileExists()))
 		{
 		}
@@ -429,6 +443,8 @@ void ARLabStitcherwxMainFrame::process(void)
 
 
 	default:
+		MainFrame::m_gauge3->SetValue(100);
+
 		while(!ofile.FileExists())
 		{
 
