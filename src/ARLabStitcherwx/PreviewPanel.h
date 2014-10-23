@@ -110,6 +110,12 @@ private:
     // transformation for current preview coordinates into equirect coordinates
     PTools::Transform * m_pano2erect;
 
+	template<typename ImageType, typename AlphaType>
+	HuginBase::Nona::RemappedPanoImage<ImageType, AlphaType> *HuginBase::Nona::SingleImageRemapper<ImageType, AlphaType>::findCenter(const HuginBase::PanoramaData &, const HuginBase::PanoramaOptions &, unsigned int, vigra::Rect2D, AppBase::MultiProgressDisplay &, vigra::Diff2D *)
+	{
+		*HuginBase::Nona::SingleImageRemapper<ImageType, AlphaType> a = NULL;
+		return a;
+	}
     // cache for remapped images
     SmallRemappedImageCache m_remapCache;
 
