@@ -62,6 +62,11 @@ public:
                                         vigra::Rect2D outputROI,
                                         AppBase::MultiProgressDisplay & progress);
 
+	virtual MRemappedImage* findCenter(const PanoramaData & pano,
+		const PanoramaOptions & opts,
+		unsigned int imgNr,
+		vigra::Rect2D outputROI,
+		AppBase::MultiProgressDisplay & progress, vigra::Diff2D* center) ;
     
     virtual	void release(MRemappedImage* d)
 	{

@@ -42,7 +42,7 @@
 #include "hugin/TextKillFocusHandler.h"
 #include "hugin/CPEditorPanel.h"
 #include "hugin/ImagesList.h"
-#include "hugin/MainFrame.h"
+#include "ARLabStitcherwxMainFrame.h"
 #include "hugin/huginApp.h"
 #include "icpfind/AutoCtrlPointCreator.h"
 #include "hugin/config_defaults.h"
@@ -373,7 +373,7 @@ void ImagesPanel::OnCleanCP(wxCommandEvent & e)
         CPremove=getCPoutsideLimit(*pano,2.0);
     }
     progress.increaseProgress(1, std::wstring(wxString(_("Finished cleaning")).wc_str(wxConvLocal)));
-    registerPTWXDlgFcn(MainFrame::Get());
+    registerPTWXDlgFcn(ARLabStitcherwxMainFrame::Get());
     if(CPremove.size()>0)
     {
         GlobalCmdHist::getInstance().addCommand(
