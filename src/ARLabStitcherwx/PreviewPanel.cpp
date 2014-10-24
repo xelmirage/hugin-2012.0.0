@@ -35,12 +35,12 @@
 
 
 #include "base_wx/wxImageCache.h"
-#include "hugin/PreviewPanel.h"
-#include "hugin/PreviewFrame.h"
-#include "hugin/MainFrame.h"
-#include "hugin/CommandHistory.h"
-#include "hugin/config_defaults.h"
-#include "hugin/huginApp.h"
+#include "PreviewPanel.h"
+#include "PreviewFrame.h"
+#include "ARLabStitcherwxMainFrame.h"
+#include "CommandHistory.h"
+#include "config_defaults.h"
+#include "huginApp.h"
 //#include "hugin/ImageProcessing.h"
 
 #include <math.h>

@@ -29,12 +29,12 @@
 #include "panoinc.h"
 
 #include "base_wx/wxPlatform.h"
-#include "hugin/ImagesList.h"
+#include "ImagesList.h"
 #include "base_wx/wxImageCache.h"
 #include "base_wx/platform.h"
 
 #ifdef __WXMAC__
-#include "hugin/MainFrame.h"
+#include "ARLabStitcherwxMainFrame.h"
 #endif
 
 using namespace PT;

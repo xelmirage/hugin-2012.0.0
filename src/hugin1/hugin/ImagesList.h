@@ -29,7 +29,7 @@
 
 #include "PT/Panorama.h"
 #include <panodata/StandardImageVariableGroups.h>
-//#include "hugin/MainFrame.h"
+#include "hugin/MainFrame.h"
 
 using namespace PT;
 

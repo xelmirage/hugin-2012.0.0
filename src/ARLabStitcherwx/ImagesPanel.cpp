@@ -37,15 +37,15 @@
 //#include <vigra_ext/PointMatching.h>
 //#include <vigra_ext/LoweSIFT.h>
 
-#include "hugin/ImagesPanel.h"
-#include "hugin/CommandHistory.h"
-#include "hugin/TextKillFocusHandler.h"
-#include "hugin/CPEditorPanel.h"
-#include "hugin/ImagesList.h"
+#include "ImagesPanel.h"
+#include "CommandHistory.h"
+#include "TextKillFocusHandler.h"
+#include "CPEditorPanel.h"
+#include "ImagesList.h"
 #include "ARLabStitcherwxMainFrame.h"
-#include "hugin/huginApp.h"
+#include "huginApp.h"
 #include "icpfind/AutoCtrlPointCreator.h"
-#include "hugin/config_defaults.h"
+#include "config_defaults.h"
 #include "base_wx/MyProgressDialog.h"
 #include "base_wx/PTWXDlg.h"
 #include <algorithms/control_points/CleanCP.h>
