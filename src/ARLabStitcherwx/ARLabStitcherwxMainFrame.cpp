@@ -58,12 +58,23 @@ void ARLabStitcherwxMainFrame::throw_to_parent(wxProcessEvent& e)
 		((wxWindow*)e.GetEventObject())->GetParent()->GetParent()->GetEventHandler()->ProcessEvent( e );
 	}
 }
+void ARLabStitcherwxMainFrame::newProcessTool(wxCommandEvent& WXUNUSED(event))
+{
+	::ARLabStitcherwxNewProjectWizard nw=new ::ARLabStitcherwxNewProjectWizard(this);
+	nw.RunWizard(nw.m_pages[0]);
+
+
+
+}
 void ARLabStitcherwxMainFrame::newProcess(wxCommandEvent& WXUNUSED(event))
 {
 	wxString cmd;
 	//wxMessageBox("new");
 	wxStringList fileNameList;
 	wxStringList fileList;
+
+
+
 	//::wxDirDialog
 	wxDirDialog dd(this,_("Ñ¡ÔñÍ¼ÏñÄ¿Â¼"),"", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
 	

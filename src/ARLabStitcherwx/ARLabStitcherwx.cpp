@@ -186,7 +186,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	this->Layout();
 	m_timerprocess.SetOwner( this, wxID_TimerProcess );
 	m_toolBar1 = this->CreateToolBar( wxTB_HORIZONTAL, wxID_ANY ); 
-	m_tool1 = m_toolBar1->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/new.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
+	m_tool_new = m_toolBar1->AddTool( wxID_NEW_PROJECT_TOOL, _("新建工程"), wxBitmap( wxT("images/new.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
 	m_tool2 = m_toolBar1->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/save.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
@@ -223,4 +223,113 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 
 MainFrame::~MainFrame()
 {
+}
+
+NewProjectWizard::NewProjectWizard( wxWindow* parent, wxWindowID id, const wxString& title, const wxBitmap& bitmap, const wxPoint& pos, long style ) 
+{
+	this->Create( parent, id, title, bitmap, pos, style );
+	this->SetSizeHints( wxSize( 600,400 ), wxDefaultSize );
+	
+	wxWizardPageSimple* m_wizPage01 = new wxWizardPageSimple( this );
+	m_pages.Add( m_wizPage01 );
+	
+	m_wizPage01->SetMinSize( wxSize( 600,400 ) );
+	
+	wxBoxSizer* bSizer10;
+	bSizer10 = new wxBoxSizer( wxVERTICAL );
+	
+	bSizer10->SetMinSize( wxSize( 600,400 ) ); 
+	m_staticText3 = new wxStaticText( m_wizPage01, wxID_ANY, _("待拼接图像路径"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	bSizer10->Add( m_staticText3, 0, wxALL, 5 );
+	
+	m_textCtrlSourceDir = new wxTextCtrl( m_wizPage01, wxID_SourceDir, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0|wxDOUBLE_BORDER );
+	m_textCtrlSourceDir->SetMinSize( wxSize( 350,-1 ) );
+	
+	bSizer10->Add( m_textCtrlSourceDir, 0, wxALL, 5 );
+	
+	m_staticTextInputDirHint = new wxStaticText( m_wizPage01, wxID_InputDirHint, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), 0 );
+	m_staticTextInputDirHint->Wrap( -1 );
+	m_staticTextInputDirHint->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
+	
+	bSizer10->Add( m_staticTextInputDirHint, 0, wxALL, 5 );
+	
+	m_buttonOpenSourceDir = new wxButton( m_wizPage01, wxID_OpenSourceDir, _("浏览"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer10->Add( m_buttonOpenSourceDir, 0, wxALL, 5 );
+	
+	
+	m_wizPage01->SetSizer( bSizer10 );
+	m_wizPage01->Layout();
+	bSizer10->Fit( m_wizPage01 );
+	wxWizardPageSimple* m_wizPage02 = new wxWizardPageSimple( this );
+	m_pages.Add( m_wizPage02 );
+	
+	m_wizPage02->SetMinSize( wxSize( 600,400 ) );
+	
+	wxBoxSizer* bSizer101;
+	bSizer101 = new wxBoxSizer( wxVERTICAL );
+	
+	bSizer101->SetMinSize( wxSize( 600,400 ) ); 
+	m_staticText31 = new wxStaticText( m_wizPage02, wxID_ANY, _("GPS记录文件路径"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText31->Wrap( -1 );
+	bSizer101->Add( m_staticText31, 0, wxALL, 5 );
+	
+	m_textCtrlGPSFile = new wxTextCtrl( m_wizPage02, wxID_GPSFile, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0|wxDOUBLE_BORDER );
+	m_textCtrlGPSFile->SetMinSize( wxSize( 350,-1 ) );
+	
+	bSizer101->Add( m_textCtrlGPSFile, 0, wxALL, 5 );
+	
+	m_staticTextGPSHint = new wxStaticText( m_wizPage02, wxID_GPSHint, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextGPSHint->Wrap( -1 );
+	bSizer101->Add( m_staticTextGPSHint, 0, wxALL, 5 );
+	
+	m_buttonOpenGPSFile = new wxButton( m_wizPage02, wxID_OpenGPSFile, _("浏览"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer101->Add( m_buttonOpenGPSFile, 0, wxALL, 5 );
+	
+	
+	m_wizPage02->SetSizer( bSizer101 );
+	m_wizPage02->Layout();
+	bSizer101->Fit( m_wizPage02 );
+	wxWizardPageSimple* m_wizPage03 = new wxWizardPageSimple( this );
+	m_pages.Add( m_wizPage03 );
+	
+	m_wizPage03->SetMinSize( wxSize( 600,400 ) );
+	
+	wxBoxSizer* bSizer102;
+	bSizer102 = new wxBoxSizer( wxVERTICAL );
+	
+	bSizer102->SetMinSize( wxSize( 600,400 ) ); 
+	m_staticText32 = new wxStaticText( m_wizPage03, wxID_ANY, _("目标文件名"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText32->Wrap( -1 );
+	bSizer102->Add( m_staticText32, 0, wxALL, 5 );
+	
+	m_textCtrlOutputDir = new wxTextCtrl( m_wizPage03, wxID_OutputDir, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0|wxDOUBLE_BORDER );
+	m_textCtrlOutputDir->SetMinSize( wxSize( 350,-1 ) );
+	
+	bSizer102->Add( m_textCtrlOutputDir, 0, wxALL, 5 );
+	
+	m_staticTextOutputDirHint = new wxStaticText( m_wizPage03, wxID_OutputDirHint, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextOutputDirHint->Wrap( -1 );
+	bSizer102->Add( m_staticTextOutputDirHint, 0, wxALL, 5 );
+	
+	m_buttonOpenOutputDir = new wxButton( m_wizPage03, wxID_OpenOutputDir, _("浏览"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer102->Add( m_buttonOpenOutputDir, 0, wxALL, 5 );
+	
+	
+	m_wizPage03->SetSizer( bSizer102 );
+	m_wizPage03->Layout();
+	bSizer102->Fit( m_wizPage03 );
+	
+	this->Centre( wxBOTH );
+	
+	for ( unsigned int i = 1; i < m_pages.GetCount(); i++ )
+	{
+		m_pages.Item( i )->SetPrev( m_pages.Item( i - 1 ) );
+		m_pages.Item( i - 1 )->SetNext( m_pages.Item( i ) );
+	}
+}
+
+NewProjectWizard::~NewProjectWizard()
+{
+	m_pages.Clear();
 }

@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Jun  5 2014)
 // http://www.wxformbuilder.org/
 //
@@ -32,6 +32,11 @@
 #include <wx/toolbar.h>
 #include <wx/statusbr.h>
 #include <wx/frame.h>
+#include <wx/stattext.h>
+#include <wx/button.h>
+#include <wx/wizard.h>
+#include <wx/dynarray.h>
+WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -42,6 +47,20 @@
 #define wxID_ListBoxPicList 1004
 #define wxID_NoteBookProgressOut 1005
 #define wxID_TimerProcess 1006
+#define wxID_NEW_PROJECT_TOOL 1007
+#define wxID_NewProjectWizard 1008
+#define wxID_WizardPage01 1009
+#define wxID_SourceDir 1010
+#define wxID_InputDirHint 1011
+#define wxID_OpenSourceDir 1012
+#define wxID_WizardPage02 1013
+#define wxID_GPSFile 1014
+#define wxID_GPSHint 1015
+#define wxID_OpenGPSFile 1016
+#define wxID_WizardPage03 1017
+#define wxID_OutputDir 1018
+#define wxID_OutputDirHint 1019
+#define wxID_OpenOutputDir 1020
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -73,7 +92,7 @@ class MainFrame : public wxFrame
 		wxGauge* m_gauge3;
 		wxTimer m_timerprocess;
 		wxToolBar* m_toolBar1;
-		wxToolBarToolBase* m_tool1; 
+		wxToolBarToolBase* m_tool_new; 
 		wxToolBarToolBase* m_tool2; 
 		wxToolBarToolBase* m_tool5; 
 		wxToolBarToolBase* m_tool14; 
@@ -105,6 +124,35 @@ class MainFrame : public wxFrame
 			m_splitter3->SetSashPosition( 0 );
 			m_splitter3->Disconnect( wxEVT_IDLE, wxIdleEventHandler( MainFrame::m_splitter3OnIdle ), NULL, this );
 		}
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class NewProjectWizard
+///////////////////////////////////////////////////////////////////////////////
+class NewProjectWizard : public wxWizard 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText3;
+		wxTextCtrl* m_textCtrlSourceDir;
+		wxStaticText* m_staticTextInputDirHint;
+		wxButton* m_buttonOpenSourceDir;
+		wxStaticText* m_staticText31;
+		wxTextCtrl* m_textCtrlGPSFile;
+		wxStaticText* m_staticTextGPSHint;
+		wxButton* m_buttonOpenGPSFile;
+		wxStaticText* m_staticText32;
+		wxTextCtrl* m_textCtrlOutputDir;
+		wxStaticText* m_staticTextOutputDirHint;
+		wxButton* m_buttonOpenOutputDir;
+	
+	public:
+		
+		NewProjectWizard( wxWindow* parent, wxWindowID id = wxID_NewProjectWizard, const wxString& title = _("新建工程向导"), const wxBitmap& bitmap = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE );
+		WizardPages m_pages;
+		~NewProjectWizard();
 	
 };
 
