@@ -48,19 +48,20 @@ WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
 #define wxID_NoteBookProgressOut 1005
 #define wxID_TimerProcess 1006
 #define wxID_NEW_PROJECT_TOOL 1007
-#define wxID_NewProjectWizard 1008
-#define wxID_WizardPage01 1009
-#define wxID_SourceDir 1010
-#define wxID_InputDirHint 1011
-#define wxID_OpenSourceDir 1012
-#define wxID_WizardPage02 1013
-#define wxID_GPSFile 1014
-#define wxID_GPSHint 1015
-#define wxID_OpenGPSFile 1016
-#define wxID_WizardPage03 1017
-#define wxID_OutputFile 1018
-#define wxID_OutputFileHint 1019
-#define wxID_OpenOutputFile 1020
+#define wxID_toolShowTrack 1008
+#define wxID_NewProjectWizard 1009
+#define wxID_WizardPage01 1010
+#define wxID_SourceDir 1011
+#define wxID_InputDirHint 1012
+#define wxID_OpenSourceDir 1013
+#define wxID_WizardPage02 1014
+#define wxID_GPSFile 1015
+#define wxID_GPSHint 1016
+#define wxID_OpenGPSFile 1017
+#define wxID_WizardPage03 1018
+#define wxID_OutputFile 1019
+#define wxID_OutputFileHint 1020
+#define wxID_OpenOutputFile 1021
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -95,9 +96,7 @@ class MainFrame : public wxFrame
 		wxToolBarToolBase* m_tool_new; 
 		wxToolBarToolBase* m_tool2; 
 		wxToolBarToolBase* m_tool5; 
-		wxToolBarToolBase* m_tool14; 
-		wxToolBarToolBase* m_tool6; 
-		wxToolBarToolBase* m_tool7; 
+		wxToolBarToolBase* m_toolShowTrack; 
 		wxToolBarToolBase* m_tool8; 
 		wxToolBarToolBase* m_tool9; 
 		wxToolBarToolBase* m_tool10; 
@@ -109,7 +108,7 @@ class MainFrame : public wxFrame
 	public:
 		wxBoxSizer* bSizer7;
 		
-		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("ARLabStitcher"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 798,613 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("ARLabStitcher"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1150,613 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
 		~MainFrame();
 		

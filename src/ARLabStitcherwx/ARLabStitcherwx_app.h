@@ -18,7 +18,7 @@ class ARLabStitcherwxApp: public wxApp
 DECLARE_APP(ARLabStitcherwxApp)
 IMPLEMENT_APP(ARLabStitcherwxApp)
 
-	
+
 //	enum
 //{
 //    ID_Quit=1,
@@ -27,13 +27,14 @@ IMPLEMENT_APP(ARLabStitcherwxApp)
 
 
 
-BEGIN_EVENT_TABLE(ARLabStitcherwxMainFrame,MainFrame)
-	EVT_MENU(wxID_New,ARLabStitcherwxMainFrame::newProcessTool)
-	EVT_MENU(wxID_Process,ARLabStitcherwxMainFrame::processcmd)
-	EVT_LISTBOX(wxID_ListBoxPicList,ARLabStitcherwxMainFrame::ListBoxPicListClick )
-	EVT_TIMER(wxID_TimerProcess,ARLabStitcherwxMainFrame::count_time)
-	EVT_END_PROCESS(-1, ARLabStitcherwxMainFrame::end_process)
-	EVT_TOOL(wxID_NEW_PROJECT_TOOL,ARLabStitcherwxMainFrame::newProcessTool)
+BEGIN_EVENT_TABLE(ARLabStitcherwxMainFrame, MainFrame)
+EVT_MENU(wxID_New, ARLabStitcherwxMainFrame::newProcessTool)
+EVT_MENU(wxID_Process, ARLabStitcherwxMainFrame::processcmd)
+EVT_LISTBOX(wxID_ListBoxPicList, ARLabStitcherwxMainFrame::ListBoxPicListClick)
+EVT_TIMER(wxID_TimerProcess, ARLabStitcherwxMainFrame::count_time)
+EVT_END_PROCESS(-1, ARLabStitcherwxMainFrame::end_process)
+EVT_TOOL(wxID_NEW_PROJECT_TOOL, ARLabStitcherwxMainFrame::newProcessTool)
+EVT_TOOL(wxID_toolShowTrack, ARLabStitcherwxMainFrame::showTrack)
 END_EVENT_TABLE()
 
 

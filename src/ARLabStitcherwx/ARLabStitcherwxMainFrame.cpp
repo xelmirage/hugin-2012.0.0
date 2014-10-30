@@ -478,3 +478,16 @@ void ARLabStitcherwxMainFrame::process(void)
 	}
 
 }
+void ARLabStitcherwxMainFrame::showTrack(wxCommandEvent& WXUNUSED(event))
+{
+	Py_Initialize();
+
+	// 检查初始化是否成功
+	if (!Py_IsInitialized())
+	{
+		return;
+	}
+
+
+
+}
