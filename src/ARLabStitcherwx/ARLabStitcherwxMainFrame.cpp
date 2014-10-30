@@ -62,6 +62,16 @@ void ARLabStitcherwxMainFrame::newProcessTool(wxCommandEvent& WXUNUSED(event))
 {
 	::ARLabStitcherwxNewProjectWizard nw=new ::ARLabStitcherwxNewProjectWizard(this);
 	nw.RunWizard(nw.m_pages[0]);
+	sdir = nw.sdir;
+	gpsfileName = nw.gpsfileName;
+	outfileName = nw.outfileName;
+
+
+	wxPathList list;
+	::wxDir::GetAllFiles(sdir, &list, wxT("*.jpg"), wxDIR_FILES);
+
+	MainFrame::m_listBoxPicList->Clear();
+	MainFrame::m_listBoxPicList->InsertItems(list, 0);
 
 
 

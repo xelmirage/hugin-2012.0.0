@@ -49,7 +49,15 @@ void ARLabStitcherwxNewProjectWizard::ValidateInputDir(wxCommandEvent& WXUNUSED(
 	sdir = m_textCtrlSourceDir->GetValue();
 	
 	wxDir dir(sdir);
-	if (dir.IsOpened())
+
+	wxPathList list;
+	::wxDir::GetAllFiles(sdir, &list, wxT("*.jpg"), wxDIR_FILES);
+
+	
+
+
+
+	if (list.size()>0)
 	{
 		this->m_btnNext->Enable(true);
 		m_staticTextInputDirHint->SetForegroundColour(wxColor("BLACK"));
