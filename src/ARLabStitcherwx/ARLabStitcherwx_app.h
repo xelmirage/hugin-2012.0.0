@@ -40,7 +40,15 @@ END_EVENT_TABLE()
 
 BEGIN_EVENT_TABLE(ARLabStitcherwxNewProjectWizard, NewProjectWizard)
 	EVT_BUTTON(wxID_OpenSourceDir, ARLabStitcherwxNewProjectWizard::OpenSourceDir)
-	EVT_WIZARD_BEFORE_PAGE_CHANGED(wxID_NewProjectWizard, ARLabStitcherwxNewProjectWizard::DisableNextFirst)
+	EVT_BUTTON(wxID_OpenGPSFile, ARLabStitcherwxNewProjectWizard::OpenGPSFile)
+	EVT_BUTTON(wxID_OpenOutputFile, ARLabStitcherwxNewProjectWizard::OpenOutputFile)
+
 	EVT_TEXT(wxID_SourceDir, ARLabStitcherwxNewProjectWizard::ValidateInputDir)
+	EVT_TEXT(wxID_GPSFile, ARLabStitcherwxNewProjectWizard::ValidateGPSFile)
+	EVT_TEXT(wxID_OutputFile, ARLabStitcherwxNewProjectWizard::ValidateOutFile)
+
+
+	EVT_WIZARD_BEFORE_PAGE_CHANGED(wxID_NewProjectWizard, ARLabStitcherwxNewProjectWizard::DisableNextFirst)
+
 	
 END_EVENT_TABLE()

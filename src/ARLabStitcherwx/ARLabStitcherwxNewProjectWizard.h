@@ -25,11 +25,20 @@ class ARLabStitcherwxNewProjectWizard : public NewProjectWizard
 		ARLabStitcherwxNewProjectWizard( wxWindow* parent );
 	//// end generated class members
 		wxString sdir;
+		wxString gpsfileName;
+		wxString gpath;
+		wxString outfileName;
 private:
 	DECLARE_EVENT_TABLE()
 	void OpenSourceDir(wxCommandEvent& WXUNUSED(event));
+	void OpenGPSFile(wxCommandEvent& WXUNUSED(event));
+	void OpenOutputFile(wxCommandEvent& WXUNUSED(event));
+
 	void DisableNextFirst(wxWizardEvent& WXUNUSED(event));
+	
 	void ValidateInputDir(wxCommandEvent& WXUNUSED(event));
+	void ValidateGPSFile(wxCommandEvent& WXUNUSED(event));
+	void ValidateOutFile(wxCommandEvent& WXUNUSED(event));
 };
 
 #endif // __ARLabStitcherwxNewProjectWizard__

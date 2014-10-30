@@ -303,17 +303,17 @@ NewProjectWizard::NewProjectWizard( wxWindow* parent, wxWindowID id, const wxStr
 	m_staticText32->Wrap( -1 );
 	bSizer102->Add( m_staticText32, 0, wxALL, 5 );
 	
-	m_textCtrlOutputDir = new wxTextCtrl( m_wizPage03, wxID_OutputDir, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0|wxDOUBLE_BORDER );
-	m_textCtrlOutputDir->SetMinSize( wxSize( 350,-1 ) );
+	m_textCtrlOutputFile = new wxTextCtrl( m_wizPage03, wxID_OutputFile, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0|wxDOUBLE_BORDER );
+	m_textCtrlOutputFile->SetMinSize( wxSize( 350,-1 ) );
 	
-	bSizer102->Add( m_textCtrlOutputDir, 0, wxALL, 5 );
+	bSizer102->Add( m_textCtrlOutputFile, 0, wxALL, 5 );
 	
-	m_staticTextOutputDirHint = new wxStaticText( m_wizPage03, wxID_OutputDirHint, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticTextOutputDirHint->Wrap( -1 );
-	bSizer102->Add( m_staticTextOutputDirHint, 0, wxALL, 5 );
+	m_staticTextOutputFileHint = new wxStaticText( m_wizPage03, wxID_OutputFileHint, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticTextOutputFileHint->Wrap( -1 );
+	bSizer102->Add( m_staticTextOutputFileHint, 0, wxALL, 5 );
 	
-	m_buttonOpenOutputDir = new wxButton( m_wizPage03, wxID_OpenOutputDir, _("浏览"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer102->Add( m_buttonOpenOutputDir, 0, wxALL, 5 );
+	m_buttonOpenOutputFile = new wxButton( m_wizPage03, wxID_OpenOutputFile, _("浏览"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer102->Add( m_buttonOpenOutputFile, 0, wxALL, 5 );
 	
 	
 	m_wizPage03->SetSizer( bSizer102 );

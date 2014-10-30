@@ -58,9 +58,9 @@ WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
 #define wxID_GPSHint 1015
 #define wxID_OpenGPSFile 1016
 #define wxID_WizardPage03 1017
-#define wxID_OutputDir 1018
-#define wxID_OutputDirHint 1019
-#define wxID_OpenOutputDir 1020
+#define wxID_OutputFile 1018
+#define wxID_OutputFileHint 1019
+#define wxID_OpenOutputFile 1020
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -144,9 +144,9 @@ class NewProjectWizard : public wxWizard
 		wxStaticText* m_staticTextGPSHint;
 		wxButton* m_buttonOpenGPSFile;
 		wxStaticText* m_staticText32;
-		wxTextCtrl* m_textCtrlOutputDir;
-		wxStaticText* m_staticTextOutputDirHint;
-		wxButton* m_buttonOpenOutputDir;
+		wxTextCtrl* m_textCtrlOutputFile;
+		wxStaticText* m_staticTextOutputFileHint;
+		wxButton* m_buttonOpenOutputFile;
 	
 	public:
 		
