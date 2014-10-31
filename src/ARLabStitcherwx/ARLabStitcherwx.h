@@ -85,6 +85,8 @@ class MainFrame : public wxFrame
 		wxNotebook* m_notebook4;
 		wxPanel* m_panel71;
 		wxListBox* m_listBoxPicList;
+		wxPanel* m_panel8;
+		wxListBox* m_listBoxExif;
 		wxPanel* m_panel14;
 		wxStaticBitmap* m_bitmappreview;
 		wxPanel* m_panel5;

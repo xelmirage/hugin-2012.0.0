@@ -5,7 +5,7 @@ ARLabStitcherwxMainFrame::ARLabStitcherwxMainFrame( wxWindow* parent ,wxString D
 MainFrame( parent )
 {
 	time_count=0;
-	MyExecPanel * m_execPanel1l= new MyExecPanel(MainFrame::m_notebook4);
+	
 	m_execPanel= new MyExecPanel(MainFrame:: m_notebookProgressOut);
 	//m_execPanel->SetId(wxID_execPanel);
 	
@@ -16,7 +16,7 @@ MainFrame( parent )
 	MainFrame::m_notebookProgressOut->AddPage(m_execPanel,wxT("子步骤状态"));
 	//::wxMessageBox(m_execPanel->GetParent()->GetName());
 	MainFrame::m_notebook4->SetPageText(0,wxT("工程文件管理"));
-	MainFrame::m_notebook4->AddPage(m_execPanel1l,wxT("工程信息显示"));
+	MainFrame::m_notebook4->SetPageText(1, wxT("工程信息显示"));
 	
 	MainFrame::m_notebookProgressOut->
 	GetEventHandler()->
@@ -43,8 +43,8 @@ MainFrame( parent )
 	phasename[5]="工程检查";
 	phasename[6]="图像定向";
 
-	phasename[7]="GPS点位重采样";
-	phasename[8]="结果裁剪";
+	phasename[7]="结果裁剪";
+	phasename[8]="GPS点位重采样";
 	phasename[9]="图像融合";
 	phasename[10] = "结束";
 	sdir="f:\\kl\\part";
@@ -81,6 +81,10 @@ void ARLabStitcherwxMainFrame::newProcessTool(wxCommandEvent& WXUNUSED(event))
 
 	MainFrame::m_listBoxPicList->Clear();
 	MainFrame::m_listBoxPicList->InsertItems(list, 0);
+	wxArrayString exif;
+	wxExecute("exiftool " + list[0], exif);
+	m_listBoxExif->InsertItems(exif, 0);
+
 
 	m_toolShowTrack->Enable(true);
 	m_toolStart->Enable(true);
@@ -161,6 +165,12 @@ void ARLabStitcherwxMainFrame::ListBoxPicListClick(wxCommandEvent& e)
 	MainFrame::m_bitmappreview->ClearBackground();
 	MainFrame::m_bitmappreview->ResetConstraints();
 	MainFrame::m_bitmappreview->SetBitmap(preimg);
+
+
+
+	wxArrayString exif;
+	wxExecute("exiftool " + e.GetString(), exif);
+	m_listBoxExif->InsertItems(exif, 0);
 }
 void ARLabStitcherwxMainFrame::processcmd(wxCommandEvent& WXUNUSED(event))
 {
@@ -318,7 +328,7 @@ void ARLabStitcherwxMainFrame::process(void)
 		{
 			++phase;
 			
-			push_message("\n---------------\n["+run_time+"] skip generating project......\n---------------\n");
+			push_message("\n---------------\n["+run_time+"] 跳过生成工程......\n---------------\n");
 			//textEdit->setText(textEdit->toPlainText()+tr("\n skip generating pto......\n\n"));
 
 		}
@@ -423,32 +433,12 @@ void ARLabStitcherwxMainFrame::process(void)
 		}
 	
 	case 7:
-		MainFrame::m_gauge3->SetValue(80);
-
-		if(!gps_connect.FileExists())
-		{
-			cmd=ExeDir+"\\nona -f "+sdir+"\\stitch_cp_clean_linefind_op.pto -o "+this->outfileName;
-			if(execexternal(cmd,wxT("GPS重采样"))!=0)
-			{
-				return;
-			}
-
-			break;
-		}
-		else
-		{
-			++phase;
-			push_message("\n---------------\n["+run_time+"] GPS重采样......\n---------------\n");
-		}
-	
-	case 8:
-	
 		MainFrame::m_gauge3->SetValue(90);
 
-		if(!stitch_cp_clean_line_op_crop.FileExists())
+		if (!stitch_cp_clean_line_op_crop.FileExists())
 		{
-			cmd=ExeDir+"\\pano_modify --canvas=50% --crop=auto "+sdir+"\\stitch_cp_clean_linefind_op.pto -o "+sdir+"\\stitch_cp_clean_linefind_op_crop.pto";
-			if(execexternal(cmd,wxT("裁剪"))!=0)
+			cmd = ExeDir + "\\pano_modify --canvas=50% --crop=auto " + sdir + "\\stitch_cp_clean_linefind_op.pto -o " + sdir + "\\stitch_cp_clean_linefind_op_crop.pto";
+			if (execexternal(cmd, wxT("裁剪")) != 0)
 			{
 				return;
 			}
@@ -457,9 +447,29 @@ void ARLabStitcherwxMainFrame::process(void)
 		else
 		{
 			++phase;
-			push_message("\n---------------\n["+run_time+"] 跳过裁剪......\n---------------\n");
+			push_message("\n---------------\n[" + run_time + "] 跳过裁剪......\n---------------\n");
 		}
 		this->change_status();
+	
+	case 8:
+		MainFrame::m_gauge3->SetValue(80);
+
+		if (!gps_connect.FileExists())
+		{
+			cmd = ExeDir + "\\nona -f " + sdir + "\\stitch_cp_clean_linefind_op.pto -o " + this->outfileName;
+			if (execexternal(cmd, wxT("GPS重采样")) != 0)
+			{
+				return;
+			}
+
+			break;
+		}
+		else
+		{
+			++phase;
+			push_message("\n---------------\n[" + run_time + "] GPS重采样......\n---------------\n");
+		}
+		
 
 	case 9:
 		MainFrame::m_gauge3->SetValue(95);

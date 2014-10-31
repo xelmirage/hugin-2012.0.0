@@ -120,6 +120,18 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_panel71->Layout();
 	bSizer82->Fit( m_panel71 );
 	m_notebook4->AddPage( m_panel71, _("a page"), false );
+	m_panel8 = new wxPanel( m_notebook4, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer12;
+	bSizer12 = new wxBoxSizer( wxVERTICAL );
+	
+	m_listBoxExif = new wxListBox( m_panel8, wxID_ListBoxPicList, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE ); 
+	bSizer12->Add( m_listBoxExif, 0, wxALL|wxEXPAND|wxSHAPED, 5 );
+	
+	
+	m_panel8->SetSizer( bSizer12 );
+	m_panel8->Layout();
+	bSizer12->Fit( m_panel8 );
+	m_notebook4->AddPage( m_panel8, _("a page"), true );
 	
 	bSizer26->Add( m_notebook4, 1, wxEXPAND | wxALL, 5 );
 	
