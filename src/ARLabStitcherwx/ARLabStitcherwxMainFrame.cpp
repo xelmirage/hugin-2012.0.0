@@ -221,11 +221,8 @@ void ARLabStitcherwxMainFrame::change_status()
 	}
 	
 
-
+	if(phase>10) phase=10;
 	status+=phasename[phase]+"   "+boost::lexical_cast<string>(phase)+"/10    "+run_time;
-	
-	
-	
 	m_statusBar->SetStatusText(status);
 }
 void ARLabStitcherwxMainFrame::push_message(wxString message)
