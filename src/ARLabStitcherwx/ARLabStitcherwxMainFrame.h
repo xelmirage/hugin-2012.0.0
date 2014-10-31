@@ -57,7 +57,7 @@ private:
 	wxString ExeDir,run_time;
 	long time_count;
 	int phase;
-	std::string phasename[10];
+	std::string phasename[11];
 
 	
 	

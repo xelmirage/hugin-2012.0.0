@@ -46,9 +46,16 @@ MainFrame( parent )
 	phasename[7]="GPS点位重采样";
 	phasename[8]="结果裁剪";
 	phasename[9]="图像融合";
+	phasename[10] = "结束";
 	sdir="f:\\kl\\part";
 	gpsfileName="f:\\kl\\part\\02.txt";
 	
+
+
+	m_toolStart->Enable(false);
+	m_toolShowTrack->Enable(false);
+	m_tool2->Enable(false);
+	m_tool9->Enable(false);
 }
 void ARLabStitcherwxMainFrame::throw_to_parent(wxProcessEvent& e)
 {
@@ -75,7 +82,8 @@ void ARLabStitcherwxMainFrame::newProcessTool(wxCommandEvent& WXUNUSED(event))
 	MainFrame::m_listBoxPicList->Clear();
 	MainFrame::m_listBoxPicList->InsertItems(list, 0);
 
-
+	m_toolShowTrack->Enable(true);
+	m_toolStart->Enable(true);
 
 }
 void ARLabStitcherwxMainFrame::newProcess(wxCommandEvent& WXUNUSED(event))
@@ -212,7 +220,12 @@ void ARLabStitcherwxMainFrame::change_status()
 
 	}
 	
+
+
 	status+=phasename[phase]+"   "+boost::lexical_cast<string>(phase)+"/10    "+run_time;
+	
+	
+	
 	m_statusBar->SetStatusText(status);
 }
 void ARLabStitcherwxMainFrame::push_message(wxString message)
@@ -476,7 +489,7 @@ void ARLabStitcherwxMainFrame::process(void)
 		//::wxMessageBox(wxT("执行完成"));
 		this->change_status();
 		push_message(wxT("\n---------------\n["+run_time+"] 处理完成;-)\n---------------\n"));
-		
+		m_timerprocess.Stop();
 		MainFrame::m_timerprocess.Stop();
 	}
 
