@@ -130,8 +130,8 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	wxBoxSizer* bSizer27;
 	bSizer27 = new wxBoxSizer( wxVERTICAL );
 	
-	m_bitmappreview = new wxStaticBitmap( m_panel14, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer27->Add( m_bitmappreview, 1, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+	m_bitmappreview = new wxStaticBitmap( m_panel14, wxID_ANY, wxNullBitmap, wxPoint( 0,0 ), wxDefaultSize, 0 );
+	bSizer27->Add( m_bitmappreview, 1, wxALIGN_LEFT|wxALIGN_TOP|wxALL, 5 );
 	
 	
 	m_panel14->SetSizer( bSizer27 );
@@ -190,21 +190,13 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	m_tool2 = m_toolBar1->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/save.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
-	m_tool5 = m_toolBar1->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/start1.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
+	m_toolStart = m_toolBar1->AddTool( wxID_ToolStart, _("tool"), wxBitmap( wxT("images/start1.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
 	m_toolShowTrack = m_toolBar1->AddTool( wxID_toolShowTrack, _("tool"), wxBitmap( wxT("images/airportsxia.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
-	
-	m_tool8 = m_toolBar1->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/doreconstruction.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
 	m_tool9 = m_toolBar1->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/Dotriangulation .bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
 	m_tool10 = m_toolBar1->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/stereoimage.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
-	
-	m_tool11 = m_toolBar1->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/rectifyimg.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
-	
-	m_tool12 = m_toolBar1->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/triangle.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
-	
-	m_tool13 = m_toolBar1->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/ruler.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
 	m_toolBar1->AddSeparator(); 
 	

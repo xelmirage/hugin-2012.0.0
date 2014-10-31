@@ -29,7 +29,7 @@ IMPLEMENT_APP(ARLabStitcherwxApp)
 
 BEGIN_EVENT_TABLE(ARLabStitcherwxMainFrame, MainFrame)
 EVT_MENU(wxID_New, ARLabStitcherwxMainFrame::newProcessTool)
-EVT_MENU(wxID_Process, ARLabStitcherwxMainFrame::processcmd)
+EVT_TOOL(wxID_ToolStart, ARLabStitcherwxMainFrame::processcmd)
 EVT_LISTBOX(wxID_ListBoxPicList, ARLabStitcherwxMainFrame::ListBoxPicListClick)
 EVT_TIMER(wxID_TimerProcess, ARLabStitcherwxMainFrame::count_time)
 EVT_END_PROCESS(-1, ARLabStitcherwxMainFrame::end_process)

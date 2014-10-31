@@ -48,20 +48,21 @@ WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
 #define wxID_NoteBookProgressOut 1005
 #define wxID_TimerProcess 1006
 #define wxID_NEW_PROJECT_TOOL 1007
-#define wxID_toolShowTrack 1008
-#define wxID_NewProjectWizard 1009
-#define wxID_WizardPage01 1010
-#define wxID_SourceDir 1011
-#define wxID_InputDirHint 1012
-#define wxID_OpenSourceDir 1013
-#define wxID_WizardPage02 1014
-#define wxID_GPSFile 1015
-#define wxID_GPSHint 1016
-#define wxID_OpenGPSFile 1017
-#define wxID_WizardPage03 1018
-#define wxID_OutputFile 1019
-#define wxID_OutputFileHint 1020
-#define wxID_OpenOutputFile 1021
+#define wxID_ToolStart 1008
+#define wxID_toolShowTrack 1009
+#define wxID_NewProjectWizard 1010
+#define wxID_WizardPage01 1011
+#define wxID_SourceDir 1012
+#define wxID_InputDirHint 1013
+#define wxID_OpenSourceDir 1014
+#define wxID_WizardPage02 1015
+#define wxID_GPSFile 1016
+#define wxID_GPSHint 1017
+#define wxID_OpenGPSFile 1018
+#define wxID_WizardPage03 1019
+#define wxID_OutputFile 1020
+#define wxID_OutputFileHint 1021
+#define wxID_OpenOutputFile 1022
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -95,20 +96,16 @@ class MainFrame : public wxFrame
 		wxToolBar* m_toolBar1;
 		wxToolBarToolBase* m_tool_new; 
 		wxToolBarToolBase* m_tool2; 
-		wxToolBarToolBase* m_tool5; 
+		wxToolBarToolBase* m_toolStart; 
 		wxToolBarToolBase* m_toolShowTrack; 
-		wxToolBarToolBase* m_tool8; 
 		wxToolBarToolBase* m_tool9; 
 		wxToolBarToolBase* m_tool10; 
-		wxToolBarToolBase* m_tool11; 
-		wxToolBarToolBase* m_tool12; 
-		wxToolBarToolBase* m_tool13; 
 		wxStatusBar* m_statusBar;
 	
 	public:
 		wxBoxSizer* bSizer7;
 		
-		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("ARLabStitcher"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1150,613 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("ARLabStitcher"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 798,613 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
 		~MainFrame();
 		

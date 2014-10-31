@@ -26,7 +26,6 @@ class ARLabStitcherwxNewProjectWizard : public NewProjectWizard
 	//// end generated class members
 		wxString sdir;
 		wxString gpsfileName;
-		wxString gpath;
 		wxString outfileName;
 private:
 	DECLARE_EVENT_TABLE()

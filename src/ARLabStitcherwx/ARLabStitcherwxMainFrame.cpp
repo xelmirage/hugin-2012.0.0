@@ -17,7 +17,9 @@ MainFrame( parent )
 	//::wxMessageBox(m_execPanel->GetParent()->GetName());
 	MainFrame::m_notebook4->SetPageText(0,wxT("工程文件管理"));
 	MainFrame::m_notebook4->AddPage(m_execPanel1l,wxT("工程信息显示"));
-		GetEventHandler()->
+	
+	MainFrame::m_notebookProgressOut->
+	GetEventHandler()->
 		Bind(wxEVT_END_PROCESS,&ARLabStitcherwxMainFrame::throw_to_parent,this);
 
 	MainFrame::m_panel5->
@@ -154,7 +156,7 @@ void ARLabStitcherwxMainFrame::ListBoxPicListClick(wxCommandEvent& e)
 }
 void ARLabStitcherwxMainFrame::processcmd(wxCommandEvent& WXUNUSED(event))
 {
-	MainFrame::m_timerprocess.Start(1000);
+	//MainFrame::m_timerprocess.Start(1000);
 	::Sleep(1200);
 	phase=-1;
 
@@ -168,19 +170,17 @@ void ARLabStitcherwxMainFrame::count_time(::wxTimerEvent& e)
 	
 	//time_now=t.GetTicks();
 	//time_count=static_cast<long>(time_now-time_start);
-	++time_count;
-	int day,hour,minute,second;
-	day=time_count/24/3600;
-	hour=(time_count/3600)%24;
-	minute=(time_count/60)%60;
-	second=time_count%60;
-
+	
+	wxDateTime now = wxDateTime::Now();
+	wxTimeSpan runtime = now - t;
+	
+	
 	run_time.clear();
 	
-	run_time+=wxString::Format(wxT("%d"),day)+wxT(" 天 ");
-	run_time+=wxString::Format(wxT("%d"),hour)+wxT(" 小时 ");
-	run_time+=wxString::Format(wxT("%d"),minute)+wxT(" 分 ");
-	run_time+=wxString::Format(wxT("%d"),second)+wxT(" 秒 ");
+	run_time+=wxString::Format(wxT("%d"),runtime.GetDays())+wxT(" 天 ");
+	run_time+=wxString::Format(wxT("%d"),runtime.GetHours()%24)+wxT(" 小时 ");
+	run_time+=wxString::Format(wxT("%d"),runtime.GetMinutes()%60)+wxT(" 分 ");
+	run_time += (runtime.GetSeconds()%60).ToString() + wxT(" 秒 ");
 
 	this->change_status();
 
@@ -224,6 +224,7 @@ void ARLabStitcherwxMainFrame::push_message(wxString message)
 }
 int ARLabStitcherwxMainFrame::execexternal(wxString command,wxString message)
 {
+
 	push_message("\n---------------\n["+run_time+"] 开始 "+message+"\n---------------\n");
 	if (m_execPanel->ExecWithRedirect(command) == -1) 
 	{
@@ -265,7 +266,9 @@ void ARLabStitcherwxMainFrame::process(void)
 		MainFrame::m_textCtrlProgress->Clear();
 		this->m_execPanel->ClearText();
 		time_count=0;
-		time_start=t.GetTicks();
+		t = wxDateTime::Now();
+		
+		this->m_timerprocess.Start(1000);
 		if(!beltlog.FileExists())
 		{
 			cmd=ExeDir+wxT("\\gpsfilter -o ")+sdir+wxT("\\belts.log -g ")+gpsfileName+wxT(" -s ")+sdir;
@@ -480,14 +483,13 @@ void ARLabStitcherwxMainFrame::process(void)
 }
 void ARLabStitcherwxMainFrame::showTrack(wxCommandEvent& WXUNUSED(event))
 {
-	Py_Initialize();
-
-	// 检查初始化是否成功
-	if (!Py_IsInitialized())
-	{
-		return;
-	}
-
-
+	wxString strAppPath;
+	wxStandardPathsBase& stdp = wxStandardPaths::Get();
+	wxFileName exeFile(stdp.GetExecutablePath());
+	strAppPath = exeFile.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
+	strAppPath += "python\\python.exe track.py -i "+this->gpsfileName;
+	wxArrayString output;
+	wxExecute(strAppPath, output);
+	
 
 }

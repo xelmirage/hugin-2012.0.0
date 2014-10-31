@@ -702,11 +702,11 @@ int main(int argc,char* argv[])
 	}
 
 	while (data.good()) {
-
+	
 		std::getline(data, line);
 		//cout<<line<<endl;
 		SplitVec.clear();
-		
+		trim(line);
 		split(SplitVec, line, is_any_of(" "), token_compress_on);
 		//yawTemp=lexical_cast<double>(SplitVec[8]);
 		//cout<<yawTemp<<","<<endl;
@@ -781,7 +781,7 @@ int main(int argc,char* argv[])
 	//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).slope(*(i+1))"<<"    "<<"atan((*i).slope(*(i+1)))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
 	i=pointsL.begin()+1;
 
-	int inf=30;
+	int inf=5;
 
 	for(i=pointsL.begin()+1;i!=pointsL.end()-1;++i)
 	{
@@ -814,7 +814,7 @@ int main(int argc,char* argv[])
 
 	for (i=pointsL.begin();i<pointsL.end();++i)
 	{
-		if (( (*i).yawint==most1||(*i).yawint==(most2))&&(*i).dyaw<30)
+		if (( (*i).yawint==most1||(*i).yawint==(most2))&&(*i).dyaw<5)
 		{
 			(*i).selected=true;
 

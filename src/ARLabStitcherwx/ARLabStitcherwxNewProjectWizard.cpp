@@ -72,10 +72,10 @@ void ARLabStitcherwxNewProjectWizard::ValidateInputDir(wxCommandEvent& WXUNUSED(
 }
 void ARLabStitcherwxNewProjectWizard::ValidateGPSFile(wxCommandEvent& WXUNUSED(event))
 {
-	gpath = m_textCtrlGPSFile->GetValue();
+	gpsfileName = m_textCtrlGPSFile->GetValue();
 	
-	wxFile gfile(gpath);
-	if (gfile.Exists(gpath))
+	wxFile gfile(gpsfileName);
+	if (gfile.Exists(gpsfileName))
 	{
 		this->m_btnNext->Enable(true);
 		m_staticTextGPSHint->SetForegroundColour(wxColor("BLACK"));
