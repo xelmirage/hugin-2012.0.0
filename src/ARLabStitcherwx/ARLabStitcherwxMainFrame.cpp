@@ -447,7 +447,7 @@ void ARLabStitcherwxMainFrame::process(void)
 
 		if(!stitch_cp_clean_line_op_crop.FileExists())
 		{
-			cmd=ExeDir+"\\pano_modify --crop=auto "+sdir+"\\stitch_cp_clean_linefind_op.pto -o "+sdir+"\\stitch_cp_clean_linefind_op_crop.pto";
+			cmd=ExeDir+"\\pano_modify --canvas=50% --crop=auto "+sdir+"\\stitch_cp_clean_linefind_op.pto -o "+sdir+"\\stitch_cp_clean_linefind_op_crop.pto";
 			if(execexternal(cmd,wxT("²Ã¼ô"))!=0)
 			{
 				return;
