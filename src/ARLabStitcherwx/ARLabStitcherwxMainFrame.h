@@ -38,7 +38,7 @@ public:
 
 	void newProcessTool(wxCommandEvent& WXUNUSED(event));
 	void showTrack(wxCommandEvent& WXUNUSED(event));
-
+	void showKML(wxCommandEvent& WXUNUSED(event));
 	void push_message(wxString message);
 	int execexternal(wxString command,wxString tickmessage);
 	

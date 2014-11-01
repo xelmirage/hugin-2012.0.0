@@ -54,7 +54,7 @@ MainFrame( parent )
 
 	m_toolStart->Enable(false);
 	m_toolShowTrack->Enable(false);
-	m_tool2->Enable(false);
+	m_toolShowKML->Enable(false);
 	m_tool9->Enable(false);
 }
 void ARLabStitcherwxMainFrame::throw_to_parent(wxProcessEvent& e)
@@ -498,8 +498,17 @@ void ARLabStitcherwxMainFrame::process(void)
 		push_message(wxT("\n---------------\n["+run_time+"] 处理完成;-)\n---------------\n"));
 		m_timerprocess.Stop();
 		MainFrame::m_timerprocess.Stop();
+		m_toolShowKML->Enable(true);
 	}
 
+}
+void ARLabStitcherwxMainFrame::showKML(wxCommandEvent& WXUNUSED(event))
+{
+	wxString kmlPath;
+	wxFileName fname(outfileName);
+	fname.SetExt("kml");
+	wxArrayString list;
+	wxExecute(fname.GetFullPath(),list);
 }
 void ARLabStitcherwxMainFrame::showTrack(wxCommandEvent& WXUNUSED(event))
 {

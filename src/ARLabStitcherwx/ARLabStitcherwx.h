@@ -50,19 +50,20 @@ WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
 #define wxID_NEW_PROJECT_TOOL 1007
 #define wxID_ToolStart 1008
 #define wxID_toolShowTrack 1009
-#define wxID_NewProjectWizard 1010
-#define wxID_WizardPage01 1011
-#define wxID_SourceDir 1012
-#define wxID_InputDirHint 1013
-#define wxID_OpenSourceDir 1014
-#define wxID_WizardPage02 1015
-#define wxID_GPSFile 1016
-#define wxID_GPSHint 1017
-#define wxID_OpenGPSFile 1018
-#define wxID_WizardPage03 1019
-#define wxID_OutputFile 1020
-#define wxID_OutputFileHint 1021
-#define wxID_OpenOutputFile 1022
+#define wxID_ShowKML 1010
+#define wxID_NewProjectWizard 1011
+#define wxID_WizardPage01 1012
+#define wxID_SourceDir 1013
+#define wxID_InputDirHint 1014
+#define wxID_OpenSourceDir 1015
+#define wxID_WizardPage02 1016
+#define wxID_GPSFile 1017
+#define wxID_GPSHint 1018
+#define wxID_OpenGPSFile 1019
+#define wxID_WizardPage03 1020
+#define wxID_OutputFile 1021
+#define wxID_OutputFileHint 1022
+#define wxID_OpenOutputFile 1023
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -101,7 +102,7 @@ class MainFrame : public wxFrame
 		wxToolBarToolBase* m_toolStart; 
 		wxToolBarToolBase* m_toolShowTrack; 
 		wxToolBarToolBase* m_tool9; 
-		wxToolBarToolBase* m_tool10; 
+		wxToolBarToolBase* m_toolShowKML; 
 		wxStatusBar* m_statusBar;
 	
 	public:
