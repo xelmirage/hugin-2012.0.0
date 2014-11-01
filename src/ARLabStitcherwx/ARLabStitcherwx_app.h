@@ -35,7 +35,7 @@ EVT_TIMER(wxID_TimerProcess, ARLabStitcherwxMainFrame::count_time)
 EVT_END_PROCESS(-1, ARLabStitcherwxMainFrame::end_process)
 EVT_TOOL(wxID_NEW_PROJECT_TOOL, ARLabStitcherwxMainFrame::newProcessTool)
 EVT_TOOL(wxID_toolShowTrack, ARLabStitcherwxMainFrame::showTrack)
-VT_TOOL(wxID_toolShowKML, ARLabStitcherwxMainFrame::showTrack)
+EVT_TOOL(wxID_ShowKML, ARLabStitcherwxMainFrame::showTrack)
 END_EVENT_TABLE()
 
 
