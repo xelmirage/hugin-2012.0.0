@@ -754,31 +754,57 @@ bool PanoramaMakefilelibExport::createItems()
         mgr.own_add(new Comment("Rules for ordinary TIFF_m and hdr output"));
         UIntSet::const_iterator it = images.begin();
         size_t i=0;
-        for(; it != images.end(); it++, i++)
-        {
-            std::string source = Makefile::quote(pano.getImage(*it).getFilename(), Makefile::MAKE);
-            std::ostringstream imgnr;
-            imgnr << *it;
+        //for(; it != images.end(); it++, i++)
+        //{
+        //    std::string source = Makefile::quote(pano.getImage(*it).getFilename(), Makefile::MAKE);
+        //    std::ostringstream imgnr;
+        //    imgnr << *it;
 
-            // ldr part
-            Rule* ruleldr = mgr.own(new Rule()); ruleldr->add();
-            ruleldr->addTarget(Makefile::quote(remappedImages[i], Makefile::MAKE));
-            ruleldr->addPrereq(source);
-            ruleldr->addPrereq(vprojectfile);
-            ruleldr->addCommand(
-                    vnona->getRef() +" "+ vnonaopts->getRef() +" "+ vnonaldr->getRef()
-                    + " -r ldr -m " + ldrRemappedMode + " -o " + vldrremappedprefixshell->getRef() +
-                    " -i " + imgnr.str() +" "+ vprojectfileshell->getRef());
+        //    // ldr part
+        //    Rule* ruleldr = mgr.own(new Rule()); ruleldr->add();
+        //    ruleldr->addTarget(Makefile::quote(remappedImages[i], Makefile::MAKE));
+        //    ruleldr->addPrereq(source);
+        //    ruleldr->addPrereq(vprojectfile);
+        //    ruleldr->addCommand(
+        //            vnona->getRef() +" "+ vnonaopts->getRef() +" "+ vnonaldr->getRef()
+        //            + " -r ldr -m " + ldrRemappedMode + " -o " + vldrremappedprefixshell->getRef() +
+        //            " -i " + imgnr.str() +" "+ vprojectfileshell->getRef());
 
-            // hdr part
-            Rule* rulehdr = mgr.own(new Rule()); rulehdr->add();
-            rulehdr->addTarget(Makefile::quote(remappedHDRImages[i], Makefile::MAKE));
-            rulehdr->addPrereq(source);
-            rulehdr->addPrereq(vprojectfile);
-            rulehdr->addCommand(
-                    vnona->getRef() +" "+ vnonaopts->getRef() +" -r hdr -m " + hdrRemappedMode + " -o " +
-                    vhdrstackremappedprefixshell->getRef() + " -i " + imgnr.str() +" "+ vprojectfileshell->getRef());
-        }
+        //    // hdr part
+        //    Rule* rulehdr = mgr.own(new Rule()); rulehdr->add();
+        //    rulehdr->addTarget(Makefile::quote(remappedHDRImages[i], Makefile::MAKE));
+        //    rulehdr->addPrereq(source);
+        //    rulehdr->addPrereq(vprojectfile);
+        //    rulehdr->addCommand(
+        //            vnona->getRef() +" "+ vnonaopts->getRef() +" -r hdr -m " + hdrRemappedMode + " -o " +
+        //            vhdrstackremappedprefixshell->getRef() + " -i " + imgnr.str() +" "+ vprojectfileshell->getRef());
+		//}
+
+		//--------------------modify
+		std::string source = Makefile::quote(pano.getImage(*it).getFilename(), Makefile::MAKE);
+		std::ostringstream imgnr;
+		imgnr << *it;
+
+		// ldr part
+		Rule* ruleldr = mgr.own(new Rule()); ruleldr->add();
+		ruleldr->addTarget(Makefile::quote(remappedImages[i], Makefile::MAKE));
+		ruleldr->addPrereq(source);
+		ruleldr->addPrereq(vprojectfile);
+		ruleldr->addCommand(
+			vnona->getRef() + " " + vnonaopts->getRef() + " " + vnonaldr->getRef()
+			+ " -r ldr -m " + ldrRemappedMode + " -o " + vldrremappedprefixshell->getRef() +
+			 " " + vprojectfileshell->getRef());
+
+		// hdr part
+		Rule* rulehdr = mgr.own(new Rule()); rulehdr->add();
+		rulehdr->addTarget(Makefile::quote(remappedHDRImages[i], Makefile::MAKE));
+		rulehdr->addPrereq(source);
+		rulehdr->addPrereq(vprojectfile);
+		rulehdr->addCommand(
+			vnona->getRef() + " " + vnonaopts->getRef() + " -r hdr -m " + hdrRemappedMode + " -o " +
+			vhdrstackremappedprefixshell->getRef() + " " + vprojectfileshell->getRef());
+		//--------------------end of modify
+
 
         mgr.own_add(new Comment("Rules for exposure layer output"));
 

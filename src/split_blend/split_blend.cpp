@@ -281,7 +281,7 @@ bool split_blend_App::OnInit()
 	MainFrame *frame;
 	frame = new MainFrame(NULL, wxT("SplitBlender"), wxDefaultPosition, wxSize(640,600) );
 	frame->superOverlay=superOverlay;
-	frame->Show( true );
+	//frame->Show( true );
 	frame->SetTitle("SplitBlender");
 	frame->SetOverwrite(parser.Found(wxT("w")));
 	frame->SetSize(wxSize(640,640));
@@ -782,7 +782,7 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 		//::wxMessageBox(*it+"\n"+*it_out,"output");
 		frame = new SplitBlendFrame(NULL, wxT("SplitBlender"), wxDefaultPosition, wxSize(640,600) );
 		stitchFrames.push_back(frame);
-		frame->Show( true );
+		//frame->Show( true );
 //		SetTopWindow( frame );
 		frame->SetTitle(wxString::Format(_("%s - Stitching"), (*it)));
 		frame->SetOverwrite(true);

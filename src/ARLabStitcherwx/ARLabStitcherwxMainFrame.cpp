@@ -55,7 +55,7 @@ MainFrame( parent )
 	m_toolStart->Enable(false);
 	m_toolShowTrack->Enable(false);
 	m_toolShowKML->Enable(false);
-	m_tool9->Enable(false);
+	
 }
 void ARLabStitcherwxMainFrame::throw_to_parent(wxProcessEvent& e)
 {
@@ -521,4 +521,16 @@ void ARLabStitcherwxMainFrame::showTrack(wxCommandEvent& WXUNUSED(event))
 	wxExecute(strAppPath, output);
 	
 
+}
+int ARLabStitcherwxMainFrame::stitch(wxString inputFileName, wxString outFileName)
+{
+
+	return 0;
+}
+
+void ARLabStitcherwxMainFrame::generateSuperOverlay(wxCommandEvent& WXUNUSED(event))
+{
+	SuperOverlay ovl =SuperOverlay("f:/ge/20141111debug.tif", "f:/ge/20141111debug.kml", "f:/ge/superoverlay");
+	ovl.build();
+	
 }

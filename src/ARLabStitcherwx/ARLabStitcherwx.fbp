@@ -2008,10 +2008,10 @@
                 <object class="tool" expanded="0">
                     <property name="bitmap">Load From File; images/Dotriangulation .bmp</property>
                     <property name="context_menu">0</property>
-                    <property name="id">wxID_ANY</property>
+                    <property name="id">wxID_SuperOverLay</property>
                     <property name="kind">wxITEM_NORMAL</property>
                     <property name="label">tool</property>
-                    <property name="name">m_tool9</property>
+                    <property name="name">m_toolSuperOverLay</property>
                     <property name="permission">protected</property>
                     <property name="statusbar"></property>
                     <property name="tooltip"></property>

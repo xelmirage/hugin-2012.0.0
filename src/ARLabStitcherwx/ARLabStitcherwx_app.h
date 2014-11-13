@@ -28,14 +28,15 @@ IMPLEMENT_APP(ARLabStitcherwxApp)
 
 
 BEGIN_EVENT_TABLE(ARLabStitcherwxMainFrame, MainFrame)
-EVT_MENU(wxID_New, ARLabStitcherwxMainFrame::newProcessTool)
-EVT_TOOL(wxID_ToolStart, ARLabStitcherwxMainFrame::processcmd)
-EVT_LISTBOX(wxID_ListBoxPicList, ARLabStitcherwxMainFrame::ListBoxPicListClick)
-EVT_TIMER(wxID_TimerProcess, ARLabStitcherwxMainFrame::count_time)
-EVT_END_PROCESS(-1, ARLabStitcherwxMainFrame::end_process)
-EVT_TOOL(wxID_NEW_PROJECT_TOOL, ARLabStitcherwxMainFrame::newProcessTool)
-EVT_TOOL(wxID_toolShowTrack, ARLabStitcherwxMainFrame::showTrack)
-EVT_TOOL(wxID_ShowKML, ARLabStitcherwxMainFrame::showTrack)
+	EVT_MENU(wxID_New, ARLabStitcherwxMainFrame::newProcessTool)
+	EVT_TOOL(wxID_ToolStart, ARLabStitcherwxMainFrame::processcmd)
+	EVT_LISTBOX(wxID_ListBoxPicList, ARLabStitcherwxMainFrame::ListBoxPicListClick)
+	EVT_TIMER(wxID_TimerProcess, ARLabStitcherwxMainFrame::count_time)
+	EVT_END_PROCESS(-1, ARLabStitcherwxMainFrame::end_process)
+	EVT_TOOL(wxID_NEW_PROJECT_TOOL, ARLabStitcherwxMainFrame::newProcessTool)
+	EVT_TOOL(wxID_toolShowTrack, ARLabStitcherwxMainFrame::showTrack)
+	EVT_TOOL(wxID_ShowKML, ARLabStitcherwxMainFrame::showTrack)
+	EVT_TOOL(wxID_SuperOverLay, ARLabStitcherwxMainFrame::generateSuperOverlay)
 END_EVENT_TABLE()
 
 
