@@ -10,7 +10,6 @@
 #include<wx/xml/xml.h>
 #include <wx/gdicmn.h>
 #include<boost/lexical_cast.hpp>
-
 #include<algorithm>
 using namespace std;
 
@@ -21,6 +20,17 @@ struct pointll
 };
 class pyramidNode
 {
+private:
+
+public:
+	int maxLod, minLod;
+	double north, south, west,east;
+	wxFileName image,kml;
+	vector<pyramidNode> networkNodes;
+	
+
+	bool readKml(wxString kmlfile);
+	bool writeKml();
 
 };
 
