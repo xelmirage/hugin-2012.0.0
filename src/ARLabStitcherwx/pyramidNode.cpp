@@ -49,4 +49,5 @@ bool pyramidNode::writeKml()
 	icon.AddChild(&href);
 
 
+
 }

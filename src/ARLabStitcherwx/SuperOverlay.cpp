@@ -158,8 +158,8 @@ bool SuperOverlay::readKml(wxString kmlFileName)
 									int64_t x, y;
 									try
 									{
-										x = boost::lexical_cast<double>(lls[0])*llFactor;
-										y = boost::lexical_cast<double>(lls[1])*llFactor;
+										x = boost::lexical_cast<double>(lls[0])*LLFACTOR;
+										y = boost::lexical_cast<double>(lls[1])*LLFACTOR;
 										corners[i].latitude = y;
 										corners[i].longitude = x;
 									}

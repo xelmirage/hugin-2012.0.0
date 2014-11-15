@@ -11,12 +11,22 @@
 #include <wx/gdicmn.h>
 #include<boost/lexical_cast.hpp>
 #include<algorithm>
+#define LLFACTOR  1000000000000000
 using namespace std;
 
 
-struct pointll
+class pointll
 {
+public:
 	int64_t latitude, longitude;
+	double getLatitude()
+	{
+		return latitude / LLFACTOR;
+	}
+	double getLongitude()
+	{
+		return longitude / LLFACTOR;
+	}
 };
 class pyramidNode
 {
