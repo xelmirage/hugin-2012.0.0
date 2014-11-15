@@ -19,7 +19,10 @@ struct pointll
 {
 	int64_t latitude, longitude;
 };
+class pyramidNode
+{
 
+};
 
 
 class SuperOverlay
@@ -43,12 +46,12 @@ private:
 	|              /    \
 	|            /        \    aL
 	|          /            \
-	| theta/                \east
+	| theta  /                \east
 	|      /                  /
 	|    /                  /
 	|  /                  /
 	|/                  /     
-	|\ west        /   L
+	|\ west           /   L
 	|  \            /
 	|    \        /
 	|      \    /

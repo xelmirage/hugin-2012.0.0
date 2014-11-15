@@ -202,6 +202,8 @@ wxSize SuperOverlay::calc_split(wxSize imageSize, wxSize blockSize)
 
 bool SuperOverlay::writeKML(int pyNo, int i, int j, wxString blkName)
 {
-	wxXmlNode* root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("RunSite"));
+	wxXmlNode* root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("kml"));
+	root->AddAttribute("xmlns", "http://earth.google.com/kml/2.2");
+
 	return true;
 }
