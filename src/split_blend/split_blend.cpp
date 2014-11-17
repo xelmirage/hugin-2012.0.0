@@ -507,6 +507,8 @@ void MainFrame::calc_a_b(string filename)
 		ya1=answer[1];
 		ya2=answer[2];
 	}
+	free(_data);
+	free(answer);
 		
 }
 vigra::Size2D MainFrame::calc_split(vigra::Rect2D view,int num)
