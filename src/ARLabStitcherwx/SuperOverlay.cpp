@@ -68,6 +68,7 @@ bool SuperOverlay::build()
 	wxString blockName;
 
 	block.AddHandler(new wxTIFFHandler);
+	calc_reg(baseImage.GetWidth(), baseImage.GetHeight());
 
 	for (i = 0; i < blocks.GetWidth(); ++i)
 	{
@@ -93,6 +94,8 @@ bool SuperOverlay::build()
 			outBlockName.SetName(blockName);
 			outBlockName.SetExt("tif");
 			block.SaveFile(outBlockName.GetFullPath());
+
+			pyramidNode p;
 
 
 		
@@ -155,13 +158,13 @@ bool SuperOverlay::readKml(wxString kmlFileName)
 								{
 									arrayCoordinates[i].Trim();
 									wxArrayString lls = wxSplit(arrayCoordinates[i], ',');
-									int64_t x, y;
+									double x, y;
 									try
 									{
-										x = boost::lexical_cast<double>(lls[0])*LLFACTOR;
-										y = boost::lexical_cast<double>(lls[1])*LLFACTOR;
-										corners[i].latitude = y;
-										corners[i].longitude = x;
+										x = boost::lexical_cast<double>(lls[0]);
+										y = boost::lexical_cast<double>(lls[1]);
+										corners[i].setLatitude(y);
+										corners[i].setLongitude(x);
 									}
 									catch (boost::bad_lexical_cast& e)
 									{
@@ -206,4 +209,90 @@ bool SuperOverlay::writeKML(int pyNo, int i, int j, wxString blkName)
 	root->AddAttribute("xmlns", "http://earth.google.com/kml/2.2");
 
 	return true;
+}
+void SuperOverlay::calc_reg(int width,int height)
+{
+	int i;
+	vector<vector<double>> mat;
+	vector<double> row0;
+	vector<double> row1;
+	vector<double> row2;
+	vector<double> row3;
+	double x, y;
+	mat.clear();
+
+
+	x = 0;
+	y = 0;
+	row0.push_back(x);
+	row0.push_back(y);
+	row0.push_back(upperleft.getLongitude());
+	row0.push_back(upperleft.getLatitude());
+	mat.push_back(row0);
+
+	x = width;
+	y = 0;
+	row1.push_back(x);
+	row1.push_back(y);
+	row1.push_back(upperright.getLongitude());
+	row1.push_back(upperright.getLatitude());
+	mat.push_back(row1);
+
+	x = width;
+	y = height;
+	row2.push_back(x);
+	row2.push_back(y);
+	row2.push_back(lowerright.getLongitude());
+	row2.push_back(lowerright.getLatitude());
+	mat.push_back(row2);
+
+	x = 0;
+	y = height;
+	row3.push_back(x);
+	row3.push_back(y);
+	row3.push_back(lowerleft.getLongitude());
+	row3.push_back(lowerleft.getLatitude());
+	mat.push_back(row3);
+
+	double *_data;
+	_data = (double*)malloc(3 * mat.size()*sizeof(double));
+	double *answer = (double*)malloc(3 * (sizeof(double)));
+	double SquarePoor[4];
+
+	for (int i = 0; i<mat.size(); ++i)
+	{
+		*(_data + i * 3) = mat[i][0];
+		*(_data + i * 3 + 1) = mat[i][1];
+		*(_data + i * 3 + 2) = mat[i][2];
+
+	}
+	
+	if (MultipleRegression(_data, mat.size(), 3, answer, SquarePoor) == 0)
+	{
+		xb = answer[0];
+		xa1 = answer[1];
+		xa2 = answer[2];
+	}
+	else
+	{
+
+	}
+
+	for (int i = 0; i<mat.size(); ++i)
+	{
+		*(_data + i * 3) = mat[i][0];
+		*(_data + i * 3 + 1) = mat[i][1];
+		*(_data + i * 3 + 2) = mat[i][3];
+
+	}
+	if (MultipleRegression(_data, mat.size(), 3, answer, SquarePoor) == 0)
+	{
+		yb = answer[0];
+		ya1 = answer[1];
+		ya2 = answer[2];
+	}
+
+
+	free(_data);
+	free(answer);
 }

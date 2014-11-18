@@ -19,6 +19,19 @@ class pointll
 {
 public:
 	int64_t latitude, longitude;
+
+	double setLatitude(double l)
+	{
+		latitude = l*LLFACTOR;
+		return latitude ;
+	}
+	double setLongitude(double l)
+	{
+		longitude = l*LLFACTOR;
+		return longitude;
+	}
+
+
 	double getLatitude()
 	{
 		return latitude / LLFACTOR;
@@ -35,6 +48,8 @@ private:
 public:
 	int maxLod, minLod;
 	double north, south, west,east;
+	pointll upperleft, upperright, lowerright, lowerleft;
+	vector<pointll> corners;
 	wxFileName image,kml;
 	vector<pyramidNode> networkNodes;
 	
@@ -82,8 +97,12 @@ private:
 	pointll upperleft, upperright, lowerleft, lowerright;
 	pointll north, west, south, east;
 	vector<pointll> corners;
-	bool readKml(wxString kmlFileName);
 	wxSize blkSize;
+	double xa1, xa2, xb, ya1, ya2, yb;
+
+
+	bool readKml(wxString kmlFileName);
+	void calc_reg(int width, int height);
 public:
 	wxSize calc_split(wxSize imageSize, wxSize blockSize);
 	bool writeKML(int pyNo, int i, int j, wxString blkName);

@@ -3,7 +3,10 @@
 
 bool pyramidNode::readKml(wxString kmlfile)
 {
-	
+	corners.insert(corners.end(), lowerleft);
+	corners.insert(corners.end(), lowerright);
+	corners.insert(corners.end(), upperright);
+	corners.insert(corners.end(), upperleft);
 }
 bool pyramidNode::writeKml()
 {
