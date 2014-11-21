@@ -456,7 +456,7 @@ void ARLabStitcherwxMainFrame::process(void)
 
 		if (!gps_connect.FileExists())
 		{
-			cmd = ExeDir + "\\nona -f " + sdir + "\\stitch_cp_clean_linefind_op.pto -o " + this->outfileName;
+			cmd = ExeDir + "\\nona -f " + sdir + "\\stitch_cp_clean_linefind_op_crop.pto -o " + this->outfileName;
 			if (execexternal(cmd, wxT("GPSÖØ²ÉÑù")) != 0)
 			{
 				return;

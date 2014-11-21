@@ -103,14 +103,18 @@ bool SuperOverlay::build()
 	wxDir outdir(outPath);
 	int pyramidNo= 0;
 	wxSize lastBlocks;
-	while ((baseImage.GetWidth() >= blkSize.GetWidth())
-		&& (baseImage.GetHeight() >= blkSize.GetHeight()))
+	wxSize baseImgSize;
+	baseImgSize.x = baseImage.GetWidth();
+	baseImgSize.y = baseImage.GetHeight();
+	wxSize blocks = calc_split(baseImgSize, blkSize);
+
+	while ((blocks.GetWidth()>1) || (blocks.GetHeight()>1))
 	{
-		wxSize baseImgSize;
+		
 		baseImgSize.x = baseImage.GetWidth();
 		baseImgSize.y = baseImage.GetHeight();
 
-		wxSize blocks = calc_split(baseImgSize, blkSize);
+		blocks = calc_split(baseImgSize, blkSize);
 		wxImage block;
 		wxFileName outBlockName = wxFileName::DirName(outdir.GetName());
 		wxString blockName;
@@ -118,7 +122,7 @@ bool SuperOverlay::build()
 		block.AddHandler(new wxTIFFHandler);
 		calc_reg(baseImage.GetWidth(), baseImage.GetHeight());
 		vector<vector<pyramidNode>> col;
-		
+		pyramidNode pnode;
 		for (i = 0; i < blocks.GetWidth(); ++i)
 		{
 			vector<pyramidNode> row;
@@ -147,7 +151,7 @@ bool SuperOverlay::build()
 				outBlockName.SetExt("tif");
 				block.SaveFile(outBlockName.GetFullPath());
 
-				pyramidNode pnode;
+				
 				double cornerLon, cornerLat;
 
 				multiReg(p.x, p.y + actrualSize.GetHeight(), cornerLon, cornerLat);
@@ -179,20 +183,20 @@ bool SuperOverlay::build()
 				pnode.image = outBlockName;
 				pnode.kml = outBlockName;
 				pnode.kml.SetExt("kml");
-
+				pnode.networkNodes.clear();
 				if (pyramidNo != 0)
 				{
 					pnode.networkNodes.push_back(pyramid.back()[i * 2][j * 2]);
-					if (j * 2 <= lastBlocks.GetHeight())
+					if ((j * 2+1) < lastBlocks.GetHeight())
 					{
 						pnode.networkNodes.push_back(pyramid.back()[i * 2][j * 2+1]);
 						
 					}
-					if (i * 2 <= lastBlocks.GetWidth())
+					if ((i * 2+1) < lastBlocks.GetWidth())
 					{
 						pnode.networkNodes.push_back(pyramid.back()[i * 2 + 1][j * 2]);
 					}
-					if ((j * 2 <= lastBlocks.GetHeight()) && (i * 2 <= lastBlocks.GetWidth()))
+					if (((j * 2+1) < lastBlocks.GetHeight()) && ((i * 2+1) < lastBlocks.GetWidth()))
 					{
 						pnode.networkNodes.push_back(pyramid.back()[i * 2 + 1][j * 2+1]);
 					}
@@ -306,8 +310,8 @@ wxSize SuperOverlay::calc_split(wxSize imageSize, wxSize blockSize)
 {
 	wxSize blocks;
 
-	blocks.SetWidth(ceil(imageSize.GetWidth() / blockSize.GetWidth()));
-	blocks.SetHeight(ceil(imageSize.GetHeight() / blockSize.GetHeight()));
+	blocks.SetWidth(ceil((double)imageSize.GetWidth() / (double)blockSize.GetWidth()));
+	blocks.SetHeight(ceil((double)imageSize.GetHeight() / (double)blockSize.GetHeight()));
 
 
 	return blocks;
