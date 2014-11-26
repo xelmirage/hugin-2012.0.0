@@ -734,8 +734,7 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 			
 			string outfilename=oname.filename().string()+".tif";
 			
-			insertNewImageToKml(outfilename,
-				&Folder,upperleft,lowerright);
+			
 
 
 
@@ -745,7 +744,14 @@ bool MainFrame::SplitBlend(wxString scriptFile, wxString outname,
 
 		cout<<"i finish"<<endl;
 	}
+	vigra::Point2D upperleft, lowerright;
+	upperleft.x = roi.left();
+	upperleft.y = roi.top();
+	lowerright.x = roi.right();
+	lowerright.y = roi.bottom();
 
+	insertNewImageToKml(outname.ToStdString(),
+		&Folder, upperleft, lowerright);
 	
 	
 	cmd=progs.enblend+progs.enblend_opts+" -o "+outname+".tif ";
