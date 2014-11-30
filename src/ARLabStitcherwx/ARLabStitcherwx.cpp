@@ -41,11 +41,13 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	m_menuEdit = new wxMenu();
 	wxMenuItem* m_menuItemPorcess;
-	m_menuItemPorcess = new wxMenuItem( m_menuEdit, wxID_Process, wxString( _("显示航迹") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menuItemPorcess = new wxMenuItem( m_menuEdit, wxID_Process, wxString( _("自动处理") ) , wxEmptyString, wxITEM_NORMAL );
 	m_menuEdit->Append( m_menuItemPorcess );
 	
+	m_menuEdit->AppendSeparator();
+	
 	wxMenuItem* m_menuItem4;
-	m_menuItem4 = new wxMenuItem( m_menuEdit, wxID_ANY, wxString( _("图像关联") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menuItem4 = new wxMenuItem( m_menuEdit, wxID_ANY, wxString( _("预处理") ) , wxEmptyString, wxITEM_NORMAL );
 	m_menuEdit->Append( m_menuItem4 );
 	
 	wxMenuItem* m_menuItem5;
@@ -332,4 +334,16 @@ NewProjectWizard::NewProjectWizard( wxWindow* parent, wxWindowID id, const wxStr
 NewProjectWizard::~NewProjectWizard()
 {
 	m_pages.Clear();
+}
+
+GPSFrame::GPSFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	
+	this->Centre( wxBOTH );
+}
+
+GPSFrame::~GPSFrame()
+{
 }

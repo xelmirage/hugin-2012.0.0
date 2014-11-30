@@ -156,4 +156,21 @@ class NewProjectWizard : public wxWizard
 	
 };
 
+///////////////////////////////////////////////////////////////////////////////
+/// Class GPSFrame
+///////////////////////////////////////////////////////////////////////////////
+class GPSFrame : public wxFrame 
+{
+	private:
+	
+	protected:
+	
+	public:
+		
+		GPSFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("GPS_Points"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,300 ), long style = wxDEFAULT_FRAME_STYLE|wxFRAME_NO_TASKBAR|wxTAB_TRAVERSAL );
+		
+		~GPSFrame();
+	
+};
+
 #endif //__ARLABSTITCHERWX_H__
