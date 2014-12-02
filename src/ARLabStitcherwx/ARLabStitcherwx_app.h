@@ -55,3 +55,8 @@ BEGIN_EVENT_TABLE(ARLabStitcherwxNewProjectWizard, NewProjectWizard)
 
 	
 END_EVENT_TABLE()
+
+BEGIN_EVENT_TABLE(ARLabStitcherwxGPSFrame, GPSFrame)
+
+
+END_EVENT_TABLE()
