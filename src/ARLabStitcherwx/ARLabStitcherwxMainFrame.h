@@ -42,6 +42,8 @@ public:
 	void showTrack(wxCommandEvent& WXUNUSED(event));
 	void showKML(wxCommandEvent& WXUNUSED(event));
 	void generateSuperOverlay(wxCommandEvent& WXUNUSED(event));
+	void preProcess(wxCommandEvent& WXUNUSED(event));
+
 
 
 
@@ -55,6 +57,7 @@ private:
 	int spin;
 
 	MyExecPanel * m_execPanel;
+	ARLabStitcherwxGPSFrame *gFrame;
 	wxDateTime t;
 	time_t time_start;
 	time_t time_now;

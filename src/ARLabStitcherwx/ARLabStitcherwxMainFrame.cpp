@@ -8,7 +8,7 @@ MainFrame( parent )
 	
 	m_execPanel= new MyExecPanel(MainFrame:: m_notebookProgressOut);
 	//m_execPanel->SetId(wxID_execPanel);
-	
+	gFrame = new ::ARLabStitcherwxGPSFrame(this);
 	//MainFrame::m_splitter5->SplitHorizontally( m_panel7, m_execPanel, 0 );
 	ExeDir=Dir;
 	MainFrame::m_notebookProgressOut->SetPageText(0,wxT("´¦Àí×´Ì¬"));
@@ -533,4 +533,12 @@ void ARLabStitcherwxMainFrame::generateSuperOverlay(wxCommandEvent& WXUNUSED(eve
 	SuperOverlay ovl =SuperOverlay("f:/ge/20141111debug.tif", "f:/ge/20141111debug.kml", "f:/ge/superoverlay");
 	ovl.build();
 	
+}
+void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
+{
+
+	gFrame->Show(true);
+	
+
+
 }

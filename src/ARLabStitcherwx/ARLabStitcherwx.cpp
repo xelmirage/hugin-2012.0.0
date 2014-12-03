@@ -46,9 +46,9 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	m_menuEdit->AppendSeparator();
 	
-	wxMenuItem* m_menuItem4;
-	m_menuItem4 = new wxMenuItem( m_menuEdit, wxID_ANY, wxString( _("预处理") ) , wxEmptyString, wxITEM_NORMAL );
-	m_menuEdit->Append( m_menuItem4 );
+	wxMenuItem* m_menuItemPreProcess;
+	m_menuItemPreProcess = new wxMenuItem( m_menuEdit, wxID_menuItemPreProcess, wxString( _("预处理") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menuEdit->Append( m_menuItemPreProcess );
 	
 	wxMenuItem* m_menuItem5;
 	m_menuItem5 = new wxMenuItem( m_menuEdit, wxID_ANY, wxString( _("图像增强") ) , wxEmptyString, wxITEM_NORMAL );
