@@ -6,3 +6,7 @@ GPSFrame( parent )
 {
 
 }
+void ARLabStitcherwxGPSFrame::process()
+{
+
+}

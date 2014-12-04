@@ -30,6 +30,7 @@ public:
 		dc.SetBrush(*wxRED_BRUSH);
 		dc.DrawLine(40, 30, 40, 120);
 	}
+	void process();
 
 	DECLARE_EVENT_TABLE()
 };
