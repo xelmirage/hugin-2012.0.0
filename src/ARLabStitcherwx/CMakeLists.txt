@@ -1,4 +1,4 @@
-
+include_directories( ${CMAKE_SOURCE_DIR}/src/foreign/zthread/include )
 
 
 
@@ -10,6 +10,9 @@ TARGET_LINK_LIBRARIES(ARLabStitcherwx
 huginbase huginbasewx 
 ${Boost_LIBRARIES}
 ${wxWidgets_LIBRARIES}
+${common_libs}
+${image_libs}
+${ZTHREAD_LIBRARIES}
 )
 if(WIN32)
    set_target_properties(ARLabStitcherwx PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:WINDOWS")
