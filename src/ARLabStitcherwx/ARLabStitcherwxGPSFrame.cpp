@@ -1,8 +1,8 @@
 #include "ARLabStitcherwxGPSFrame.h"
 
-ARLabStitcherwxGPSFrame::ARLabStitcherwxGPSFrame( wxWindow* parent )
+ARLabStitcherwxGPSFrame::ARLabStitcherwxGPSFrame(wxWindow* parent, MyExecPanel * execpanel, wxString exeDir)
 :
-GPSFrame( parent )
+GPSFrame(parent), m_execPanel(execpanel), huginExeDir(exeDir)
 {
 
 }
@@ -33,8 +33,8 @@ void ARLabStitcherwxGPSFrame::process()
 
 	if (!filesystem::exists(full_path))
 	{
-		std::cout << "找不到配置文件目录,请检查该目录是否存在:";
-		std::cout << full_path.string() << std::endl;
+		m_execPanel->m_textctrl->AppendText("\n找不到配置文件目录,请检查该目录是否存在:" + full_path.string()+"\n");
+		
 		return;
 	}
 

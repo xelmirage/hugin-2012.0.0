@@ -8,7 +8,7 @@ MainFrame( parent )
 	
 	m_execPanel= new MyExecPanel(MainFrame:: m_notebookProgressOut);
 	//m_execPanel->SetId(wxID_execPanel);
-	gFrame = new ::ARLabStitcherwxGPSFrame(this);
+	
 	//MainFrame::m_splitter5->SplitHorizontally( m_panel7, m_execPanel, 0 );
 	ExeDir=Dir;
 	MainFrame::m_notebookProgressOut->SetPageText(0,wxT("´¦Àí×´Ì¬"));
@@ -56,6 +56,7 @@ MainFrame( parent )
 	m_toolShowTrack->Enable(false);
 	m_toolShowKML->Enable(false);
 	
+	gFrame = new ::ARLabStitcherwxGPSFrame(this,m_execPanel,ExeDir);
 }
 void ARLabStitcherwxMainFrame::throw_to_parent(wxProcessEvent& e)
 {
@@ -536,9 +537,12 @@ void ARLabStitcherwxMainFrame::generateSuperOverlay(wxCommandEvent& WXUNUSED(eve
 }
 void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 {
-
+	gFrame->_inputDIR = sdir;
+	gFrame->_inputFile = gpsfileName;
+	gFrame->_outputFile = outfileName;
+	
 	gFrame->Show(true);
 	
-
+	gFrame->process();
 
 }
