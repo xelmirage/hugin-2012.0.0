@@ -1,199 +1,32 @@
 #include "ARLabStitcherwxGPSFrame.h"
 
-ARLabStitcherwxGPSFrame::ARLabStitcherwxGPSFrame(wxWindow* parent, MyExecPanel * execpanel, wxString exeDir)
+ARLabStitcherwxGPSFrame::ARLabStitcherwxGPSFrame(wxWindow* parent, MyExecPanel * execpanel, wxString exeDir, MyExecPanel * hiddenexecpanel)
 :
-GPSFrame(parent), m_execPanel(execpanel), huginExeDir(exeDir)
+GPSFrame(parent), m_execPanel(execpanel), huginExeDir(exeDir), hidden_execPanel(hiddenexecpanel)
 {
 
 }
-void ARLabStitcherwxGPSFrame::process()
+ARLabStitcherwxGPSFrame::~ARLabStitcherwxGPSFrame()
 {
-	int _cores = hugin_utils::getCPUCount();
-	int c;
-	int optionIndex = 0;
-	std::string	line = "";
-	ZThread::PoolExecutor aExecutor(_cores);
-
-
-	ifstream data(_inputFile.c_str());
-	//ofstream out(_outputFile.c_str());
-	vector<double> YawVec;
-	vector<string> SplitVec;
-
-	double yawTemp;
-
-	long minx = 0, miny = 0;
-	int j = 0;
-
-	filesystem::path full_path(filesystem::initial_path());
-
-	unsigned long file_count = 0;
-	unsigned long dir_count = 0;
-	unsigned long err_count = 0;
-
-	if (!filesystem::exists(full_path))
-	{
-		m_execPanel->m_textctrl->AppendText("\n找不到配置文件目录,请检查该目录是否存在:" + full_path.string()+"\n");
-		
-		return;
-	}
-
-	images.clear();
-	if (filesystem::is_directory(full_path))
-	{
-		filesystem::directory_iterator end_iter;
-		for (filesystem::directory_iterator pos(_inputDIR.c_str()); pos != end_iter; ++pos)
-		{
-			if (pos->path().extension() == ".JPG" || pos->path().extension() == ".jpg" || pos->path().extension() == ".tif")
-				images.push_back(pos->path().string());
-			//cout<<*pos<<"   "<<pos->path().extension()<<   endl;
-		}
-
-	}
-
-	if (data.bad())
-	{
-		cerr << "ERROR: could not open file: '" << _inputFile << "'!" << endl;
-		return ;
-	}
-
-	while (data.good()) {
-
-		std::getline(data, line);
-		//cout<<line<<endl;
-		SplitVec.clear();
-		trim(line);
-		split(SplitVec, line, is_any_of(" "), token_compress_on);
-		//yawTemp=lexical_cast<double>(SplitVec[8]);
-		//cout<<yawTemp<<","<<endl;
-		if (SplitVec.size() < 9)
-			break;
-		for (int i = 0; i<SplitVec.size(); ++i)
-		{
-			trim(SplitVec[i]);
-		}
-
-		int id;
-		float x, y, yaw, roll;
-
-		id = lexical_cast<int>(SplitVec[0]);
-
-		x = lexical_cast<float>(SplitVec[3]);
-		y = lexical_cast<float>(SplitVec[4]);
-		yaw = lexical_cast<float>(SplitVec[8]);
-		roll = lexical_cast<float>(SplitVec[7]);
-		LLtoUTM(x, y);
-		PointL *p = new PointL(id, UTMEasting, UTMNorthing, yaw, roll);
-
-		pointsL.push_back(*p);
-		YawVec.push_back(yaw);
-
-		if (minx == 0 || minx>UTMEasting)
-		{
-			minx = UTMEasting;
-		}
-
-		if (miny == 0 || miny > UTMNorthing)
-		{
-			miny = UTMNorthing;
-		}
-
-
-		//Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(images[j]);
-		//assert (image.get() != 0);
-		//image->readMetadata();
-		//Exiv2::ExifData &exifData = image->exifData();
-		//exifData["Exif.Photo.UserComment"]
-		//= "charset=Ascii thrown";
-
-		string cmd = huginExeDir.ToStdString() + "\\exiftool -F -m -overwrite_original -GPSLongitude=\"" + lexical_cast<string>(SplitVec[3])
-			+ "\"  -GPSLatitude=\"" + lexical_cast<string>(SplitVec[4])
-			+ "\" -UserComment=\"thrown\" "
-			+ images[j];
-
-		aExecutor.execute(new runexif(cmd, images[j]));
-		//threads.add_thread(new boost::thread(boost::bind(&run,cmd)));
-		//std::system(cmd.c_str());
-
-		cout << images[j] << endl;
-		//image->writeMetadata();
-		j++;
-
-	}
-
-	aExecutor.wait();
-	//threads.join_all();
-	POINTSL::iterator i;
-	PointL minPoint(0, minx, miny, 0, 0);
-	for (i = pointsL.begin(); i != pointsL.end(); ++i)
-	{
-		(*i) = (*i) - minPoint;
-
-		//cout<<(*i).x<<"   "<<(*i).y<<endl;
-	}
-	POINTSLV groups;
-	double deg, heading, deg1, deg2;
-	//	out.clear();
-	//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).heading(*(i+1))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
-	//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).slope(*(i+1))"<<"    "<<"atan((*i).slope(*(i+1)))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
-	i = pointsL.begin() + 1;
-
-	int inf = 5;
-
-	for (i = pointsL.begin() + 1; i != pointsL.end() - 1; ++i)
-	{
-		heading = (*(i - 1)).heading(*(i));
-
-		deg1 = 360 - heading / PI * 180;
-		heading = (*(i)).heading(*(i + 1));
-		deg2 = 360 - heading / PI * 180;
-
-		if ((i->yaw / inf - floor(i->yaw / inf)) >= 0.5)
-			i->yawint = ceil(i->yaw / inf);
-		else
-			i->yawint = floor(i->yaw / inf);
-		i->dyaw = abs(deg1 - deg2);
-		//out<<(*i).x<<"    "<<(*i).y<<"    "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<endl;
-		//cout<<(*i).x<<"    "<<(*i).y<<"    "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<endl;
-		//cout<<(*i).id<<"     "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<" yawint "<<i->yawint<<endl;
-		//out<<(*i).id<<"     "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<" yawint "<<i->yawint<<endl;
-		//cout<<(*i).x<<"    "<<(*i).y<<"    "<<heading<<"    "<<deg<<"    "<<(*i).yaw<<"    "<<deg-(*i).yaw<<endl;
-		//out<<(*i).x<<"    "<<(*i).y<<"    "<<heading<<"    "<<deg<<"    "<<(*i).yaw<<"    "<<deg-(*i).yaw<<endl;
-		//system("pause");
-	}
-
-	int most1 = findmost(), most2;
-	if (most1 > (180 / inf))
-		most2 = most1 - (180 / inf);
-	else
-		most2 = (180 / inf) + most1;
-
-
-	for (i = pointsL.begin(); i < pointsL.end(); ++i)
-	{
-		if (((*i).yawint == most1 || (*i).yawint == (most2)) && (*i).dyaw < 5)
-		{
-			(*i).selected = true;
-
-
-		}
-		//out<<(*i).id<<"   yawint  "<<(*i).yawint<<"  roll  "<<(*i).roll<<" dyaw:"<<(*i).dyaw<<"  selected "<<i->selected<<endl;
-		//cout<<(*i).id<<"   yawint  "<<(*i).yawint<<"  roll  "<<(*i).roll<<" dyaw:"<<(*i).dyaw<<"  selected "<<i->selected<<endl;
-		//cout<<(*i).id<<"   yawint  "<<(*i).yawint<<"  roll  "<<(*i).roll<<" dyaw:"<<(*i).dyaw<<"  selected "<<i->selected<<endl;
-	}
-
-	//cout<<most1<<"     "<<most2<<endl;
-
-
-
-
-
-	build_belt(_outputFile);
-
 	
+}
+void ARLabStitcherwxGPSFrame::process(wxCommandEvent& WXUNUSED(event))
+{
+	gpsThread = new gpsFilterThread(m_execPanel,huginExeDir,hidden_execPanel,
+		_inputFile,_outputFile,_inputDIR);
+
+	if (gpsThread->Run() != wxTHREAD_NO_ERROR)
+	{
+		wxLogError("Can't create the thread!");
+		delete gpsThread;
+		gpsThread = NULL;
+	}
 
 }
-int ARLabStitcherwxGPSFrame::findmost()
+
+
+
+int gpsFilterThread::findmost()
 {
 	int len = pointsL.size();
 	int* data = new int[len];
@@ -229,7 +62,7 @@ int ARLabStitcherwxGPSFrame::findmost()
 
 	return data[most];
 }
-void ARLabStitcherwxGPSFrame::find_nearest(POINTSL::iterator point_position, POINTSLV::iterator belt_position)
+void gpsFilterThread::find_nearest(POINTSL::iterator point_position, POINTSLV::iterator belt_position)
 {
 	DISTS dists;
 	POINTSL::iterator point_iterato;
@@ -292,7 +125,7 @@ void ARLabStitcherwxGPSFrame::find_nearest(POINTSL::iterator point_position, POI
 
 
 }
-bool ARLabStitcherwxGPSFrame::is_next_valid(int id, int step)
+bool gpsFilterThread::is_next_valid(int id, int step)
 {
 	POINTSL::iterator point_iterator;
 	POINTSLV::iterator belt_iterator;
@@ -315,7 +148,7 @@ bool ARLabStitcherwxGPSFrame::is_next_valid(int id, int step)
 	}
 	return false;
 }
-void ARLabStitcherwxGPSFrame::build_belt(string outfile)
+void gpsFilterThread::build_belt(string outfile)
 {
 	int _cores = hugin_utils::getCPUCount();
 	boost::thread_group threads;
@@ -391,7 +224,7 @@ void ARLabStitcherwxGPSFrame::build_belt(string outfile)
 
 			//belt_out<<images[img_id-1]<<endl;
 
-			cout << i->id << ",";
+			textout(i->id + ",");
 
 
 
@@ -437,7 +270,7 @@ void ARLabStitcherwxGPSFrame::build_belt(string outfile)
 			DISTS::iterator row_iterator;
 			for (row_iterator = row.begin(); row_iterator != row.end(); ++row_iterator)
 			{
-				cout << row_iterator->id << ",";
+				textout(row_iterator->id + ",");
 				//belt_out<<row_iterator->id<<",";
 				tag.clear();
 				tag = "selected ";
@@ -475,24 +308,24 @@ void ARLabStitcherwxGPSFrame::build_belt(string outfile)
 					+ images[(row_iterator->id - 1)];
 				//threads.add_thread(new boost::thread(boost::bind(&run,cmd)));
 				//std::system(cmd.c_str());
-
-				aExecutor.execute(new runexif(cmd, images[(row_iterator->id - 1)]));
+				hidden_execPanel->ExecWithRedirect(cmd);
+				//aExecutor.execute(new runexif(cmd, images[(row_iterator->id - 1)],m_execPanel));
 
 			}
-			cout << endl;
+			textout("\n");
 			//belt_out<<images[i->id-1]<<" ";                          //重要：从images[]数组调用时要将id-1，因为排id的时候没有0
 
 
 			for (row_iterator = row.begin(); row_iterator != row.end(); ++row_iterator)
 			{
-				cout << images[(*row_iterator).id - 1] << endl;
+				textout(images[(*row_iterator).id - 1] +"\n");
 				belt_out << images[(*row_iterator).id - 1] << " ";
 
 			}
-			cout << endl;
+			textout("\n");
 
 
-			aExecutor.wait();
+			//aExecutor.wait();
 
 			//belt_out<<endl;
 
@@ -509,7 +342,212 @@ void ARLabStitcherwxGPSFrame::build_belt(string outfile)
 
 
 
-	cout << endl << endl << "Filtered successfully    ;-)" << endl;
+	textout("\nFiltered successfully    ;-)\n");
 
 
+}
+void*  gpsFilterThread::Entry()
+{
+	int _cores = hugin_utils::getCPUCount();
+	int c;
+	int optionIndex = 0;
+	std::string	line = "";
+	ZThread::PoolExecutor aExecutor(_cores);
+
+
+	ifstream data(_inputFile.ToStdString());
+	//ofstream out(_outputFile.c_str());
+	vector<double> YawVec;
+	vector<string> SplitVec;
+
+	double yawTemp;
+
+	long minx = 0, miny = 0;
+	int j = 0;
+
+	filesystem::path full_path(filesystem::initial_path());
+
+	unsigned long file_count = 0;
+	unsigned long dir_count = 0;
+	unsigned long err_count = 0;
+
+	if (!filesystem::exists(full_path))
+	{
+		textout("\n找不到配置文件目录,请检查该目录是否存在:" + full_path.string() + "\n");
+
+		return NULL;
+	}
+
+	images.clear();
+	if (filesystem::is_directory(full_path))
+	{
+		filesystem::directory_iterator end_iter;
+		for (filesystem::directory_iterator pos(_inputDIR.ToStdString()); pos != end_iter; ++pos)
+		{
+			if (pos->path().extension() == ".JPG" || pos->path().extension() == ".jpg" || pos->path().extension() == ".tif")
+				images.push_back(pos->path().string());
+			//cout<<*pos<<"   "<<pos->path().extension()<<   endl;
+		}
+
+	}
+
+	if (data.bad())
+	{
+		cerr << "ERROR: could not open file: '" << _inputFile << "'!" << endl;
+		return NULL;
+	}
+
+	while (data.good()) {
+
+		std::getline(data, line);
+		//cout<<line<<endl;
+		SplitVec.clear();
+		trim(line);
+		split(SplitVec, line, is_any_of(" "), token_compress_on);
+		//yawTemp=lexical_cast<double>(SplitVec[8]);
+		//cout<<yawTemp<<","<<endl;
+		if (SplitVec.size() < 9)
+			break;
+		for (int i = 0; i<SplitVec.size(); ++i)
+		{
+			trim(SplitVec[i]);
+		}
+
+		int id;
+		float x, y, yaw, roll;
+
+		id = lexical_cast<int>(SplitVec[0]);
+
+		x = lexical_cast<float>(SplitVec[3]);
+		y = lexical_cast<float>(SplitVec[4]);
+		yaw = lexical_cast<float>(SplitVec[8]);
+		roll = lexical_cast<float>(SplitVec[7]);
+		LLtoUTM(x, y);
+		PointL p = PointL(id, UTMEasting, UTMNorthing, yaw, roll);
+
+		pointsL.push_back(p);
+		YawVec.push_back(yaw);
+
+		if (minx == 0 || minx>UTMEasting)
+		{
+			minx = UTMEasting;
+		}
+
+		if (miny == 0 || miny > UTMNorthing)
+		{
+			miny = UTMNorthing;
+		}
+
+
+		//Exiv2::Image::AutoPtr image = Exiv2::ImageFactory::open(images[j]);
+		//assert (image.get() != 0);
+		//image->readMetadata();
+		//Exiv2::ExifData &exifData = image->exifData();
+		//exifData["Exif.Photo.UserComment"]
+		//= "charset=Ascii thrown";
+
+		string cmd = huginExeDir.ToStdString() + "\\exiftool -F -m -overwrite_original -GPSLongitude=\"" + lexical_cast<string>(SplitVec[3])
+			+ "\"  -GPSLatitude=\"" + lexical_cast<string>(SplitVec[4])
+			+ "\" -UserComment=\"thrown\" "
+			+ images[j];
+
+		//aExecutor.execute(new runexif(cmd, images[j],m_execPanel));
+		//threads.add_thread(new boost::thread(boost::bind(&run,cmd)));
+		//std::system(cmd.c_str());
+		wxMutexGuiEnter();
+		
+		wxMutexGuiLeave();
+		
+		textout( images[j]+"\n");
+		//image->writeMetadata();
+		j++;
+
+	}
+
+	//aExecutor.wait();
+	//threads.join_all();
+	POINTSL::iterator i;
+	PointL minPoint(0, minx, miny, 0, 0);
+	for (i = pointsL.begin(); i != pointsL.end(); ++i)
+	{
+		(*i) = (*i) - minPoint;
+
+		//cout<<(*i).x<<"   "<<(*i).y<<endl;
+	}
+	POINTSLV groups;
+	double deg, heading, deg1, deg2;
+	//	out.clear();
+	//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).heading(*(i+1))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
+	//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).slope(*(i+1))"<<"    "<<"atan((*i).slope(*(i+1)))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
+	i = pointsL.begin() + 1;
+
+	int inf = 5;
+
+	for (i = pointsL.begin() + 1; i != pointsL.end() - 1; ++i)
+	{
+		heading = (*(i - 1)).heading(*(i));
+
+		deg1 = 360 - heading / PI * 180;
+		heading = (*(i)).heading(*(i + 1));
+		deg2 = 360 - heading / PI * 180;
+
+		if ((i->yaw / inf - floor(i->yaw / inf)) >= 0.5)
+			i->yawint = ceil(i->yaw / inf);
+		else
+			i->yawint = floor(i->yaw / inf);
+		i->dyaw = abs(deg1 - deg2);
+		//out<<(*i).x<<"    "<<(*i).y<<"    "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<endl;
+		//cout<<(*i).x<<"    "<<(*i).y<<"    "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<endl;
+		//cout<<(*i).id<<"     "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<" yawint "<<i->yawint<<endl;
+		//out<<(*i).id<<"     "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<" yawint "<<i->yawint<<endl;
+		//cout<<(*i).x<<"    "<<(*i).y<<"    "<<heading<<"    "<<deg<<"    "<<(*i).yaw<<"    "<<deg-(*i).yaw<<endl;
+		//out<<(*i).x<<"    "<<(*i).y<<"    "<<heading<<"    "<<deg<<"    "<<(*i).yaw<<"    "<<deg-(*i).yaw<<endl;
+		//system("pause");
+	}
+
+	int most1 = findmost(), most2;
+	if (most1 > (180 / inf))
+		most2 = most1 - (180 / inf);
+	else
+		most2 = (180 / inf) + most1;
+
+
+	for (i = pointsL.begin(); i < pointsL.end(); ++i)
+	{
+		if (((*i).yawint == most1 || (*i).yawint == (most2)) && (*i).dyaw < 5)
+		{
+			(*i).selected = true;
+
+
+		}
+		//out<<(*i).id<<"   yawint  "<<(*i).yawint<<"  roll  "<<(*i).roll<<" dyaw:"<<(*i).dyaw<<"  selected "<<i->selected<<endl;
+		//cout<<(*i).id<<"   yawint  "<<(*i).yawint<<"  roll  "<<(*i).roll<<" dyaw:"<<(*i).dyaw<<"  selected "<<i->selected<<endl;
+		//cout<<(*i).id<<"   yawint  "<<(*i).yawint<<"  roll  "<<(*i).roll<<" dyaw:"<<(*i).dyaw<<"  selected "<<i->selected<<endl;
+	}
+
+	//cout<<most1<<"     "<<most2<<endl;
+
+
+
+
+
+	build_belt(_outputFile.ToStdString());
+}
+void gpsFilterThread::textout(wxString txt)
+{
+	wxMutexGuiEnter();
+	m_execPanel->m_textctrl->AppendText(txt);
+	wxMutexGuiLeave();
+}
+void gpsFilterThread::OnExit()
+{}
+void gpsFilterThread::OnProcessTerminated(MyPipedProcess *process, int pid, int status)
+{
+
+}
+int gpsFilterThread::execExternal(wxString cmd)
+{
+	std::system(cmd);
+
+	return 0;
 }
