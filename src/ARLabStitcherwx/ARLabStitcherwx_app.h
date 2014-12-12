@@ -57,5 +57,4 @@ END_EVENT_TABLE()
 
 BEGIN_EVENT_TABLE(ARLabStitcherwxGPSFrame, GPSFrame)
 EVT_PAINT(ARLabStitcherwxGPSFrame::OnPaint)
-EVT_MENU(wxID_menuItemPreProcess,ARLabStitcherwxGPSFrame::process)
 END_EVENT_TABLE()

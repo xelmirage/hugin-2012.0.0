@@ -17,8 +17,6 @@ MainFrame( parent )
 	//::wxMessageBox(m_execPanel->GetParent()->GetName());
 	MainFrame::m_notebook4->SetPageText(0,wxT("工程文件管理"));
 	MainFrame::m_notebook4->SetPageText(1, wxT("工程信息显示"));
-	hidden_execPanel = new MyExecPanel(MainFrame::m_notebook4);
-	MainFrame::m_notebook4->AddPage(hidden_execPanel, wxT("a"));
 	
 	MainFrame::m_notebookProgressOut->
 	GetEventHandler()->
@@ -57,10 +55,8 @@ MainFrame( parent )
 	m_toolStart->Enable(false);
 	m_toolShowTrack->Enable(false);
 	m_toolShowKML->Enable(false);
-
 	
-	gFrame = new ::ARLabStitcherwxGPSFrame(this,m_execPanel,ExeDir,hidden_execPanel);
-	
+	gFrame = new ::ARLabStitcherwxGPSFrame(this,m_execPanel,ExeDir);
 }
 void ARLabStitcherwxMainFrame::throw_to_parent(wxProcessEvent& e)
 {
@@ -539,14 +535,14 @@ void ARLabStitcherwxMainFrame::generateSuperOverlay(wxCommandEvent& WXUNUSED(eve
 	ovl.build();
 	
 }
-void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& e)
+void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 {
 	gFrame->_inputDIR = sdir;
 	gFrame->_inputFile = gpsfileName;
-	gFrame->_outputFile = sdir + wxT("\\belts.log");
+	gFrame->_outputFile = outfileName;
 	
 	gFrame->Show(true);
-	gFrame->GetEventHandler()->ProcessEvent(e);
 	
+	gFrame->process();
 
 }
