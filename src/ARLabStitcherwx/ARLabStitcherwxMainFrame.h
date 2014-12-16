@@ -52,16 +52,96 @@ class ARLabStitcherwxMainFrame : public MainFrame
 
 
 			wxMutexGuiEnter();
-			frame->m_gauge3->SetValue(10);
-
+			frame->m_textCtrlProgress->Clear();
+			frame->m_execPanel->ClearText();
+			frame->t = wxDateTime::Now();
 			wxMutexGuiLeave();
+
+
+			//航迹识别
+			setGauge(10);
+			if (!beltlog.FileExists())
+			{
+				cmd = frame->ExeDir + wxT("\\gpsfilter -o ") + frame->sdir + wxT("\\belts.log -g ") + frame->gpsfileName + wxT(" -s ") + frame->sdir;
+				if (execexternal(cmd, wxT("航迹识别")) != 0)
+					return;
+				//"gpsfilter -o "+sdir+"belts.log -g "+gpsfileName+" -s "+sdir,"processing GPSFilting");
+				
+			}
+			else
+			{
+				push_message(wxT("\n---------------\n[") + frame-> run_time + wxT("] 跳过航迹识别......\n---------------\n"));
+			}
+
+			//生成工程
+			setGauge(20);
+			if (!stitch.FileExists())
+			{
+				cmd = frame->ExeDir + wxT("\\pto_gen ") + frame->sdir + wxT("\\*.jpg -o") + frame->sdir + wxT("\\stitch.pto --gps -f 1");
+				if (execexternal(cmd, wxT("生成工程")) != 0)
+				{
+					return;
+				}
+			}
+			else
+			{
+			
+
+				push_message("\n---------------\n[" + frame->run_time + "] 跳过生成工程......\n---------------\n");
+				//textEdit->setText(textEdit->toPlainText()+tr("\n skip generating pto......\n\n"));
+
+			}
+
+			//匹配
+			if (!stitch_cp.FileExists())
+			{
+				cmd = frame->ExeDir + wxT("\\cpfindgps001 -o ") + frame->sdir + wxT("\\stitch_cp.pto ") + frame->sdir + wxT("\\stitch.pto --gps");
+				if (execexternal(cmd, wxT("匹配图像")) != 0)
+				{
+					return;
+				}
+				
+			}
+			else
+			{
+
+				push_message("\n---------------\n[" + frame->run_time + "] 跳过图像匹配......\n---------------\n");
+				//textEdit->setText(textEdit->toPlainText()+tr("\n skip finding control points......\n\n"));
+
+			}
+
 
 
 
 
 
 		}
-
+		int execexternal(wxString command, wxString message)
+		{
+			wxMutexGuiEnter();
+			frame->push_message("\n---------------\n[" + frame->run_time + "] 开始 " + message + "\n---------------\n");
+			if (frame->m_execPanel->ExecWithRedirect(command) == -1)
+			{
+				wxMessageBox(wxString::Format(_("Error running \n%s"), command.c_str()),
+					_("Error running command"), wxICON_ERROR | wxOK);
+				return -1;
+			}
+			wxMutexGuiLeave();
+		}
+		void push_message(wxString message)
+		{
+			wxMutexGuiEnter();
+			//m_textCtrlProgress->SetValue(
+			//	m_textCtrlProgress->GetValue()+message);
+			frame->m_textCtrlProgress->AppendText(message);
+			wxMutexGuiEnter();
+		}
+		void setGauge(int g)
+		{
+			wxMutexGuiEnter();
+			frame->m_gauge3->SetValue(g);
+			wxMutexGuiLeave();
+		}
 	};
 public:
 	/** Constructor */
