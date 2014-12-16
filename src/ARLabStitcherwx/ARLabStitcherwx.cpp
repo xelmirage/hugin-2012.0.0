@@ -40,9 +40,9 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_menubarmain->Append( m_menufile, _("文件") ); 
 	
 	m_menuEdit = new wxMenu();
-	wxMenuItem* m_menuItemPorcess;
-	m_menuItemPorcess = new wxMenuItem( m_menuEdit, wxID_Process, wxString( _("自动处理") ) , wxEmptyString, wxITEM_NORMAL );
-	m_menuEdit->Append( m_menuItemPorcess );
+	wxMenuItem* wxID_menuItemProcess;
+	wxID_menuItemProcess = new wxMenuItem( m_menuEdit, wxID_Process, wxString( _("自动处理") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menuEdit->Append( wxID_menuItemProcess );
 	
 	m_menuEdit->AppendSeparator();
 	

@@ -93,6 +93,7 @@ class ARLabStitcherwxMainFrame : public MainFrame
 			}
 
 			//匹配
+			setGauge(30);
 			if (!stitch_cp.FileExists())
 			{
 				cmd = frame->ExeDir + wxT("\\cpfindgps001 -o ") + frame->sdir + wxT("\\stitch_cp.pto ") + frame->sdir + wxT("\\stitch.pto --gps");
@@ -110,7 +111,123 @@ class ARLabStitcherwxMainFrame : public MainFrame
 
 			}
 
+			//清理误差
+			setGauge(40);
+			if (!stitch_cp_clean.FileExists())
+			{
+				cmd = frame->ExeDir + wxT("\\cpclean -o") + frame->sdir + wxT("\\stitch_cp_clean.pto ") + frame->sdir + wxT("\\stitch_cp.pto");
+				if (execexternal(cmd, wxT("清理误差点")) != 0)
+				{
+					return;
+				}
+				
+			}
+			else
+			{
+				
 
+				push_message("\n---------------\n[" + frame->run_time + "] 跳过清理误差点......\n---------------\n");
+				//textEdit->setText(textEdit->toPlainText()+tr("\n skip cleaning control points......\n\n"));
+			}
+
+			//图像校准
+			setGauge(50);
+			if (!stitch_cp_clean_line.FileExists())
+			{
+
+				cmd = frame->ExeDir + "\\linefind -o " + frame->sdir + "\\stitch_cp_clean_linefind.pto " + frame->sdir + "\\stitch_cp_clean.pto";
+				if (execexternal(cmd, wxT("图像校准")) != 0)
+				{
+					return;
+				}
+				
+			}
+			else
+			{
+				
+
+				push_message("\n---------------\n[" + frame->run_time + "] 跳过图像校准......\n---------------\n");
+				//textEdit->setText(textEdit->toPlainText()+tr("\n skip finding vertical lines......\n\n"));
+
+
+			}
+
+			//工程检查
+			setGauge(60);
+
+			cmd = frame->ExeDir + "\\checkpto " + frame->sdir + "\\stitch_cp_clean_linefind.pto";
+			if (execexternal(cmd, wxT("工程检查")) != 0)
+			{
+				return;
+			}
+
+			//图像定向
+			setGauge(70);
+
+			if (!stitch_cp_clean_line_op.FileExists())
+			{
+				cmd = frame->ExeDir + "\\autooptimiser -a -s -l -o " + frame->sdir + "\\stitch_cp_clean_linefind_op.pto " + frame->sdir + "\\stitch_cp_clean_linefind.pto";
+				if (execexternal(cmd, wxT("图像定向")) != 0)
+				{
+					return;
+				}
+				
+			}
+			else
+			{
+				
+				push_message("\n---------------\n[" + frame->run_time + "] 跳过工程检查......\n---------------\n");
+			}
+			
+			//裁剪
+			setGauge(80);
+
+			if (!stitch_cp_clean_line_op_crop.FileExists())
+			{
+				cmd = frame->ExeDir + "\\pano_modify --canvas=30% --crop=auto " + frame->sdir + "\\stitch_cp_clean_linefind_op.pto -o " + frame->sdir + "\\stitch_cp_clean_linefind_op_crop.pto";
+				if (execexternal(cmd, wxT("裁剪")) != 0)
+				{
+					return;
+				}
+				
+			}
+			else
+			{
+				
+				push_message("\n---------------\n[" + frame->run_time + "] 跳过裁剪......\n---------------\n");
+			}
+			//this->change_status();
+
+			//GPS重采样
+			setGauge(90);
+			if (!gps_connect.FileExists())
+			{
+				cmd = frame->ExeDir + "\\nona -f " + frame->sdir + "\\stitch_cp_clean_linefind_op_crop.pto -o " + frame->outfileName;
+				if (execexternal(cmd, wxT("GPS重采样")) != 0)
+				{
+					return;
+				}
+
+				
+			}
+			else
+			{
+				
+				push_message("\n---------------\n[" + frame->run_time + "] GPS重采样......\n---------------\n");
+			}
+
+
+			//"融合
+			setGauge(95);
+			while ((!stitch_cp_clean_line_op_crop.FileExists()) || (!gps_connect.FileExists()))
+			{
+			}
+			cmd = frame->ExeDir + "\\split_blend " + frame->sdir + "\\stitch_cp_clean_linefind_op_crop.pto -o " + frame->outfileName;
+			if (execexternal(cmd, wxT("融合")) != 0)
+			{
+				return;
+			}
+			
 
 
 
