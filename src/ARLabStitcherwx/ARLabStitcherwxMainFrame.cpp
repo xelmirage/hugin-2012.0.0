@@ -542,3 +542,11 @@ void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 
 
 }
+void ARLabStitcherwxMainFrame::menuProcess(wxCommandEvent& WXUNUSED(event))
+{
+	threadProcess = new processThread(this);
+	if (threadProcess->Create()!=wxTHREAD_NO_ERROR)
+	{
+		wxLogError(wxT("can't creat peocess thread"));
+	}
+}

@@ -64,7 +64,7 @@ class ARLabStitcherwxMainFrame : public MainFrame
 			{
 				cmd = frame->ExeDir + wxT("\\gpsfilter -o ") + frame->sdir + wxT("\\belts.log -g ") + frame->gpsfileName + wxT(" -s ") + frame->sdir;
 				if (execexternal(cmd, wxT("航迹识别")) != 0)
-					return;
+					return NULL;
 				//"gpsfilter -o "+sdir+"belts.log -g "+gpsfileName+" -s "+sdir,"processing GPSFilting");
 				
 			}
@@ -80,7 +80,7 @@ class ARLabStitcherwxMainFrame : public MainFrame
 				cmd = frame->ExeDir + wxT("\\pto_gen ") + frame->sdir + wxT("\\*.jpg -o") + frame->sdir + wxT("\\stitch.pto --gps -f 1");
 				if (execexternal(cmd, wxT("生成工程")) != 0)
 				{
-					return;
+					return NULL;
 				}
 			}
 			else
@@ -99,7 +99,7 @@ class ARLabStitcherwxMainFrame : public MainFrame
 				cmd = frame->ExeDir + wxT("\\cpfindgps001 -o ") + frame->sdir + wxT("\\stitch_cp.pto ") + frame->sdir + wxT("\\stitch.pto --gps");
 				if (execexternal(cmd, wxT("匹配图像")) != 0)
 				{
-					return;
+					return NULL;
 				}
 				
 			}
@@ -118,7 +118,7 @@ class ARLabStitcherwxMainFrame : public MainFrame
 				cmd = frame->ExeDir + wxT("\\cpclean -o") + frame->sdir + wxT("\\stitch_cp_clean.pto ") + frame->sdir + wxT("\\stitch_cp.pto");
 				if (execexternal(cmd, wxT("清理误差点")) != 0)
 				{
-					return;
+					return NULL;
 				}
 				
 			}
@@ -138,7 +138,7 @@ class ARLabStitcherwxMainFrame : public MainFrame
 				cmd = frame->ExeDir + "\\linefind -o " + frame->sdir + "\\stitch_cp_clean_linefind.pto " + frame->sdir + "\\stitch_cp_clean.pto";
 				if (execexternal(cmd, wxT("图像校准")) != 0)
 				{
-					return;
+					return NULL;
 				}
 				
 			}
@@ -158,7 +158,7 @@ class ARLabStitcherwxMainFrame : public MainFrame
 			cmd = frame->ExeDir + "\\checkpto " + frame->sdir + "\\stitch_cp_clean_linefind.pto";
 			if (execexternal(cmd, wxT("工程检查")) != 0)
 			{
-				return;
+				return NULL;
 			}
 
 			//图像定向
@@ -169,7 +169,7 @@ class ARLabStitcherwxMainFrame : public MainFrame
 				cmd = frame->ExeDir + "\\autooptimiser -a -s -l -o " + frame->sdir + "\\stitch_cp_clean_linefind_op.pto " + frame->sdir + "\\stitch_cp_clean_linefind.pto";
 				if (execexternal(cmd, wxT("图像定向")) != 0)
 				{
-					return;
+					return NULL;
 				}
 				
 			}
@@ -187,7 +187,7 @@ class ARLabStitcherwxMainFrame : public MainFrame
 				cmd = frame->ExeDir + "\\pano_modify --canvas=30% --crop=auto " + frame->sdir + "\\stitch_cp_clean_linefind_op.pto -o " + frame->sdir + "\\stitch_cp_clean_linefind_op_crop.pto";
 				if (execexternal(cmd, wxT("裁剪")) != 0)
 				{
-					return;
+					return NULL;
 				}
 				
 			}
@@ -205,7 +205,7 @@ class ARLabStitcherwxMainFrame : public MainFrame
 				cmd = frame->ExeDir + "\\nona -f " + frame->sdir + "\\stitch_cp_clean_linefind_op_crop.pto -o " + frame->outfileName;
 				if (execexternal(cmd, wxT("GPS重采样")) != 0)
 				{
-					return;
+					return NULL;
 				}
 
 				
@@ -225,11 +225,11 @@ class ARLabStitcherwxMainFrame : public MainFrame
 			cmd = frame->ExeDir + "\\split_blend " + frame->sdir + "\\stitch_cp_clean_linefind_op_crop.pto -o " + frame->outfileName;
 			if (execexternal(cmd, wxT("融合")) != 0)
 			{
-				return;
+				return NULL;
 			}
 			
 
-
+			return NULL;
 
 
 		}
@@ -276,7 +276,7 @@ public:
 	void showKML(wxCommandEvent& WXUNUSED(event));
 	void generateSuperOverlay(wxCommandEvent& WXUNUSED(event));
 	void preProcess(wxCommandEvent& WXUNUSED(event));
-
+	void menuProcess(wxCommandEvent& WXUNUSED(event));
 
 
 
@@ -288,7 +288,7 @@ public:
 private:
 
 	int spin;
-
+	processThread* threadProcess;
 	MyExecPanel * m_execPanel;
 	ARLabStitcherwxGPSFrame *gFrame;
 	wxDateTime t;
