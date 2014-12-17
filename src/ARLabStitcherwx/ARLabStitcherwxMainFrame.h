@@ -301,7 +301,7 @@ private:
 	long time_count;
 	int phase;
 	std::string phasename[11];
-
+	bool isBatch;
 	
 	
 	DECLARE_EVENT_TABLE()

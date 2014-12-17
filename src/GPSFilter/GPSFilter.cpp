@@ -526,6 +526,7 @@ void build_belt(string outfile)
 
 					string cmd="exiftool -F -m -overwrite_original -UserComment=\""+tag+"\" "
 						+images[(row_iterator->id-1)];
+					belt_out << tag << endl;
 					//threads.add_thread(new boost::thread(boost::bind(&run,cmd)));
 					//std::system(cmd.c_str());
 
@@ -538,9 +539,9 @@ void build_belt(string outfile)
 
 				for(row_iterator=row.begin();row_iterator!=row.end();++row_iterator)
 				{
-					cout<<images[(*row_iterator).id-1]<<endl;
-					belt_out<<images[(*row_iterator).id-1]<<" ";
-
+					//cout<<images[(*row_iterator).id-1]<<endl;
+					//belt_out<<images[(*row_iterator).id-1]<<" ";
+					
 				}
 				cout<<endl;
 

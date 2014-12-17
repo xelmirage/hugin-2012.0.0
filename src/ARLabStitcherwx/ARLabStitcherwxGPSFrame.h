@@ -22,6 +22,7 @@ class ARLabStitcherwxGPSFrame : public GPSFrame
 public:
 	/** Constructor */
 	ARLabStitcherwxGPSFrame(wxWindow* parent);
+
 	//// end generated class members
 	void OnPaint(wxPaintEvent& event)
 	{

@@ -42,7 +42,7 @@ WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
 
 #define wxID_New 1000
 #define wxID_Exit 1001
-#define wxID_Process 1002
+#define wxID_menuItemProcess 1002
 #define wxID_menuItemPreProcess 1003
 #define wxID_Panel6 1004
 #define wxID_ListBoxPicList 1005

@@ -55,6 +55,8 @@ MainFrame( parent )
 	m_toolStart->Enable(false);
 	m_toolShowTrack->Enable(false);
 	m_toolShowKML->Enable(false);
+
+	isBatch = false;
 	
 }
 void ARLabStitcherwxMainFrame::throw_to_parent(wxProcessEvent& e)
@@ -261,12 +263,22 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 {
 	
 	push_message("\n---------------\n["+run_time+"] "+phasename[phase]+" 完成\n---------------\n");
-	process();
+	if (isBatch)
+	{
+		process();
+	}
+	else
+	{
+		m_timerprocess.Stop();
+		MainFrame::m_timerprocess.Stop();
+	}
+	
 	//wxMessageBox("\n---------------\n["+run_time+"] GPSFILTER finished\n---------------\n");
 }
 
 void ARLabStitcherwxMainFrame::process(void)
 {
+	isBatch = true;
 	std::string cmd;
 	wxFileName beltlog(sdir+"\\belts.log");
 	wxFileName stitch(sdir+"\\stitch.pto");
@@ -500,7 +512,7 @@ void ARLabStitcherwxMainFrame::process(void)
 		MainFrame::m_timerprocess.Stop();
 		m_toolShowKML->Enable(true);
 	}
-
+	isBatch = false;
 }
 void ARLabStitcherwxMainFrame::showKML(wxCommandEvent& WXUNUSED(event))
 {
@@ -536,17 +548,30 @@ void ARLabStitcherwxMainFrame::generateSuperOverlay(wxCommandEvent& WXUNUSED(eve
 }
 void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 {
+	wxString cmd;
+	
+	
+	cmd = ExeDir + wxT("\\gpsfilter -o ") + sdir + wxT("\\belts.log -g ") + gpsfileName + wxT(" -s ") + sdir;
+	phase = 0;
+
+	MainFrame::m_textCtrlProgress->Clear();
+	this->m_execPanel->ClearText();
+	time_count = 0;
+	t = wxDateTime::Now();
+
+	this->m_timerprocess.Start(1000);
+
+
+	if (execexternal(cmd, wxT("航迹识别")) != 0)
+		return;
 
 	gFrame->Show(true);
-	
-
-
 }
 void ARLabStitcherwxMainFrame::menuProcess(wxCommandEvent& WXUNUSED(event))
 {
-	threadProcess = new processThread(this);
-	if (threadProcess->Create()!=wxTHREAD_NO_ERROR)
-	{
-		wxLogError(wxT("can't creat peocess thread"));
-	}
+	
+	
+
+
+
 }
