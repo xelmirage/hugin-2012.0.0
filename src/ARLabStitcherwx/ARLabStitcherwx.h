@@ -172,6 +172,7 @@ class GPSFrame : public wxFrame
 		
 		~GPSFrame();
 	
+
 };
 
 #endif //__ARLABSTITCHERWX_H__
