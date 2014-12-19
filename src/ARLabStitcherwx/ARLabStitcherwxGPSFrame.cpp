@@ -25,25 +25,20 @@ int ARLabStitcherwxGPSFrame::getReady()
 	long minx = 0, miny = 0;
 	int j = 0;
 
-	filesystem::path full_path(filesystem::initial_path());
+	
 
 	unsigned long file_count = 0;
 	unsigned long dir_count = 0;
 	unsigned long err_count = 0;
 
-	if (!filesystem::exists(full_path))
-	{
-		std::cout << "找不到配置文件目录,请检查该目录是否存在:";
-		std::cout << full_path.string() << std::endl;
-		return -1;
-	}
+	
 	
 	
 
 	if (data.bad())
 	{
 		cerr << "ERROR: could not open file: '" << _inputFile << "'!" << endl;
-		return false;
+		return -1;
 	}
 
 	while (data.good()) {
@@ -99,6 +94,38 @@ int ARLabStitcherwxGPSFrame::getReady()
 
 		//cout<<(*i).x<<"   "<<(*i).y<<endl;
 	}
+	data.close();
+
+
+	ifstream data(_GPSResult.c_str());
+	if (data.bad())
+	{
+		cerr << "ERROR: could not open file: '" << _inputFile << "'!" << endl;
+		return -1;
+	}
+	while (data.good())
+	{
+		std::getline(data, line);
+		SplitVec.clear();
+		trim(line);
+		split(SplitVec, line, is_any_of(" "), token_compress_on);
+
+		if (SplitVec.size() < 2)
+			break;
+
+		for (int i = 0; i < SplitVec.size(); ++i)
+		{
+			trim(SplitVec[i]);
+		}
+		if (SplitVec[0]=="selected")
+		{
+			int ID=
+		}
+
+
+	}
+
+
 
 	return 0;
 }

@@ -159,11 +159,15 @@ public:
 	int yawint;
 	bool selected;
 };
+struct  Line
+{
+	PointL a, b;
+};
 typedef vector<PointL> POINTSL;
 typedef vector<POINTSL> POINTSLV;
 typedef vector<dist> DISTS;
 typedef vector<DISTS> DISTSV;
-
+typedef vector<Line> LINES;
 /** Implementing GPSFrame */
 class ARLabStitcherwxGPSFrame : public GPSFrame
 {
@@ -183,7 +187,7 @@ public:
 
 	DECLARE_EVENT_TABLE()
 private:
-	std::string _inputFile;
+	std::string _inputFile,_GPSResult;
 	int getReady();
 	int UTMNorthing;
 	int UTMEasting;
@@ -234,6 +238,8 @@ private:
 		// 南半球纬度起点为10000000.0m
 		UTMNorthing = UTMNorthing + FN;
 	}
+	POINTSL pointsL;//航带
+	LINES lines;
 };
 
 
