@@ -191,6 +191,7 @@ private:
 	int getReady();
 	int UTMNorthing;
 	int UTMEasting;
+	int maxx, maxy;
 	void LLtoUTM(double Long, double Lat) {
 		//double PI=3.1415926535897932;
 		UTMNorthing = 0;

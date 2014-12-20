@@ -23,6 +23,7 @@ int ARLabStitcherwxGPSFrame::getReady()
 	double yawTemp;
 
 	long minx = 0, miny = 0;
+	maxx = maxy = 0;
 	int j = 0;
 
 	
@@ -81,7 +82,14 @@ int ARLabStitcherwxGPSFrame::getReady()
 		{
 			miny = UTMNorthing;
 		}
-		
+		if (maxx<UTMEasting)
+		{
+			maxx = UTMEasting;
+		}
+		if (maxy<UTMNorthing)
+		{
+			maxy = UTMNorthing;
+		}
 		j++;
 
 	}
@@ -94,6 +102,8 @@ int ARLabStitcherwxGPSFrame::getReady()
 
 		//cout<<(*i).x<<"   "<<(*i).y<<endl;
 	}
+	maxx -= minx;
+	maxy -= miny;
 	data.close();
 
 
@@ -126,9 +136,12 @@ int ARLabStitcherwxGPSFrame::getReady()
 				vector<std::string> pairs;
 
 				split(pairs, SplitVec[3], is_any_of(","), token_compress_on);
-				for (i = 0; i < pairs.size(), ++i)
+				for (int i = 0; i < pairs.size(); ++i)
 				{
-
+					Line l;
+					l.a = pointsL[ID];
+					l.b = pointsL[lexical_cast<int>(pairs[i])];
+					lines.push_back(l);
 				}
 
 			}
