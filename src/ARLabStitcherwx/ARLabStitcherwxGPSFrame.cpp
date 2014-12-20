@@ -67,9 +67,9 @@ int ARLabStitcherwxGPSFrame::getReady()
 		yaw = lexical_cast<float>(SplitVec[8]);
 		roll = lexical_cast<float>(SplitVec[7]);
 		LLtoUTM(x, y);
-		PointL *p = new PointL(id, UTMEasting, UTMNorthing, yaw, roll);
+		PointL p = PointL(id, UTMEasting, UTMNorthing, yaw, roll);
 
-		pointsL.push_back(*p);
+		pointsL.push_back(p);
 		YawVec.push_back(yaw);
 
 		if (minx == 0 || minx>UTMEasting)
@@ -81,7 +81,7 @@ int ARLabStitcherwxGPSFrame::getReady()
 		{
 			miny = UTMNorthing;
 		}
-
+		
 		j++;
 
 	}
@@ -119,7 +119,20 @@ int ARLabStitcherwxGPSFrame::getReady()
 		}
 		if (SplitVec[0]=="selected")
 		{
-			int ID=
+			int ID = lexical_cast<int>(SplitVec[1]);
+			pointsL[ID].selected = true;
+			if (SplitVec.size()>3)
+			{
+				vector<std::string> pairs;
+
+				split(pairs, SplitVec[3], is_any_of(","), token_compress_on);
+				for (i = 0; i < pairs.size(), ++i)
+				{
+
+				}
+
+			}
+			
 		}
 
 
