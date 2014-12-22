@@ -176,13 +176,7 @@ public:
 	ARLabStitcherwxGPSFrame(wxWindow* parent);
 
 	//// end generated class members
-	void OnPaint(wxPaintEvent& event)
-	{
-		wxPaintDC dc(this);
-		dc.SetPen(*wxBLACK_PEN);
-		dc.SetBrush(*wxRED_BRUSH);
-		dc.DrawLine(40, 30, 40, 120);
-	}
+	void OnPaint(wxPaintEvent& event);
 	void process();
 
 	DECLARE_EVENT_TABLE()
@@ -192,6 +186,7 @@ private:
 	int UTMNorthing;
 	int UTMEasting;
 	int maxx, maxy;
+	bool isReady;
 	void LLtoUTM(double Long, double Lat) {
 		//double PI=3.1415926535897932;
 		UTMNorthing = 0;
