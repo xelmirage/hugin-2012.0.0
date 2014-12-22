@@ -5,7 +5,7 @@ ARLabStitcherwxGPSFrame::ARLabStitcherwxGPSFrame( wxWindow* parent )
 :
 GPSFrame( parent )
 {
-
+	isReady = false;
 }
 void ARLabStitcherwxGPSFrame::process()
 {
@@ -107,7 +107,7 @@ int ARLabStitcherwxGPSFrame::getReady()
 	data.close();
 
 
-	ifstream data(_GPSResult.c_str());
+	data.open(_GPSResult.c_str());
 	if (data.bad())
 	{
 		cerr << "ERROR: could not open file: '" << _inputFile << "'!" << endl;
@@ -152,6 +152,37 @@ int ARLabStitcherwxGPSFrame::getReady()
 	}
 
 
-
+	isReady = true;
 	return 0;
+}
+void ARLabStitcherwxGPSFrame::OnPaint(wxPaintEvent& event)
+{
+	wxPaintDC dc(this);
+	dc.SetPen(*wxRED_PEN);
+	
+	wxSize windowSize = dc.GetSize();
+	double ratio_x, ratio_y;
+	double ratio_use;
+	
+
+	if (isReady)
+	{
+		ratio_x = (double)windowSize.x / (double)(maxx);
+		ratio_y = (double)windowSize.y / (double)(maxy);
+
+		if (ratio_x > ratio_y)
+		{
+			ratio_use = ratio_x;
+		}
+		else
+		{
+			ratio_use = ratio_y;
+		}
+		for (int i = 0; i < pointsL.size(); ++i)
+		{
+			dc.DrawCircle(pointsL[i].x*ratio_use, pointsL[i].y*ratio_use, 5);
+		}
+
+	}
+
 }
