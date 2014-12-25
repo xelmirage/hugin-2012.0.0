@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////
+﻿///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Jun  5 2014)
 // http://www.wxformbuilder.org/
 //
@@ -189,7 +189,7 @@ class ControlPointFrame : public wxFrame
 		wxBitmapButton* m_bpButtonLeft;
 		wxPanel* m_panelRight;
 		wxComboBox* m_comboBoxRight;
-		wxBitmapButton* m_bpButtonLeft;
+		wxBitmapButton* m_bpButtonRight;
 	
 	public:
 		
