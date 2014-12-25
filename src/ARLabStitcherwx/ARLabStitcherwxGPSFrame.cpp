@@ -1,12 +1,7 @@
 #include "ARLabStitcherwxGPSFrame.h"
-#include "ARLabStitcherwx.h"
 
-ARLabStitcherwxGPSFrame::ARLabStitcherwxGPSFrame( wxWindow* parent )
-:
-GPSFrame( parent )
-{
-	isReady = false;
-}
+
+
 void ARLabStitcherwxGPSFrame::process()
 {
 
@@ -139,8 +134,11 @@ int ARLabStitcherwxGPSFrame::getReady()
 				for (int i = 0; i < pairs.size(); ++i)
 				{
 					Line l;
-					l.a = pointsL[ID];
-					l.b = pointsL[lexical_cast<int>(pairs[i])];
+					
+					l.a.x = pointsL[ID].x;
+					l.a.y = pointsL[ID].y;
+					l.b.x = pointsL[lexical_cast<int>(pairs[i])].x;
+					l.b.y = pointsL[lexical_cast<int>(pairs[i])].y;
 					lines.push_back(l);
 				}
 
@@ -157,20 +155,36 @@ int ARLabStitcherwxGPSFrame::getReady()
 }
 void ARLabStitcherwxGPSFrame::OnPaint(wxPaintEvent& event)
 {
-	wxPaintDC dc(this);
+	
+	//wxClientDC dc(this);
+	wxSize clientSize = GetClientSize();
+	if (m_doubleBuffer==NULL)
+	{
+		m_doubleBuffer = new wxBitmap(clientSize);
+	}
+	else if (	clientSize.x != m_doubleBuffer->GetWidth() ||
+		clientSize.y != m_doubleBuffer->GetHeight())
+	{
+		delete m_doubleBuffer;
+		m_doubleBuffer = new wxBitmap(clientSize);
+	}
+
+	wxBufferedPaintDC dc(this,*m_doubleBuffer);
+	dc.SetBackground(GetBackgroundColour());
 	dc.SetPen(*wxRED_PEN);
+	
 	
 	wxSize windowSize = dc.GetSize();
 	double ratio_x, ratio_y;
 	double ratio_use;
-	
-
+	dc.Clear();
+	//dc.DrawRectangle(0, 0, windowSize.x, windowSize.y);
 	if (isReady)
 	{
-		ratio_x = (double)windowSize.x / (double)(maxx);
-		ratio_y = (double)windowSize.y / (double)(maxy);
+		ratio_x = (double)(windowSize.x-20) / (double)(maxx);
+		ratio_y = (double)(windowSize.y-20) / (double)(maxy);
 
-		if (ratio_x > ratio_y)
+		if (ratio_x < ratio_y)
 		{
 			ratio_use = ratio_x;
 		}
@@ -178,11 +192,56 @@ void ARLabStitcherwxGPSFrame::OnPaint(wxPaintEvent& event)
 		{
 			ratio_use = ratio_y;
 		}
+		dc.SetPen(*wxGREEN_PEN);
+		for (int i = 0; i < lines.size(); ++i)
+		{
+
+			dc.DrawLine(lines[i].a.x*ratio_use + 10, windowSize.y - lines[i].a.y*ratio_use - 10,
+				lines[i].b.x*ratio_use+10, windowSize.y - lines[i].b.y*ratio_use - 10);
+		}
 		for (int i = 0; i < pointsL.size(); ++i)
 		{
-			dc.DrawCircle(pointsL[i].x*ratio_use, pointsL[i].y*ratio_use, 5);
+			if (pointsL[i].selected == true)
+			{
+				dc.SetPen(*wxRED_PEN);
+				dc.SetBrush(*wxWHITE_BRUSH);
+			}
+			else
+			{
+				dc.SetPen(*wxWHITE_PEN);
+				dc.SetBrush(*wxWHITE_BRUSH);
+			}
+			dc.DrawCircle(pointsL[i].x*ratio_use+10, windowSize.y - pointsL[i].y*ratio_use-10, 2);
+
 		}
+	
 
 	}
+}
 
+void ARLabStitcherwxGPSFrame::setGPSFileName(wxString name)
+{
+	_inputFile = name.ToStdString();
+}
+
+
+void ARLabStitcherwxGPSFrame::setResultName(wxString resName)
+{
+	_GPSResult = resName.ToStdString();
+}
+void ARLabStitcherwxGPSFrame::OnResize(wxSizeEvent& e)
+{
+	this->Refresh();
+}
+
+
+
+void ARLabStitcherwxGPSFrame::paint()
+{
+	
+}
+
+
+void ARLabStitcherwxGPSFrame::OnErase(wxEraseEvent& e)
+{
 }

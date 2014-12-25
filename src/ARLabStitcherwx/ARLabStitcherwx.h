@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Jun  5 2014)
 // http://www.wxformbuilder.org/
 //
@@ -37,6 +37,8 @@
 #include <wx/wizard.h>
 #include <wx/dynarray.h>
 WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
+#include <wx/combobox.h>
+#include <wx/bmpbuttn.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -172,7 +174,29 @@ class GPSFrame : public wxFrame
 		
 		~GPSFrame();
 	
+};
 
+///////////////////////////////////////////////////////////////////////////////
+/// Class ControlPointFrame
+///////////////////////////////////////////////////////////////////////////////
+class ControlPointFrame : public wxFrame 
+{
+	private:
+	
+	protected:
+		wxPanel* m_panelLeft;
+		wxComboBox* m_comboBoxLeft;
+		wxBitmapButton* m_bpButtonLeft;
+		wxPanel* m_panelRight;
+		wxComboBox* m_comboBoxRight;
+		wxBitmapButton* m_bpButtonLeft;
+	
+	public:
+		
+		ControlPointFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 573,393 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		
+		~ControlPointFrame();
+	
 };
 
 #endif //__ARLABSTITCHERWX_H__

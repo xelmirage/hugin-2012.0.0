@@ -59,4 +59,6 @@ END_EVENT_TABLE()
 
 BEGIN_EVENT_TABLE(ARLabStitcherwxGPSFrame, GPSFrame)
 EVT_PAINT(ARLabStitcherwxGPSFrame::OnPaint)
+EVT_SIZE(ARLabStitcherwxGPSFrame::OnResize)
+EVT_ERASE_BACKGROUND(ARLabStitcherwxGPSFrame::OnErase)
 END_EVENT_TABLE()

@@ -1,14 +1,15 @@
 #include "ARLabStitcherwxMainFrame.h"
+#include "ARLabStitcherwxGPSFrame.h"
 
 ARLabStitcherwxMainFrame::ARLabStitcherwxMainFrame( wxWindow* parent ,wxString Dir)
 	:
 MainFrame( parent )
 {
 	time_count=0;
-	
+	gFrame = new ::ARLabStitcherwxGPSFrame(this);
 	m_execPanel= new MyExecPanel(MainFrame:: m_notebookProgressOut);
 	//m_execPanel->SetId(wxID_execPanel);
-	gFrame = new ::ARLabStitcherwxGPSFrame(this);
+	
 	//MainFrame::m_splitter5->SplitHorizontally( m_panel7, m_execPanel, 0 );
 	ExeDir=Dir;
 	MainFrame::m_notebookProgressOut->SetPageText(0,wxT("处理状态"));
@@ -271,9 +272,23 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 	{
 		m_timerprocess.Stop();
 		MainFrame::m_timerprocess.Stop();
+		wxString res = sdir + wxT("\\belts.log");
+		switch (phase)
+		{
+		case 0://航迹识别
+			
+			gFrame->setGPSFileName(gpsfileName);
+			gFrame->setResultName(res);
+			
+			gFrame->getReady();
+			gFrame->Show(true);
+			break;
+		default:
+			break;
+		}
 	}
 	
-	//wxMessageBox("\n---------------\n["+run_time+"] GPSFILTER finished\n---------------\n");
+	
 }
 
 void ARLabStitcherwxMainFrame::process(void)
@@ -511,8 +526,9 @@ void ARLabStitcherwxMainFrame::process(void)
 		m_timerprocess.Stop();
 		MainFrame::m_timerprocess.Stop();
 		m_toolShowKML->Enable(true);
+		isBatch = false;
 	}
-	isBatch = false;
+	
 }
 void ARLabStitcherwxMainFrame::showKML(wxCommandEvent& WXUNUSED(event))
 {
@@ -559,13 +575,18 @@ void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 	time_count = 0;
 	t = wxDateTime::Now();
 
+
+	wxString res = sdir + wxT("\\belts.log");
 	this->m_timerprocess.Start(1000);
+	gFrame->setGPSFileName(gpsfileName);
+	gFrame->setResultName(res);
 
-
-	if (execexternal(cmd, wxT("航迹识别")) != 0)
-		return;
-
+	gFrame->getReady();
 	gFrame->Show(true);
+
+	/*if (execexternal(cmd, wxT("航迹识别")) != 0)
+		return;*/
+	
 }
 void ARLabStitcherwxMainFrame::menuProcess(wxCommandEvent& WXUNUSED(event))
 {
@@ -575,3 +596,4 @@ void ARLabStitcherwxMainFrame::menuProcess(wxCommandEvent& WXUNUSED(event))
 
 
 }
+

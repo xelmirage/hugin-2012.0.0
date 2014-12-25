@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Jun  5 2014)
 // http://www.wxformbuilder.org/
 //
@@ -345,5 +345,55 @@ GPSFrame::GPSFrame( wxWindow* parent, wxWindowID id, const wxString& title, cons
 }
 
 GPSFrame::~GPSFrame()
+{
+}
+
+ControlPointFrame::ControlPointFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizerLeft;
+	bSizerLeft = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_panelLeft = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizerLeft;
+	bSizerLeft = new wxBoxSizer( wxVERTICAL );
+	
+	m_comboBoxLeft = new wxComboBox( m_panelLeft, wxID_ANY, _("Combo!"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
+	bSizerLeft->Add( m_comboBoxLeft, 0, wxALL|wxEXPAND, 5 );
+	
+	m_bpButtonLeft = new wxBitmapButton( m_panelLeft, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	bSizerLeft->Add( m_bpButtonLeft, 0, wxALL|wxEXPAND, 5 );
+	
+	
+	m_panelLeft->SetSizer( bSizerLeft );
+	m_panelLeft->Layout();
+	bSizerLeft->Fit( m_panelLeft );
+	bSizerLeft->Add( m_panelLeft, 1, wxEXPAND | wxALL, 5 );
+	
+	m_panelRight = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizerRight;
+	bSizerRight = new wxBoxSizer( wxVERTICAL );
+	
+	m_comboBoxRight = new wxComboBox( m_panelRight, wxID_ANY, _("Combo!"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
+	bSizerRight->Add( m_comboBoxRight, 0, wxALL|wxEXPAND, 5 );
+	
+	m_bpButtonLeft = new wxBitmapButton( m_panelRight, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	bSizerRight->Add( m_bpButtonLeft, 0, wxALL|wxEXPAND, 5 );
+	
+	
+	m_panelRight->SetSizer( bSizerRight );
+	m_panelRight->Layout();
+	bSizerRight->Fit( m_panelRight );
+	bSizerLeft->Add( m_panelRight, 1, wxEXPAND | wxALL, 5 );
+	
+	
+	this->SetSizer( bSizerLeft );
+	this->Layout();
+	
+	this->Centre( wxBOTH );
+}
+
+ControlPointFrame::~ControlPointFrame()
 {
 }

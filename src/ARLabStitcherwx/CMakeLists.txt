@@ -4,7 +4,8 @@
 
 
 add_executable(ARLabStitcherwx WIN32 ARLabStitcherwx.cpp ARLabStitcherwx.h ARLabStitcherwx_app.cpp ARLabStitcherwx_app.h ARLabStitcherwxMainFrame.h ARLabStitcherwxMainFrame.cpp ARLabStitcherwx_rc.rc ARLabStitcherwxNewProjectWizard.cpp ARLabStitcherwxNewProjectWizard.h SuperOverlay.cpp SuperOverlay.h pyramidNode.cpp
-ARLabStitcherwxGPSFrame.h ARLabStitcherwxGPSFrame.cpp)
+ARLabStitcherwxGPSFrame.h ARLabStitcherwxGPSFrame.cpp
+ARLabStitcherwxControlPointFrame.cpp ARLabStitcherwxControlPointFrame.h)
 
 TARGET_LINK_LIBRARIES(ARLabStitcherwx 
 huginbase huginbasewx 
