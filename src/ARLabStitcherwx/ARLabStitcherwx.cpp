@@ -352,8 +352,8 @@ ControlPointFrame::ControlPointFrame( wxWindow* parent, wxWindowID id, const wxS
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
-	wxBoxSizer* bSizerLeft;
-	bSizerLeft = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer* bSizerMain;
+	bSizerMain = new wxBoxSizer( wxHORIZONTAL );
 	
 	m_panelLeft = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizerLeft;
@@ -369,7 +369,7 @@ ControlPointFrame::ControlPointFrame( wxWindow* parent, wxWindowID id, const wxS
 	m_panelLeft->SetSizer( bSizerLeft );
 	m_panelLeft->Layout();
 	bSizerLeft->Fit( m_panelLeft );
-	bSizerLeft->Add( m_panelLeft, 1, wxEXPAND | wxALL, 5 );
+	bSizerMain->Add( m_panelLeft, 1, wxEXPAND | wxALL, 5 );
 	
 	m_panelRight = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizerRight;
@@ -378,17 +378,17 @@ ControlPointFrame::ControlPointFrame( wxWindow* parent, wxWindowID id, const wxS
 	m_comboBoxRight = new wxComboBox( m_panelRight, wxID_ANY, _("Combo!"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
 	bSizerRight->Add( m_comboBoxRight, 0, wxALL|wxEXPAND, 5 );
 	
-	m_bpButtonLeft = new wxBitmapButton( m_panelRight, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	bSizerRight->Add( m_bpButtonLeft, 0, wxALL|wxEXPAND, 5 );
+	m_bpButtonRight = new wxBitmapButton( m_panelRight, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	bSizerRight->Add( m_bpButtonRight, 0, wxALL|wxEXPAND, 5 );
 	
 	
 	m_panelRight->SetSizer( bSizerRight );
 	m_panelRight->Layout();
 	bSizerRight->Fit( m_panelRight );
-	bSizerLeft->Add( m_panelRight, 1, wxEXPAND | wxALL, 5 );
+	bSizerMain->Add( m_panelRight, 1, wxEXPAND | wxALL, 5 );
 	
 	
-	this->SetSizer( bSizerLeft );
+	this->SetSizer( bSizerMain );
 	this->Layout();
 	
 	this->Centre( wxBOTH );
