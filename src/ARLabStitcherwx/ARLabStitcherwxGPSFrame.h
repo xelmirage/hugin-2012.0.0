@@ -253,4 +253,5 @@ public:
 };
 
 
+
 #endif // __ARLabStitcherwxGPSFrame__

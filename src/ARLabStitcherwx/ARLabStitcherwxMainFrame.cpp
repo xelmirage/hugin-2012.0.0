@@ -1,6 +1,6 @@
 #include "ARLabStitcherwxMainFrame.h"
 #include "ARLabStitcherwxGPSFrame.h"
-
+ARLabStitcherwxMainFrame* ARLabStitcherwxMainFrame::m_this = 0;
 ARLabStitcherwxMainFrame::ARLabStitcherwxMainFrame( wxWindow* parent ,wxString Dir)
 	:
 MainFrame( parent )
@@ -58,7 +58,7 @@ MainFrame( parent )
 	m_toolShowKML->Enable(false);
 
 	isBatch = false;
-	
+	m_this = this;
 }
 void ARLabStitcherwxMainFrame::throw_to_parent(wxProcessEvent& e)
 {
@@ -597,3 +597,41 @@ void ARLabStitcherwxMainFrame::menuProcess(wxCommandEvent& WXUNUSED(event))
 
 }
 
+ARLabStitcherwxMainFrame * ARLabStitcherwxMainFrame::Get()
+{
+	if (m_this) {
+		return m_this;
+	}
+	else {
+		DEBUG_FATAL("ARLabStitcherwxMainFrame not yet created");
+		DEBUG_ASSERT(m_this);
+		return 0;
+	}
+}
+void ARLabStitcherwxMainFrame::OnCPListFrameClosed()
+{
+	//cp_frame = 0;
+}
+void ARLabStitcherwxMainFrame::ShowCtrlPoint(unsigned int cpNr)
+{
+	/*DEBUG_DEBUG("Showing control point " << cpNr);
+	m_notebook->SetSelection(5);
+	cpe->ShowControlPoint(cpNr);*/
+}
+
+BEGIN_EVENT_TABLE(ARLabStitcherwxMainFrame, MainFrame)
+EVT_MENU(wxID_New, ARLabStitcherwxMainFrame::newProcessTool)
+EVT_TOOL(wxID_ToolStart, ARLabStitcherwxMainFrame::processcmd)
+EVT_LISTBOX(wxID_ListBoxPicList, ARLabStitcherwxMainFrame::ListBoxPicListClick)
+EVT_TIMER(wxID_TimerProcess, ARLabStitcherwxMainFrame::count_time)
+EVT_END_PROCESS(-1, ARLabStitcherwxMainFrame::end_process)
+EVT_TOOL(wxID_NEW_PROJECT_TOOL, ARLabStitcherwxMainFrame::newProcessTool)
+EVT_TOOL(wxID_toolShowTrack, ARLabStitcherwxMainFrame::showTrack)
+EVT_TOOL(wxID_ShowKML, ARLabStitcherwxMainFrame::showTrack)
+EVT_TOOL(wxID_SuperOverLay, ARLabStitcherwxMainFrame::generateSuperOverlay)
+
+EVT_MENU(wxID_menuItemProcess, ARLabStitcherwxMainFrame::menuProcess)
+EVT_MENU(wxID_menuItemPreProcess, ARLabStitcherwxMainFrame::preProcess)
+
+
+END_EVENT_TABLE()

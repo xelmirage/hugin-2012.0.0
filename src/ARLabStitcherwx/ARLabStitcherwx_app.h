@@ -1,4 +1,10 @@
+
+#ifndef _ARLABSTITCHERWXAPP_H
+#define _ARLABSTITCHERWXAPP_H
+
+#include "config.h"
 #include "wx/wxprec.h"
+#include "hugin_utils/utils.h"
 #include"ARLabStitcherwxMainFrame.h"
 #ifdef __BORLANDC__
    #pragma hdrstop
@@ -12,11 +18,38 @@
 
 class ARLabStitcherwxApp: public wxApp
 {
+	
     virtual bool OnInit();
+	
+
+	/** temporary working directory */
+	wxString m_workDir;
+	
+	//// the model
+	//Panorama pano;
+
+	// folder for xrc (GUI resources)
+	wxString m_xrcPrefix;
+	// folder for data shared by CLI and GUI to enable separate packaging of CLI tools
+	wxString m_DataDir;
+	// folder for CLI tools
+	wxString m_utilsBinDir;
+public:
+	static ARLabStitcherwxApp * Get();
+	static ARLabStitcherwxMainFrame* getMainFrame();
+	const wxString & GetXRCPath()
+	{
+		return m_xrcPrefix;
+	}
+
+	ARLabStitcherwxMainFrame* frame;
+
+	static ARLabStitcherwxApp* m_this;
+	
 };
 
 DECLARE_APP(ARLabStitcherwxApp)
-IMPLEMENT_APP(ARLabStitcherwxApp)
+
 
 
 //	enum
@@ -27,38 +60,16 @@ IMPLEMENT_APP(ARLabStitcherwxApp)
 
 
 
-BEGIN_EVENT_TABLE(ARLabStitcherwxMainFrame, MainFrame)
-EVT_MENU(wxID_New, ARLabStitcherwxMainFrame::newProcessTool)
-EVT_TOOL(wxID_ToolStart, ARLabStitcherwxMainFrame::processcmd)
-EVT_LISTBOX(wxID_ListBoxPicList, ARLabStitcherwxMainFrame::ListBoxPicListClick)
-EVT_TIMER(wxID_TimerProcess, ARLabStitcherwxMainFrame::count_time)
-EVT_END_PROCESS(-1, ARLabStitcherwxMainFrame::end_process)
-EVT_TOOL(wxID_NEW_PROJECT_TOOL, ARLabStitcherwxMainFrame::newProcessTool)
-EVT_TOOL(wxID_toolShowTrack, ARLabStitcherwxMainFrame::showTrack)
-EVT_TOOL(wxID_ShowKML, ARLabStitcherwxMainFrame::showTrack)
-EVT_TOOL(wxID_SuperOverLay, ARLabStitcherwxMainFrame::generateSuperOverlay)
-
-EVT_MENU(wxID_menuItemProcess, ARLabStitcherwxMainFrame::menuProcess)
-EVT_MENU(wxID_menuItemPreProcess, ARLabStitcherwxMainFrame::preProcess)
-
-
-END_EVENT_TABLE()
 
 
 
-BEGIN_EVENT_TABLE(ARLabStitcherwxNewProjectWizard, NewProjectWizard)
-EVT_BUTTON(wxID_OpenSourceDir, ARLabStitcherwxNewProjectWizard::OpenSourceDir)
-EVT_BUTTON(wxID_OpenGPSFile, ARLabStitcherwxNewProjectWizard::OpenGPSFile)
-EVT_BUTTON(wxID_OpenOutputFile, ARLabStitcherwxNewProjectWizard::OpenOutputFile)
-EVT_TEXT(wxID_SourceDir, ARLabStitcherwxNewProjectWizard::ValidateInputDir)
-EVT_TEXT(wxID_GPSFile, ARLabStitcherwxNewProjectWizard::ValidateGPSFile)
-EVT_TEXT(wxID_OutputFile, ARLabStitcherwxNewProjectWizard::ValidateOutFile)
-EVT_WIZARD_BEFORE_PAGE_CHANGED(wxID_NewProjectWizard, ARLabStitcherwxNewProjectWizard::DisableNextFirst)
-END_EVENT_TABLE()
+
+void RestoreFramePosition(wxTopLevelWindow * frame, const wxString & basename);
+void StoreFramePosition(wxTopLevelWindow * frame, const wxString & basename);
+bool str2double(wxString s, double & d);
 
 
-BEGIN_EVENT_TABLE(ARLabStitcherwxGPSFrame, GPSFrame)
-EVT_PAINT(ARLabStitcherwxGPSFrame::OnPaint)
-EVT_SIZE(ARLabStitcherwxGPSFrame::OnResize)
-EVT_ERASE_BACKGROUND(ARLabStitcherwxGPSFrame::OnErase)
-END_EVENT_TABLE()
+
+
+
+#endif 
