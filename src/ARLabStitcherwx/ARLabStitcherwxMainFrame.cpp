@@ -558,7 +558,10 @@ int ARLabStitcherwxMainFrame::stitch(wxString inputFileName, wxString outFileNam
 
 void ARLabStitcherwxMainFrame::generateSuperOverlay(wxCommandEvent& WXUNUSED(event))
 {
-	SuperOverlay ovl =SuperOverlay("f:/ge/20141111debug.tif", "f:/ge/20141111debug.kml", "f:/ge/superoverlay");
+	wxFileName outtif(outfileName);
+	wxFileName outkml = outtif;
+	outkml.SetExt(wxT("kml"));
+	SuperOverlay ovl =SuperOverlay(outtif.GetFullPath(),outkml.GetFullPath(), outkml.GetPath());
 	ovl.build();
 	
 }
