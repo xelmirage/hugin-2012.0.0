@@ -372,6 +372,7 @@ bool is_next_valid(int id,int step)
 void build_belt(string outfile)
 {
 	int _cores=hugin_utils::getCPUCount();
+	ZThread::PoolExecutor aExecutor(_cores);
 	boost::thread_group threads;
 	POINTSLV::iterator belt_iterator;
 	int row_step=1;    //选取照片的间隔
@@ -383,7 +384,7 @@ void build_belt(string outfile)
 	string _outputFile=outfile;
 	ofstream belt_out(_outputFile.c_str());
 	POINTSL::iterator i;
-	ZThread::PoolExecutor aExecutor(_cores);
+	
 	for(i=pointsL.begin();i!=pointsL.end()-1;++i)
 	{
 		if(!i->selected)
@@ -567,7 +568,42 @@ void build_belt(string outfile)
 
 
 }
+void build_belt_heli(string outfile)
+{
+	int _cores = hugin_utils::getCPUCount();
+	ZThread::PoolExecutor aExecutor(_cores);
+	DISTS distances;
+	ofstream belt_out(outfile.c_str());
+	for (int i; i < pointsL.size()-1; ++i)
+	{
+		for (int j = i + 1; j < pointsL.size(); ++j)
+		{
+			long d = pointsL[i].distance(pointsL[j]);
+			dist tempDist(pointsL[j].id, d, 0);
+			distances.push_back(tempDist);
+		}
+		sort(distances.begin(), distances.end());
+		std::string tag = "";
+		tag.clear();
+		tag = "selected ";
+		tag += lexical_cast<std::string>(pointsL[i].id);
+		tag += " pairs_with ";
+		
 
+		
+		for (int j = 0; (j < 10) && (j < distances.size()); ++j)
+		{
+			tag += "," + lexical_cast<std::string>(distances[j].id);
+		}
+
+		string cmd = "exiftool -F -m -overwrite_original -UserComment=\"" + tag + "\" "
+			+ images[i];
+		aExecutor.execute(new runexif(cmd, images[i]));
+		belt_out << tag << endl;
+	}
+	aExecutor.wait();
+	belt_out.close();
+}
 static void usage(const char* name)
 {
     cout << name << ": Filtting images with GPS data" << endl
@@ -581,12 +617,14 @@ static void usage(const char* name)
          << "     -s, --sourcedir=dir    directory contains images to be handled" << endl
          << "                            (default: 1, no stacks)" << endl
          << "     -g, --gpsfile=file.txt Specify GPS data file" << endl
+		 << "     -t, --aircraft_type=HELI|FIX  aircraft type" << endl
          << "     -h, --help             Shows this help" << endl
          << endl;
 }
 
 int main(int argc,char* argv[])
 {
+	string atype;
 	int _cores=hugin_utils::getCPUCount();
 	int c;
 	int optionIndex = 0;
@@ -594,13 +632,14 @@ int main(int argc,char* argv[])
 	ZThread::PoolExecutor aExecutor(_cores);
 	huginExeDir = getExePath(argv[0]);
 	
-	const char* optstring = "o:s:g:h";
+	const char* optstring = "o:s:g:t:h";
 	static struct option longOptions[] =
     {
 		
         {"output", required_argument, NULL, 'o' },
         {"sourcedir", required_argument, NULL, 's' },
         {"gpsfile", required_argument, NULL, 'g' },
+		{ "aircraft_type", required_argument, NULL, 't' },
         //{"gpsoutput", required_argument, NULL, 'p' },
         //{"stacklength", required_argument, NULL, 's' },
         //{"linkstacks", no_argument, NULL, 'l' },
@@ -641,6 +680,10 @@ int main(int argc,char* argv[])
 				return 1;
 				break;
 			case '?':
+				break;
+			case 't':
+				atype = optarg;
+				
 				break;
 			case 'h':
 				usage(argv[0]);
@@ -731,6 +774,7 @@ int main(int argc,char* argv[])
 		PointL *p=new PointL(id,UTMEasting,UTMNorthing,yaw,roll);
 
 		pointsL.push_back(*p);
+		free(p);
 		YawVec.push_back(yaw);
 
 		if(minx==0||minx>UTMEasting)
