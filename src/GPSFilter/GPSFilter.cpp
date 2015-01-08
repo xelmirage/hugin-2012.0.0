@@ -574,8 +574,9 @@ void build_belt_heli(string outfile)
 	ZThread::PoolExecutor aExecutor(_cores);
 	DISTS distances;
 	ofstream belt_out(outfile.c_str());
-	for (int i; i < pointsL.size()-1; ++i)
+	for (int i=0; i < pointsL.size()-1; ++i)
 	{
+		distances.clear();
 		for (int j = i + 1; j < pointsL.size(); ++j)
 		{
 			long d = pointsL[i].distance(pointsL[j]);
@@ -593,7 +594,9 @@ void build_belt_heli(string outfile)
 		
 		for (int j = 0; (j < 10) && (j < distances.size()); ++j)
 		{
-			tag += "," + lexical_cast<std::string>(distances[j].id);
+			if (j != 0)
+				tag += "," ;
+			tag +=  lexical_cast<std::string>(distances[j].id);
 		}
 
 		string cmd = "exiftool -F -m -overwrite_original -UserComment=\"" + tag + "\" "
@@ -799,8 +802,11 @@ int main(int argc,char* argv[])
 			+"\"  -GPSLatitude=\""+ lexical_cast<string>(SplitVec[4])
 			+"\" -UserComment=\"thrown\" "
 			+images[j];
+		if (atype.compare("HELI")!=0)
+		{
+			aExecutor.execute(new runexif(cmd, images[j]));
+		}
 		
-		aExecutor.execute(new runexif(cmd,images[j]));
 		//threads.add_thread(new boost::thread(boost::bind(&run,cmd)));
 		//std::system(cmd.c_str());
 
@@ -809,7 +815,11 @@ int main(int argc,char* argv[])
 		j++;
 
 	}
-	aExecutor.wait();
+	if (atype.compare("HELI") != 0)
+	{
+		aExecutor.wait();
+	}
+	
 	//threads.join_all();
 	POINTSL::iterator i;
 	PointL minPoint(0,minx,miny,0,0);
@@ -874,10 +884,16 @@ int main(int argc,char* argv[])
 
 
 
+	if (atype.compare("HELI") == 0)
+	{
+		build_belt_heli(_outputFile);
+	}
+	else
+	{
+		build_belt(_outputFile);
+	}
 
-
-	build_belt(_outputFile);
-
+	
 
 	//::system("pause");
 
