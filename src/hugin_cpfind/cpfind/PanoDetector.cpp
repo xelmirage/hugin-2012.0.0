@@ -771,7 +771,7 @@ bool PanoDetector::matchgps(PoolExecutor& aExecutor, std::vector<HuginBase::UInt
 				cout<<endl<<e.what()<<endl<<"bad lexical_cast,continue"<<endl;
 				continue;
 			}
-			if (i==1) break;
+//			if (i==1) break;
 
 		}
 		pairs.push_back(ipair);

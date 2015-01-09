@@ -574,7 +574,7 @@ void build_belt_heli(string outfile)
 	ZThread::PoolExecutor aExecutor(_cores);
 	DISTS distances;
 	ofstream belt_out(outfile.c_str());
-	for (int i=0; i < pointsL.size()-1; ++i)
+	for (int i=0; i < pointsL.size(); ++i)
 	{
 		distances.clear();
 		for (int j = i + 1; j < pointsL.size(); ++j)
@@ -801,25 +801,23 @@ int main(int argc,char* argv[])
 		string cmd=huginExeDir.ToStdString()+"\\exiftool -F -m -overwrite_original -GPSLongitude=\""+ lexical_cast<string>(SplitVec[3])
 			+"\"  -GPSLatitude=\""+ lexical_cast<string>(SplitVec[4])
 			+"\" -UserComment=\"thrown\" "
-			+images[j];
-		if (atype.compare("HELI")!=0)
-		{
-			aExecutor.execute(new runexif(cmd, images[j]));
-		}
-		
+			+ images[j];
+
+		aExecutor.execute(new runexif(cmd, images[j]));
+
+
 		//threads.add_thread(new boost::thread(boost::bind(&run,cmd)));
 		//std::system(cmd.c_str());
 
-		cout<<images[j]<<endl;
+		cout << images[j] << endl;
 		//image->writeMetadata();
 		j++;
 
 	}
-	if (atype.compare("HELI") != 0)
-	{
-		aExecutor.wait();
-	}
-	
+
+	aExecutor.wait();
+
+
 	//threads.join_all();
 	POINTSL::iterator i;
 	PointL minPoint(0,minx,miny,0,0);

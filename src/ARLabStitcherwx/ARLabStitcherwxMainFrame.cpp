@@ -318,7 +318,7 @@ void ARLabStitcherwxMainFrame::process(void)
 		this->m_timerprocess.Start(1000);
 		if(!beltlog.FileExists())
 		{
-			cmd=ExeDir+wxT("\\gpsfilter -o ")+sdir+wxT("\\belts.log -g ")+gpsfileName+wxT(" -s ")+sdir;
+			cmd=ExeDir+wxT("\\gpsfilter -o ")+sdir+wxT("\\belts.log -g ")+gpsfileName+wxT(" -s ")+sdir+wxT(" -t HELI");
 
 			if (execexternal(cmd,wxT("航迹识别"))!=0)
 				return;
@@ -570,7 +570,7 @@ void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 	wxString cmd;
 	
 	
-	cmd = ExeDir + wxT("\\gpsfilter -o ") + sdir + wxT("\\belts.log -g ") + gpsfileName + wxT(" -s ") + sdir;
+	cmd = ExeDir + wxT("\\gpsfilter -o ") + sdir + wxT("\\belts.log -g ") + gpsfileName + wxT(" -s ") + sdir+wxT(" -t HELI");
 	phase = 0;
 
 	MainFrame::m_textCtrlProgress->Clear();
@@ -587,8 +587,8 @@ void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 	gFrame->getReady();
 	gFrame->Show(true);
 
-	/*if (execexternal(cmd, wxT("航迹识别")) != 0)
-		return;*/
+	if (execexternal(cmd, wxT("航迹识别")) != 0)
+		return;
 	
 }
 void ARLabStitcherwxMainFrame::menuProcess(wxCommandEvent& WXUNUSED(event))
