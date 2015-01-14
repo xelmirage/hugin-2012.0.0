@@ -17,8 +17,7 @@ class ARLabStitcherwxControlPointFrame : public ControlPointFrame
 		/** Constructor */
 		ARLabStitcherwxControlPointFrame( wxWindow* parent );
 	//// end generated class members
-
-
+	
 };
 
 #endif // __ARLabStitcherwxControlPointFrame__
