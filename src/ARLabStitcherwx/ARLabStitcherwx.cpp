@@ -50,11 +50,11 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_menuItemPreProcess = new wxMenuItem( m_menuEdit, wxID_menuItemPreProcess, wxString( _("预处理") ) , wxEmptyString, wxITEM_NORMAL );
 	m_menuEdit->Append( m_menuItemPreProcess );
 	
-	wxMenuItem* m_menuItem5;
-	m_menuItem5 = new wxMenuItem( m_menuEdit, wxID_ANY, wxString( _("图像增强") ) , wxEmptyString, wxITEM_NORMAL );
-	m_menuEdit->Append( m_menuItem5 );
+	wxMenuItem* m_menuItemFindCP;
+	m_menuItemFindCP = new wxMenuItem( m_menuEdit, wxID_menuItemFindCP, wxString( _("寻找特征点") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menuEdit->Append( m_menuItemFindCP );
 	
-	m_menubarmain->Append( m_menuEdit, _("预处理") ); 
+	m_menubarmain->Append( m_menuEdit, _("处理") ); 
 	
 	m_menu3 = new wxMenu();
 	wxMenuItem* m_menuItem6;
@@ -352,8 +352,8 @@ ControlPointFrame::ControlPointFrame( wxWindow* parent, wxWindowID id, const wxS
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
-	wxBoxSizer* bSizerLeft;
-	bSizerLeft = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer* bSizerMain;
+	bSizerMain = new wxBoxSizer( wxHORIZONTAL );
 	
 	m_panelLeft = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizerLeft;
@@ -362,14 +362,14 @@ ControlPointFrame::ControlPointFrame( wxWindow* parent, wxWindowID id, const wxS
 	m_comboBoxLeft = new wxComboBox( m_panelLeft, wxID_ANY, _("Combo!"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
 	bSizerLeft->Add( m_comboBoxLeft, 0, wxALL|wxEXPAND, 5 );
 	
-	m_bpButtonLeft = new wxBitmapButton( m_panelLeft, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	bSizerLeft->Add( m_bpButtonLeft, 0, wxALL|wxEXPAND, 5 );
+	m_bitmapLeft = new wxStaticBitmap( m_panelLeft, wxID_bitmapLeft, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizerLeft->Add( m_bitmapLeft, 0, wxALL, 5 );
 	
 	
 	m_panelLeft->SetSizer( bSizerLeft );
 	m_panelLeft->Layout();
 	bSizerLeft->Fit( m_panelLeft );
-	bSizerLeft->Add( m_panelLeft, 1, wxEXPAND | wxALL, 5 );
+	bSizerMain->Add( m_panelLeft, 1, wxEXPAND | wxALL, 5 );
 	
 	m_panelRight = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizerRight;
@@ -378,17 +378,17 @@ ControlPointFrame::ControlPointFrame( wxWindow* parent, wxWindowID id, const wxS
 	m_comboBoxRight = new wxComboBox( m_panelRight, wxID_ANY, _("Combo!"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
 	bSizerRight->Add( m_comboBoxRight, 0, wxALL|wxEXPAND, 5 );
 	
-	m_bpButtonLeft = new wxBitmapButton( m_panelRight, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	bSizerRight->Add( m_bpButtonLeft, 0, wxALL|wxEXPAND, 5 );
+	m_bitmapRight = new wxStaticBitmap( m_panelRight, wxID_bitmapRight, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizerRight->Add( m_bitmapRight, 0, wxALL, 5 );
 	
 	
 	m_panelRight->SetSizer( bSizerRight );
 	m_panelRight->Layout();
 	bSizerRight->Fit( m_panelRight );
-	bSizerLeft->Add( m_panelRight, 1, wxEXPAND | wxALL, 5 );
+	bSizerMain->Add( m_panelRight, 1, wxEXPAND | wxALL, 5 );
 	
 	
-	this->SetSizer( bSizerLeft );
+	this->SetSizer( bSizerMain );
 	this->Layout();
 	
 	this->Centre( wxBOTH );

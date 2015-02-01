@@ -6,8 +6,9 @@ ARLabStitcherwxMainFrame::ARLabStitcherwxMainFrame( wxWindow* parent ,wxString D
 MainFrame( parent )
 {
 	time_count=0;
-	gFrame = new ::ARLabStitcherwxGPSFrame(this);
+	m_GPSFrame = new ::ARLabStitcherwxGPSFrame(this);
 	m_execPanel= new MyExecPanel(MainFrame:: m_notebookProgressOut);
+	m_controlPointsFrame = new ARLabStitcherwxControlPointFrame(this);
 	//m_execPanel->SetId(wxID_execPanel);
 	
 	//MainFrame::m_splitter5->SplitHorizontally( m_panel7, m_execPanel, 0 );
@@ -277,11 +278,11 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 		{
 		case 0://航迹识别
 			
-			gFrame->setGPSFileName(gpsfileName);
-			gFrame->setResultName(res);
+			m_GPSFrame->setGPSFileName(gpsfileName);
+			m_GPSFrame->setResultName(res);
 			
-			gFrame->getReady();
-			gFrame->Show(true);
+			m_GPSFrame->getReady();
+			m_GPSFrame->Show(true);
 			break;
 		default:
 			break;
@@ -578,11 +579,11 @@ void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 
 	wxString res = sdir + wxT("\\belts.log");
 	this->m_timerprocess.Start(1000);
-	gFrame->setGPSFileName(gpsfileName);
-	gFrame->setResultName(res);
+	m_GPSFrame->setGPSFileName(gpsfileName);
+	m_GPSFrame->setResultName(res);
 
-	gFrame->getReady();
-	gFrame->Show(true);
+	m_GPSFrame->getReady();
+	m_GPSFrame->Show(true);
 
 	/*if (execexternal(cmd, wxT("航迹识别")) != 0)
 		return;*/
@@ -597,3 +598,7 @@ void ARLabStitcherwxMainFrame::menuProcess(wxCommandEvent& WXUNUSED(event))
 
 }
 
+void ARLabStitcherwxMainFrame::findCP(wxCommandEvent& WXUNUSED(event))
+{
+
+}

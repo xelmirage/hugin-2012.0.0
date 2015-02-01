@@ -38,7 +38,6 @@
 #include <wx/dynarray.h>
 WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
 #include <wx/combobox.h>
-#include <wx/bmpbuttn.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -46,28 +45,31 @@ WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
 #define wxID_Exit 1001
 #define wxID_menuItemProcess 1002
 #define wxID_menuItemPreProcess 1003
-#define wxID_Panel6 1004
-#define wxID_ListBoxPicList 1005
-#define wxID_NoteBookProgressOut 1006
-#define wxID_TimerProcess 1007
-#define wxID_NEW_PROJECT_TOOL 1008
-#define wxID_ToolStart 1009
-#define wxID_toolShowTrack 1010
-#define wxID_SuperOverLay 1011
-#define wxID_ShowKML 1012
-#define wxID_NewProjectWizard 1013
-#define wxID_WizardPage01 1014
-#define wxID_SourceDir 1015
-#define wxID_InputDirHint 1016
-#define wxID_OpenSourceDir 1017
-#define wxID_WizardPage02 1018
-#define wxID_GPSFile 1019
-#define wxID_GPSHint 1020
-#define wxID_OpenGPSFile 1021
-#define wxID_WizardPage03 1022
-#define wxID_OutputFile 1023
-#define wxID_OutputFileHint 1024
-#define wxID_OpenOutputFile 1025
+#define wxID_menuItemFindCP 1004
+#define wxID_Panel6 1005
+#define wxID_ListBoxPicList 1006
+#define wxID_NoteBookProgressOut 1007
+#define wxID_TimerProcess 1008
+#define wxID_NEW_PROJECT_TOOL 1009
+#define wxID_ToolStart 1010
+#define wxID_toolShowTrack 1011
+#define wxID_SuperOverLay 1012
+#define wxID_ShowKML 1013
+#define wxID_NewProjectWizard 1014
+#define wxID_WizardPage01 1015
+#define wxID_SourceDir 1016
+#define wxID_InputDirHint 1017
+#define wxID_OpenSourceDir 1018
+#define wxID_WizardPage02 1019
+#define wxID_GPSFile 1020
+#define wxID_GPSHint 1021
+#define wxID_OpenGPSFile 1022
+#define wxID_WizardPage03 1023
+#define wxID_OutputFile 1024
+#define wxID_OutputFileHint 1025
+#define wxID_OpenOutputFile 1026
+#define wxID_bitmapLeft 1027
+#define wxID_bitmapRight 1028
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -186,10 +188,10 @@ class ControlPointFrame : public wxFrame
 	protected:
 		wxPanel* m_panelLeft;
 		wxComboBox* m_comboBoxLeft;
-		wxBitmapButton* m_bpButtonLeft;
+		wxStaticBitmap* m_bitmapLeft;
 		wxPanel* m_panelRight;
 		wxComboBox* m_comboBoxRight;
-		wxBitmapButton* m_bpButtonRight;
+		wxStaticBitmap* m_bitmapRight;
 	
 	public:
 		
