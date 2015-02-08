@@ -17,8 +17,93 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 	if (dd.ShowModal() == wxID_CANCEL)
 		return;
 
-	
-		m_textCtrlSourceDir->SetValue( dd.GetPath());
+
+	m_textCtrlSourceDir->SetValue(dd.GetPath());
+	std::string sdir = dd.GetPath();
+	wxFileName beltlog(sdir + "\\belts.log");
+	wxFileName stitch(sdir + "\\stitch.pto");
+	wxFileName stitch_cp(sdir + "\\stitch_cp.pto");
+	wxFileName stitch_cp_clean(sdir + "\\stitch_cp_clean.pto");
+	wxFileName stitch_cp_clean_line(sdir + "\\stitch_cp_clean_linefind.pto");
+	wxFileName stitch_cp_clean_line_op(sdir + "\\stitch_cp_clean_linefind_op.pto");
+	wxFileName gps_connect(this->outfileName + ".coord");
+	wxFileName stitch_cp_clean_line_op_crop(sdir + "\\stitch_cp_clean_linefind_op_crop.pto");
+
+
+	if (!beltlog.Exists())
+	{
+		return;
+	}
+	if (!stitch.Exists())
+	{
+		int answer = wxMessageBox("belt record found, recover from it?", "Recovery", wxYES_NO | wxCANCEL);
+		if (answer == wxYES)    
+			return;
+		else
+		{
+			wxRemove(sdir + "\\*.pto");
+			wxRemove(sdir + "\\*.log");
+		}
+	}
+
+	if (!stitch_cp.Exists())
+	{
+		int answer = wxMessageBox("previous points found, recover from it?", "Recovery", wxYES_NO | wxCANCEL);
+		if (answer == wxYES)
+			return;
+		else
+		{
+			wxRemove(sdir + "\\*.pto");
+			wxRemove(sdir + "\\*.log");
+		}
+	}
+	if (!stitch_cp_clean.Exists())
+	{
+		int answer = wxMessageBox("previous record found, recover from it?", "Recovery", wxYES_NO | wxCANCEL);
+		if (answer == wxYES)
+			return;
+		else
+		{
+			wxRemove(sdir + "\\*.pto");
+			wxRemove(sdir + "\\*.log");
+		}
+	}
+
+	if (!stitch_cp_clean_line.Exists())
+	{
+		int answer = wxMessageBox("previous record found, recover from it?", "Recovery", wxYES_NO | wxCANCEL);
+		if (answer == wxYES)
+			return;
+		else
+		{
+			wxRemove(sdir + "\\*.pto");
+			wxRemove(sdir + "\\*.log");
+		}
+	}
+	if (!stitch_cp_clean_line_op.Exists())
+	{
+		int answer = wxMessageBox("previous record found, recover from it?", "Recovery", wxYES_NO | wxCANCEL);
+		if (answer == wxYES)
+			return;
+		else
+		{
+			wxRemove(sdir + "\\*.pto");
+			wxRemove(sdir + "\\*.log");
+		}
+	}
+	if (!stitch_cp_clean_line_op_crop.Exists())
+	{
+		int answer = wxMessageBox("previous record found, recover from it?", "Recovery", wxYES_NO | wxCANCEL);
+		if (answer == wxYES)
+			return;
+		else
+		{
+			wxRemove(sdir + "\\*.pto");
+			wxRemove(sdir + "\\*.log");
+		}
+	}
+
+
 }
 void ARLabStitcherwxNewProjectWizard::OpenGPSFile(wxCommandEvent& WXUNUSED(event))
 {
