@@ -29,7 +29,10 @@ int ARLabStitcherwxControlPointFrame::getReady()
 			+ "DocumentData::ReadWriteError code: " + lexical_cast<string>(err)+ "\n");
 		return 1;
 	}
+	if (pano.getNrOfImages())
+	{
 
+	}
 
 	return 0;
 }
