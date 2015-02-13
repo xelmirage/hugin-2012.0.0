@@ -29,10 +29,14 @@ int ARLabStitcherwxControlPointFrame::getReady()
 			+ "DocumentData::ReadWriteError code: " + lexical_cast<string>(err)+ "\n");
 		return 1;
 	}
-	if (pano.getNrOfImages())
+	if (pano.getNrOfImages()==0)
 	{
-
+		wxMessageBox ("Panorama should consist of at least one image" );
+		return 1;
 	}
+
+
+
 
 	return 0;
 }
