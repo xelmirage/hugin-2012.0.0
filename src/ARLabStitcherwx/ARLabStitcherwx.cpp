@@ -200,11 +200,11 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	this->Layout();
 	m_timerprocess.SetOwner( this, wxID_TimerProcess );
 	m_toolBar1 = this->CreateToolBar( wxTB_HORIZONTAL, wxID_ANY ); 
-	m_tool_new = m_toolBar1->AddTool( wxID_NEW_PROJECT_TOOL, _("新建工程"), wxBitmap( wxT("images/new.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
+	m_tool_new = m_toolBar1->AddTool( wxID_NEW_PROJECT_TOOL, _("新建工程"), wxBitmap( wxT("F:\\huginbase64\\hugin-2012.0.0\\src\\ARLabStitcherwx\\images\\new.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
-	m_tool2 = m_toolBar1->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/save.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
+	m_tool2 = m_toolBar1->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("F:\\huginbase64\\hugin-2012.0.0\\src\\ARLabStitcherwx\\images\\save.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
-	m_toolStart = m_toolBar1->AddTool( wxID_ToolStart, _("tool"), wxBitmap( wxT("images/start1.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
+	m_toolStart = m_toolBar1->AddTool( wxID_ToolStart, _("tool"), wxBitmap( wxT("F:\\huginbase64\\hugin-2012.0.0\\src\\ARLabStitcherwx\\images\\start1.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
 	m_toolShowTrack = m_toolBar1->AddTool( wxID_toolShowTrack, _("tool"), wxBitmap( wxT("images/airportsxia.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
@@ -359,8 +359,10 @@ ControlPointFrame::ControlPointFrame( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizerLeft;
 	bSizerLeft = new wxBoxSizer( wxVERTICAL );
 	
-	m_comboBoxLeft = new wxComboBox( m_panelLeft, wxID_ANY, _("Combo!"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	bSizerLeft->Add( m_comboBoxLeft, 0, wxALL|wxEXPAND, 5 );
+	wxArrayString m_choiceLeftChoices;
+	m_choiceLeft = new wxChoice( m_panelLeft, wxID_choiceLeft, wxDefaultPosition, wxDefaultSize, m_choiceLeftChoices, 0 );
+	m_choiceLeft->SetSelection( 0 );
+	bSizerLeft->Add( m_choiceLeft, 0, wxALL, 5 );
 	
 	m_bitmapLeft = new wxStaticBitmap( m_panelLeft, wxID_bitmapLeft, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizerLeft->Add( m_bitmapLeft, 0, wxALL, 5 );
@@ -375,8 +377,10 @@ ControlPointFrame::ControlPointFrame( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizerRight;
 	bSizerRight = new wxBoxSizer( wxVERTICAL );
 	
-	m_comboBoxRight = new wxComboBox( m_panelRight, wxID_ANY, _("Combo!"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	bSizerRight->Add( m_comboBoxRight, 0, wxALL|wxEXPAND, 5 );
+	wxArrayString m_choiceRightChoices;
+	m_choiceRight = new wxChoice( m_panelRight, wxID_choiceRight, wxDefaultPosition, wxDefaultSize, m_choiceRightChoices, 0 );
+	m_choiceRight->SetSelection( 0 );
+	bSizerRight->Add( m_choiceRight, 0, wxALL, 5 );
 	
 	m_bitmapRight = new wxStaticBitmap( m_panelRight, wxID_bitmapRight, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
 	bSizerRight->Add( m_bitmapRight, 0, wxALL, 5 );

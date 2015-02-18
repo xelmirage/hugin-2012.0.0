@@ -32,9 +32,10 @@ private:
 	wxString ptoFile;
 	Panorama pano;
 	//// end generated class members
-
+	
 public:
 	int getReady();
+	int UpdateDisplay();
 };
 
 #endif // __ARLabStitcherwxControlPointFrame__

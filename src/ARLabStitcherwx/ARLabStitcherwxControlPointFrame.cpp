@@ -35,6 +35,30 @@ int ARLabStitcherwxControlPointFrame::getReady()
 		return 1;
 	}
 
+	if (pano.getNrOfCtrlPoints() == 0)
+	{
+		wxMessageBox("Panorama should consist of at least one image");
+		return 1;
+	}
+	for (int i = 0; i < pano.getNrOfImages(); ++i)
+	{
+		ControlPointFrame::m_choiceLeft->Insert(
+			pano.getImage(i).getFilename(),m_choiceLeft->GetCount());
+
+		ControlPointFrame::m_choiceRight->Insert(
+			pano.getImage(i).getFilename(), m_choiceRight->GetCount());
+	}
+
+
+
+	return 0;
+}
+
+
+int ARLabStitcherwxControlPointFrame::UpdateDisplay()
+{
+
+
 
 
 

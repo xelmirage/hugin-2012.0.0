@@ -71,7 +71,7 @@ void ARLabStitcherwxMainFrame::throw_to_parent(wxProcessEvent& e)
 		((wxWindow*)e.GetEventObject())->GetParent()->GetParent()->GetEventHandler()->ProcessEvent( e );
 	}
 }
-void ARLabStitcherwxMainFrame::newProcessTool(wxCommandEvent& WXUNUSED(event))
+void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 {
 	::ARLabStitcherwxNewProjectWizard nw=new ::ARLabStitcherwxNewProjectWizard(this);
 	nw.RunWizard(nw.m_pages[0]);
@@ -600,5 +600,10 @@ void ARLabStitcherwxMainFrame::menuProcess(wxCommandEvent& WXUNUSED(event))
 
 void ARLabStitcherwxMainFrame::findCP(wxCommandEvent& WXUNUSED(event))
 {
-
+	m_controlPointsFrame->setPTO("C:\part\stitch_cp.pto");
+	if (m_controlPointsFrame->getReady() != 0)
+	{
+		wxMessageBox("cpframe not ready!");
+	};
+	m_controlPointsFrame->Show();
 }

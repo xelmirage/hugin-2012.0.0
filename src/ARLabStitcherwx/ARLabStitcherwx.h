@@ -37,7 +37,7 @@
 #include <wx/wizard.h>
 #include <wx/dynarray.h>
 WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
-#include <wx/combobox.h>
+#include <wx/choice.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -68,8 +68,10 @@ WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
 #define wxID_OutputFile 1024
 #define wxID_OutputFileHint 1025
 #define wxID_OpenOutputFile 1026
-#define wxID_bitmapLeft 1027
-#define wxID_bitmapRight 1028
+#define wxID_choiceLeft 1027
+#define wxID_bitmapLeft 1028
+#define wxID_choiceRight 1029
+#define wxID_bitmapRight 1030
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -187,10 +189,10 @@ class ControlPointFrame : public wxFrame
 	
 	protected:
 		wxPanel* m_panelLeft;
-		wxComboBox* m_comboBoxLeft;
+		wxChoice* m_choiceLeft;
 		wxStaticBitmap* m_bitmapLeft;
 		wxPanel* m_panelRight;
-		wxComboBox* m_comboBoxRight;
+		wxChoice* m_choiceRight;
 		wxStaticBitmap* m_bitmapRight;
 	
 	public:

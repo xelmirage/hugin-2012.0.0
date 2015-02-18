@@ -272,7 +272,7 @@ public:
 	void throw_to_parent(wxProcessEvent& e);
 	void change_status();
 
-	void newProcessTool(wxCommandEvent& WXUNUSED(event));
+	void newProjectTool(wxCommandEvent& WXUNUSED(event));
 	void showTrack(wxCommandEvent& WXUNUSED(event));
 	void showKML(wxCommandEvent& WXUNUSED(event));
 	void generateSuperOverlay(wxCommandEvent& WXUNUSED(event));
