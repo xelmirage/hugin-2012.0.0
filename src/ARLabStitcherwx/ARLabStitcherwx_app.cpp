@@ -6,7 +6,9 @@ bool ARLabStitcherwxApp:: OnInit()
 	ARLabStitcherwxMainFrame* frame=new ARLabStitcherwxMainFrame((wxWindow*)NULL,ExeDir);
 	frame->Show(true);
 	SetTopWindow(frame);
+	::wxInitAllImageHandlers();
 	wxImage::AddHandler(new ::wxJPEGHandler);
+	wxImage::AddHandler(new ::wxPNGHandler);
 	return true;
 
 

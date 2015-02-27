@@ -45,10 +45,11 @@ int ARLabStitcherwxControlPointFrame::getReady()
 		ControlPointFrame::m_choiceLeft->Insert(
 			pano.getImage(i).getFilename(),m_choiceLeft->GetCount());
 
-		ControlPointFrame::m_choiceRight->Insert(
-			pano.getImage(i).getFilename(), m_choiceRight->GetCount());
+		//ControlPointFrame::m_choiceRight->Insert(
+		//	pano.getImage(i).getFilename(), m_choiceRight->GetCount());
 	}
 
+	ControlPointFrame::m_choiceRight->Enable(false);
 
 
 	return 0;
@@ -63,4 +64,38 @@ int ARLabStitcherwxControlPointFrame::UpdateDisplay()
 
 
 	return 0;
+}
+
+
+void ARLabStitcherwxControlPointFrame::choiceLeftChanged(wxCommandEvent& ee)
+{
+	using namespace HuginBase;
+	unsigned int imageLeftNr=2;
+	imageLeftNr = m_choiceLeft->GetSelection();
+	cpForLeftImg.clear();
+	cpForLeftImg = pano.getCtrlPointsVectorForImage(imageLeftNr);
+	
+	
+	for (int i = 0; i < cpForLeftImg.size(); ++i)
+	{
+
+		ControlPoint tempCP = cpForLeftImg[i].second;
+
+		rightImgNrs.push_back(tempCP.image2Nr);
+	}
+	sort(rightImgNrs.begin(), rightImgNrs.end());
+	std::vector<unsigned int>::iterator pos;
+	pos =std::unique(rightImgNrs.begin(), rightImgNrs.end());
+	rightImgNrs.erase(pos, rightImgNrs.end());
+
+	for (int i = 0; i < rightImgNrs.size(); ++i)
+	{
+		m_choiceRight->Insert(
+			pano.getImage(rightImgNrs[i]).getFilename(), m_choiceRight->GetCount()
+			);
+	}
+	m_choiceRight->Enable(true);
+
+
+
 }

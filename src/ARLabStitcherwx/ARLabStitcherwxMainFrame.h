@@ -266,7 +266,7 @@ public:
 	ARLabStitcherwxMainFrame( wxWindow* parent,wxString Dir );
 	void newProcess(wxCommandEvent& WXUNUSED(event));
 	void processcmd(wxCommandEvent& WXUNUSED(event));
-	void ListBoxPicListClick(wxCommandEvent& e);
+	void ListBoxClicked(wxCommandEvent& e);
 	void count_time(::wxTimerEvent& e);
 	void end_process(::wxProcessEvent& e);
 	void throw_to_parent(wxProcessEvent& e);
@@ -280,7 +280,7 @@ public:
 	void menuProcess(wxCommandEvent& WXUNUSED(event));
 
 	void findCP(wxCommandEvent& WXUNUSED(event));
-
+	void panelPreviewSizeChanged(wxSizeEvent& e);
 
 	void push_message(wxString message);
 	int execexternal(wxString command,wxString tickmessage);
@@ -314,6 +314,8 @@ private:
 public:
 	void process(void);
 
+	void UpdateImagePreview();
+	
 };
 
 enum

@@ -30,16 +30,16 @@ IMPLEMENT_APP(ARLabStitcherwxApp)
 BEGIN_EVENT_TABLE(ARLabStitcherwxMainFrame, MainFrame)
 EVT_MENU(wxID_New, ARLabStitcherwxMainFrame::newProjectTool)
 EVT_TOOL(wxID_ToolStart, ARLabStitcherwxMainFrame::processcmd)
-EVT_LISTBOX(wxID_ListBoxPicList, ARLabStitcherwxMainFrame::ListBoxPicListClick)
+EVT_LISTBOX(wxID_ListBoxPicList, ARLabStitcherwxMainFrame::ListBoxClicked)
 EVT_TIMER(wxID_TimerProcess, ARLabStitcherwxMainFrame::count_time)
 EVT_END_PROCESS(-1, ARLabStitcherwxMainFrame::end_process)
 EVT_TOOL(wxID_NEW_PROJECT_TOOL, ARLabStitcherwxMainFrame::newProjectTool)
 EVT_TOOL(wxID_toolShowTrack, ARLabStitcherwxMainFrame::showTrack)
 EVT_TOOL(wxID_ShowKML, ARLabStitcherwxMainFrame::showTrack)
 EVT_TOOL(wxID_SuperOverLay, ARLabStitcherwxMainFrame::generateSuperOverlay)
-
 EVT_MENU(wxID_menuItemProcess, ARLabStitcherwxMainFrame::menuProcess)
 EVT_MENU(wxID_menuItemPreProcess, ARLabStitcherwxMainFrame::preProcess)
+EVT_MENU(wxID_menuItemFindCP, ARLabStitcherwxMainFrame::findCP)
 
 
 END_EVENT_TABLE()
@@ -61,4 +61,9 @@ BEGIN_EVENT_TABLE(ARLabStitcherwxGPSFrame, GPSFrame)
 EVT_PAINT(ARLabStitcherwxGPSFrame::OnPaint)
 EVT_SIZE(ARLabStitcherwxGPSFrame::OnResize)
 EVT_ERASE_BACKGROUND(ARLabStitcherwxGPSFrame::OnErase)
+END_EVENT_TABLE()
+
+BEGIN_EVENT_TABLE(ARLabStitcherwxControlPointFrame,ControlPointFrame)
+EVT_CHOICE(wxID_choiceLeft,ARLabStitcherwxControlPointFrame::choiceLeftChanged)
+
 END_EVENT_TABLE()

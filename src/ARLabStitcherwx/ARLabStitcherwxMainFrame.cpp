@@ -59,7 +59,7 @@ MainFrame( parent )
 	m_toolShowKML->Enable(false);
 
 	isBatch = false;
-	
+	m_panel14->Bind(wxEVT_SIZE, &ARLabStitcherwxMainFrame::panelPreviewSizeChanged, this);
 }
 void ARLabStitcherwxMainFrame::throw_to_parent(wxProcessEvent& e)
 {
@@ -143,7 +143,7 @@ void ARLabStitcherwxMainFrame::newProcess(wxCommandEvent& WXUNUSED(event))
 
 
 }
-void ARLabStitcherwxMainFrame::ListBoxPicListClick(wxCommandEvent& e)
+void ARLabStitcherwxMainFrame::ListBoxClicked(wxCommandEvent& e)
 {
 	wxImage preimg;
 	float ratioh,ratiow,ratio;
@@ -169,7 +169,7 @@ void ARLabStitcherwxMainFrame::ListBoxPicListClick(wxCommandEvent& e)
 	MainFrame::m_bitmappreview->ClearBackground();
 	MainFrame::m_bitmappreview->ResetConstraints();
 	MainFrame::m_bitmappreview->SetBitmap(preimg);
-
+	
 
 
 	wxArrayString exif;
@@ -600,10 +600,51 @@ void ARLabStitcherwxMainFrame::menuProcess(wxCommandEvent& WXUNUSED(event))
 
 void ARLabStitcherwxMainFrame::findCP(wxCommandEvent& WXUNUSED(event))
 {
-	m_controlPointsFrame->setPTO("C:\part\stitch_cp.pto");
+	m_controlPointsFrame->setPTO("C:\\part\\stitch_cp.pto");
 	if (m_controlPointsFrame->getReady() != 0)
 	{
 		wxMessageBox("cpframe not ready!");
+		return;
 	};
 	m_controlPointsFrame->Show();
+}
+
+void ARLabStitcherwxMainFrame::UpdateImagePreview()
+{
+	wxImage preimg;
+	float ratioh, ratiow, ratio;
+
+	
+	//preimg.Clear();
+	preimg.LoadFile(m_listBoxPicList->GetString(m_listBoxPicList->GetSelection()), wxBITMAP_TYPE_JPEG);
+	ratioh = preimg.GetHeight() / MainFrame::m_panel14->GetSize().GetHeight();
+	ratiow = preimg.GetWidth() / MainFrame::m_panel14->GetSize().GetWidth();
+
+	if (ratiow > ratioh)
+	{
+		ratio = ratiow;
+
+	}
+	else
+	{
+		ratio = ratioh;
+
+	}
+
+	MainFrame::m_bitmappreview->SetSize(preimg.GetWidth() / ratio, preimg.GetHeight() / ratio);
+	preimg = preimg.Scale(preimg.GetWidth() / ratio, preimg.GetHeight() / ratio);
+	MainFrame::m_bitmappreview->ClearBackground();
+	MainFrame::m_bitmappreview->ResetConstraints();
+	MainFrame::m_bitmappreview->SetBitmap(preimg);
+
+
+
+	
+}
+
+
+void ARLabStitcherwxMainFrame::panelPreviewSizeChanged(wxSizeEvent& e)
+{
+	
+	UpdateImagePreview();
 }
