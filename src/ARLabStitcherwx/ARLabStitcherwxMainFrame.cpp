@@ -600,7 +600,7 @@ void ARLabStitcherwxMainFrame::menuProcess(wxCommandEvent& WXUNUSED(event))
 
 void ARLabStitcherwxMainFrame::findCP(wxCommandEvent& WXUNUSED(event))
 {
-	m_controlPointsFrame->setPTO("C:\\part\\stitch_cp.pto");
+	m_controlPointsFrame->setPTO("part\\stitch_cp.pto");
 	if (m_controlPointsFrame->getReady() != 0)
 	{
 		wxMessageBox("cpframe not ready!");
