@@ -40,6 +40,7 @@ public:
 	int getReady();
 	int UpdateDisplay();
 	void choiceLeftChanged(wxCommandEvent& ee);
+	void choiceRightChanged(wxCommandEvent & ee);
 };
 
 #endif // __ARLabStitcherwxControlPointFrame__

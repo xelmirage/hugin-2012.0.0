@@ -99,3 +99,9 @@ void ARLabStitcherwxControlPointFrame::choiceLeftChanged(wxCommandEvent& ee)
 
 
 }
+
+
+void ARLabStitcherwxControlPointFrame::choiceRightChanged(wxCommandEvent & ee)
+{
+
+}
