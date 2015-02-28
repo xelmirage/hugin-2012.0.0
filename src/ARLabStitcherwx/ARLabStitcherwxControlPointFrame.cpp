@@ -4,8 +4,12 @@
 ARLabStitcherwxControlPointFrame::ARLabStitcherwxControlPointFrame( wxWindow* parent )
 :
 ControlPointFrame( parent )
+, previewLeftIsReady(false)
+, isLeftImgReady(false)
+, isRightImgReady(false)
 {
-
+	//this->Bind(wxEVT_SIZE, &ARLabStitcherwxControlPointFrame::UpdatePreviewEvent, this);
+	
 }
 
 void ARLabStitcherwxControlPointFrame::setPTO(wxString s)
@@ -95,13 +99,74 @@ void ARLabStitcherwxControlPointFrame::choiceLeftChanged(wxCommandEvent& ee)
 			);
 	}
 	m_choiceRight->Enable(true);
-
-
+	isLeftImgReady = true;
+	leftImgPath = m_choiceLeft->GetString(imageLeftNr);
+	UpdatePreview();
 
 }
 
 
 void ARLabStitcherwxControlPointFrame::choiceRightChanged(wxCommandEvent & ee)
 {
+	isRightImgReady = true;
+	rightImgPath = m_choiceRight->GetString(m_choiceRight->GetSelection());
+
+}
+
+
+void ARLabStitcherwxControlPointFrame::OnResize(wxSizeEvent& e)
+{
+	e.Skip(true);
+	this->Refresh();
+	UpdatePreview();
+}
+
+
+void ARLabStitcherwxControlPointFrame::setImage(wxStaticBitmap* m_staticBitmap, wxString imagePath)
+{
+
+	wxImage preimg;
+	float ratioh, ratiow, ratio;
+
+
+	//preimg.Clear();
+	preimg.LoadFile(imagePath, wxBITMAP_TYPE_JPEG);
+	ratioh = preimg.GetHeight() / m_staticBitmap->GetParent()->GetSize().GetHeight();
+	ratiow = preimg.GetWidth() / m_staticBitmap->GetParent()->GetSize().GetWidth();
+
+	if (ratiow > ratioh)
+	{
+		ratio = ratiow;
+
+	}
+	else
+	{
+		ratio = ratioh;
+
+	}
+
+	m_staticBitmap->SetSize(preimg.GetWidth() / ratio, preimg.GetHeight() / ratio);
+	preimg = preimg.Scale(preimg.GetWidth() / ratio, preimg.GetHeight() / ratio);
+	m_staticBitmap->ClearBackground();
+	m_staticBitmap->ResetConstraints();
+	m_staticBitmap->SetBitmap(preimg);
+}
+
+
+void ARLabStitcherwxControlPointFrame::UpdatePreview()
+{
+	if (isLeftImgReady)
+	{
+		setImage(m_bitmapLeft, leftImgPath);
+	}
+
+	if (isRightImgReady)
+	{
+		setImage(m_bitmapRight, rightImgPath);
+	}
+
+
+
+
 
 }

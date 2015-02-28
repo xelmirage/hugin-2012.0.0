@@ -63,7 +63,7 @@ EVT_SIZE(ARLabStitcherwxGPSFrame::OnResize)
 EVT_ERASE_BACKGROUND(ARLabStitcherwxGPSFrame::OnErase)
 END_EVENT_TABLE()
 
-BEGIN_EVENT_TABLE(ARLabStitcherwxControlPointFrame,ControlPointFrame)
-EVT_CHOICE(wxID_choiceLeft,ARLabStitcherwxControlPointFrame::choiceLeftChanged)
-
+BEGIN_EVENT_TABLE(ARLabStitcherwxControlPointFrame, ControlPointFrame)
+EVT_CHOICE(wxID_choiceLeft, ARLabStitcherwxControlPointFrame::choiceLeftChanged)
+EVT_SIZE(ARLabStitcherwxControlPointFrame::OnResize)
 END_EVENT_TABLE()

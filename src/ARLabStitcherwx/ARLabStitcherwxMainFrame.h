@@ -299,7 +299,7 @@ private:
 	wxDateTime t;
 	time_t time_start;
 	time_t time_now;
-
+	bool preview_isReady;
 	//std::string phasename;
 	std::string sdir,gpsfileName,outfileName;
 	wxString ExeDir,run_time;
@@ -307,7 +307,7 @@ private:
 	int phase;
 	std::string phasename[11];
 	bool isBatch;
-	
+	wxString currentPreviewPic;
 	
 	DECLARE_EVENT_TABLE()
 

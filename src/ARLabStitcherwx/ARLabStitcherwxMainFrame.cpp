@@ -60,6 +60,8 @@ MainFrame( parent )
 
 	isBatch = false;
 	m_panel14->Bind(wxEVT_SIZE, &ARLabStitcherwxMainFrame::panelPreviewSizeChanged, this);
+
+	preview_isReady = false;
 }
 void ARLabStitcherwxMainFrame::throw_to_parent(wxProcessEvent& e)
 {
@@ -145,36 +147,18 @@ void ARLabStitcherwxMainFrame::newProcess(wxCommandEvent& WXUNUSED(event))
 }
 void ARLabStitcherwxMainFrame::ListBoxClicked(wxCommandEvent& e)
 {
-	wxImage preimg;
-	float ratioh,ratiow,ratio;
-	
-	//preimg.Clear();
-	preimg.LoadFile(e.GetString(),wxBITMAP_TYPE_JPEG);
-	ratioh=preimg.GetHeight()/MainFrame::m_panel14->GetSize().GetHeight();
-	ratiow=preimg.GetWidth()/MainFrame::m_panel14->GetSize().GetWidth();
 
-	if(ratiow>ratioh)
-	{
-		ratio=ratiow;
-		
-	}
-	else
-	{
-		ratio=ratioh;
-		
-	}
+	currentPreviewPic = e.GetString();
+	preview_isReady = true;
+	UpdateImagePreview();
 
-	MainFrame::m_bitmappreview->SetSize(preimg.GetWidth()/ratio,preimg.GetHeight()/ratio);
-	preimg=preimg.Scale(preimg.GetWidth()/ratio,preimg.GetHeight()/ratio);
-	MainFrame::m_bitmappreview->ClearBackground();
-	MainFrame::m_bitmappreview->ResetConstraints();
-	MainFrame::m_bitmappreview->SetBitmap(preimg);
-	
 
 
 	wxArrayString exif;
 	wxExecute("exiftool " + e.GetString(), exif);
 	m_listBoxExif->InsertItems(exif, 0);
+
+	
 }
 void ARLabStitcherwxMainFrame::processcmd(wxCommandEvent& WXUNUSED(event))
 {
@@ -611,12 +595,16 @@ void ARLabStitcherwxMainFrame::findCP(wxCommandEvent& WXUNUSED(event))
 
 void ARLabStitcherwxMainFrame::UpdateImagePreview()
 {
+	if (!preview_isReady)
+	{
+		return;
+	}
 	wxImage preimg;
 	float ratioh, ratiow, ratio;
 
 	
 	//preimg.Clear();
-	preimg.LoadFile(m_listBoxPicList->GetString(m_listBoxPicList->GetSelection()), wxBITMAP_TYPE_JPEG);
+	preimg.LoadFile(currentPreviewPic, wxBITMAP_TYPE_JPEG);
 	ratioh = preimg.GetHeight() / MainFrame::m_panel14->GetSize().GetHeight();
 	ratiow = preimg.GetWidth() / MainFrame::m_panel14->GetSize().GetWidth();
 
