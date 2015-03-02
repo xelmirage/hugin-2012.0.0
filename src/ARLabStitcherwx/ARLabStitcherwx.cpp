@@ -135,7 +135,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	bSizer12->Fit( m_panel8 );
 	m_notebook4->AddPage( m_panel8, _("a page"), true );
 	
-	bSizer26->Add( m_notebook4, 1, wxEXPAND | wxALL, 5 );
+	bSizer26->Add( m_notebook4, 0, wxEXPAND | wxALL, 5 );
 	
 	
 	m_panel13->SetSizer( bSizer26 );
@@ -378,7 +378,7 @@ ControlPointFrame::ControlPointFrame( wxWindow* parent, wxWindowID id, const wxS
 	bSizerRight = new wxBoxSizer( wxVERTICAL );
 	
 	wxArrayString m_choiceRightChoices;
-	m_choiceRight = new wxChoice( m_panelRight, wxID_choiceRight, wxDefaultPosition, wxDefaultSize, m_choiceRightChoices, 0 );
+	m_choiceRight = new wxChoice( m_panelRight, wxID_choiceRight, wxDefaultPosition, wxSize( -1,-1 ), m_choiceRightChoices, 0 );
 	m_choiceRight->SetSelection( 0 );
 	bSizerRight->Add( m_choiceRight, 0, wxALL, 5 );
 	

@@ -10,10 +10,12 @@ class ARCPImageCtrl : public wxStaticBitmap
 {
 public:
 	ARCPImageCtrl()
-	{};
+	{
+
+	};
 	~ARCPImageCtrl();
 
-	
+
 
 
 private:

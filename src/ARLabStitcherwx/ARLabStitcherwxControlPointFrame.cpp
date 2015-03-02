@@ -8,8 +8,7 @@ ControlPointFrame( parent )
 , isLeftImgReady(false)
 , isRightImgReady(false)
 {
-	//this->Bind(wxEVT_SIZE, &ARLabStitcherwxControlPointFrame::UpdatePreviewEvent, this);
-	
+
 }
 
 void ARLabStitcherwxControlPointFrame::setPTO(wxString s)
@@ -101,6 +100,7 @@ void ARLabStitcherwxControlPointFrame::choiceLeftChanged(wxCommandEvent& ee)
 	m_choiceRight->Enable(true);
 	isLeftImgReady = true;
 	leftImgPath = m_choiceLeft->GetString(imageLeftNr);
+	 imgLeft.LoadFile(leftImgPath, wxBITMAP_TYPE_JPEG);
 	UpdatePreview();
 
 }
@@ -110,27 +110,43 @@ void ARLabStitcherwxControlPointFrame::choiceRightChanged(wxCommandEvent & ee)
 {
 	isRightImgReady = true;
 	rightImgPath = m_choiceRight->GetString(m_choiceRight->GetSelection());
-
+	imgRight.LoadFile(rightImgPath, wxBITMAP_TYPE_JPEG);
+	UpdatePreview();
 }
 
 
 void ARLabStitcherwxControlPointFrame::OnResize(wxSizeEvent& e)
 {
-	e.Skip(true);
+	//e.Skip(true);
+	wxSize newSize = e.GetSize();
+	newSize.SetWidth(newSize.GetWidth() / 2);
+	m_panelLeft->SetSize(newSize);
+
+	wxPoint panelRightPosition = m_panelLeft->GetPosition();
+	panelRightPosition.x += newSize.GetWidth();
+
+	m_panelRight->SetPosition(panelRightPosition);
+	m_panelRight->SetSize(newSize);
+	wxString title;
+	wxSize fsize = this->GetSize();
+	title.Format("frame w %d, h %d,    panel w %d, h %d", fsize.GetWidth(), fsize.GetHeight(), newSize.GetWidth(), newSize.GetHeight());
+	this->SetTitle(title);
+
+
 	this->Refresh();
 	UpdatePreview();
 }
 
 
-void ARLabStitcherwxControlPointFrame::setImage(wxStaticBitmap* m_staticBitmap, wxString imagePath)
+void ARLabStitcherwxControlPointFrame::setImage(wxStaticBitmap* m_staticBitmap, wxString imagePath, wxImage preimg)
 {
 
-	wxImage preimg;
+	wxImage pImage;
 	float ratioh, ratiow, ratio;
 
 
 	//preimg.Clear();
-	preimg.LoadFile(imagePath, wxBITMAP_TYPE_JPEG);
+
 	ratioh = preimg.GetHeight() / m_staticBitmap->GetParent()->GetSize().GetHeight();
 	ratiow = preimg.GetWidth() / m_staticBitmap->GetParent()->GetSize().GetWidth();
 
@@ -146,10 +162,10 @@ void ARLabStitcherwxControlPointFrame::setImage(wxStaticBitmap* m_staticBitmap, 
 	}
 
 	m_staticBitmap->SetSize(preimg.GetWidth() / ratio, preimg.GetHeight() / ratio);
-	preimg = preimg.Scale(preimg.GetWidth() / ratio, preimg.GetHeight() / ratio);
+	pImage = preimg.Scale(preimg.GetWidth() / ratio, preimg.GetHeight() / ratio);
 	m_staticBitmap->ClearBackground();
 	m_staticBitmap->ResetConstraints();
-	m_staticBitmap->SetBitmap(preimg);
+	m_staticBitmap->SetBitmap(pImage);
 }
 
 
@@ -157,12 +173,12 @@ void ARLabStitcherwxControlPointFrame::UpdatePreview()
 {
 	if (isLeftImgReady)
 	{
-		setImage(m_bitmapLeft, leftImgPath);
+		setImage(m_bitmapLeft, leftImgPath, imgLeft);
 	}
 
 	if (isRightImgReady)
 	{
-		setImage(m_bitmapRight, rightImgPath);
+		setImage(m_bitmapRight, rightImgPath, imgRight);
 	}
 
 
