@@ -135,7 +135,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	bSizer12->Fit( m_panel8 );
 	m_notebook4->AddPage( m_panel8, _("a page"), true );
 	
-	bSizer26->Add( m_notebook4, 0, wxEXPAND | wxALL, 5 );
+	bSizer26->Add( m_notebook4, 1, wxEXPAND | wxALL, 5 );
 	
 	
 	m_panel13->SetSizer( bSizer26 );
