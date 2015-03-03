@@ -55,6 +55,10 @@ private:
 
 public:
 	void UpdatePreview();
+	void OnPaint(wxPaintEvent& ee);
+	void paintCP(wxDC* dc);
+private:
+	HuginBase::CPointVector CPToBeShown;
 };
 
 #endif // __ARLabStitcherwxControlPointFrame__

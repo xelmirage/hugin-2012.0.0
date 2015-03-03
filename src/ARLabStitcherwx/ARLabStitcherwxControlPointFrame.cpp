@@ -7,6 +7,7 @@ ControlPointFrame( parent )
 , previewLeftIsReady(false)
 , isLeftImgReady(false)
 , isRightImgReady(false)
+, CPToBeShown(0)
 {
 
 }
@@ -103,6 +104,7 @@ void ARLabStitcherwxControlPointFrame::choiceLeftChanged(wxCommandEvent& ee)
 	 imgLeft.LoadFile(leftImgPath, wxBITMAP_TYPE_JPEG);
 	UpdatePreview();
 
+
 }
 
 
@@ -112,6 +114,8 @@ void ARLabStitcherwxControlPointFrame::choiceRightChanged(wxCommandEvent & ee)
 	rightImgPath = m_choiceRight->GetString(m_choiceRight->GetSelection());
 	imgRight.LoadFile(rightImgPath, wxBITMAP_TYPE_JPEG);
 	UpdatePreview();
+	
+
 }
 
 
@@ -133,8 +137,10 @@ void ARLabStitcherwxControlPointFrame::OnResize(wxSizeEvent& e)
 	this->SetTitle(title);
 
 
-	this->Refresh();
+	//this->Refresh();
 	UpdatePreview();
+
+
 }
 
 
@@ -166,6 +172,9 @@ void ARLabStitcherwxControlPointFrame::setImage(wxStaticBitmap* m_staticBitmap, 
 	m_staticBitmap->ClearBackground();
 	m_staticBitmap->ResetConstraints();
 	m_staticBitmap->SetBitmap(pImage);
+
+
+	
 }
 
 
@@ -174,15 +183,36 @@ void ARLabStitcherwxControlPointFrame::UpdatePreview()
 	if (isLeftImgReady)
 	{
 		setImage(m_bitmapLeft, leftImgPath, imgLeft);
+	
 	}
 
 	if (isRightImgReady)
 	{
 		setImage(m_bitmapRight, rightImgPath, imgRight);
 	}
+	wxClientDC dc(m_bitmapLeft);
+	paintCP(&dc);
 
 
+	wxSize pSize = m_panelLeft->GetSize();
+	this->SetTitle(wxString::Format("%d,%d", pSize.GetWidth(), pSize.GetHeight())+m_bitmapLeft->GetParent()->GetName());
+	
+}
 
 
+void ARLabStitcherwxControlPointFrame::OnPaint(wxPaintEvent& ee)
+{
+	ControlPointFrame::OnPaint(ee);
+	wxPaintDC dc(m_bitmapLeft);
+	paintCP(&dc);
+}
 
+
+void ARLabStitcherwxControlPointFrame::paintCP(wxDC* dc)
+{
+	
+	dc->SetPen(*wxGREEN_PEN);
+	wxPoint p(0, 0);
+	wxCoord c(50);
+	dc->DrawCircle(p, c);
 }
