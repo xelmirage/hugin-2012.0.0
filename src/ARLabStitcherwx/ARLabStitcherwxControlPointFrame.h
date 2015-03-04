@@ -33,7 +33,7 @@ private:
 	wxString ptoFile;
 	Panorama pano;
 	HuginBase::CPointVector cpForLeftImg;
-	std::vector<unsigned int> rightImgNrs;
+	std::vector<unsigned int> imgRightNrs;
 	//// end generated class members
 	DECLARE_EVENT_TABLE()
 public:
@@ -47,8 +47,8 @@ private:
 private:
 	void OnResize(wxSizeEvent& e);
 	void setImage(wxStaticBitmap* m_staticBitmap, wxString imagePath, wxImage preimg);
-	wxString leftImgPath;
-	wxString rightImgPath;
+	wxString imgLeftPath;
+	wxString imgRightPath;
 	bool isLeftImgReady;
 	bool isRightImgReady;
 	wxImage imgLeft, imgRight;
@@ -58,7 +58,12 @@ public:
 	void OnPaint(wxPaintEvent& ee);
 	void paintCP(wxDC* dc);
 private:
-	HuginBase::CPointVector CPToBeShown;
+	HuginBase::CPointVector CPToDraw;
+	unsigned int imgLeftNr;
+	unsigned int imgRightNr;
+	std::vector<wxPoint> scaledCPLeft;
+	std::vector<wxPoint> scaledCPRight;
+	HuginBase::CPointVector scaledCP;
 };
 
 #endif // __ARLabStitcherwxControlPointFrame__

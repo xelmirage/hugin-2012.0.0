@@ -7,7 +7,10 @@ ControlPointFrame( parent )
 , previewLeftIsReady(false)
 , isLeftImgReady(false)
 , isRightImgReady(false)
-, CPToBeShown(0)
+, CPToDraw(0)
+, imgLeftNr(0)
+, imgRightNr(0)
+, scaledCP(0)
 {
 
 }
@@ -85,23 +88,23 @@ void ARLabStitcherwxControlPointFrame::choiceLeftChanged(wxCommandEvent& ee)
 
 		ControlPoint tempCP = cpForLeftImg[i].second;
 
-		rightImgNrs.push_back(tempCP.image2Nr);
+		imgRightNrs.push_back(tempCP.image2Nr);
 	}
-	sort(rightImgNrs.begin(), rightImgNrs.end());
+	sort(imgRightNrs.begin(), imgRightNrs.end());
 	std::vector<unsigned int>::iterator pos;
-	pos =std::unique(rightImgNrs.begin(), rightImgNrs.end());
-	rightImgNrs.erase(pos, rightImgNrs.end());
+	pos =std::unique(imgRightNrs.begin(), imgRightNrs.end());
+	imgRightNrs.erase(pos, imgRightNrs.end());
 
-	for (int i = 0; i < rightImgNrs.size(); ++i)
+	for (int i = 0; i < imgRightNrs.size(); ++i)
 	{
 		m_choiceRight->Insert(
-			pano.getImage(rightImgNrs[i]).getFilename(), m_choiceRight->GetCount()
+			pano.getImage(imgRightNrs[i]).getFilename(), m_choiceRight->GetCount()
 			);
 	}
 	m_choiceRight->Enable(true);
 	isLeftImgReady = true;
-	leftImgPath = m_choiceLeft->GetString(imageLeftNr);
-	 imgLeft.LoadFile(leftImgPath, wxBITMAP_TYPE_JPEG);
+	imgLeftPath = m_choiceLeft->GetString(imageLeftNr);
+	 imgLeft.LoadFile(imgLeftPath, wxBITMAP_TYPE_JPEG);
 	UpdatePreview();
 
 
@@ -110,9 +113,25 @@ void ARLabStitcherwxControlPointFrame::choiceLeftChanged(wxCommandEvent& ee)
 
 void ARLabStitcherwxControlPointFrame::choiceRightChanged(wxCommandEvent & ee)
 {
+	unsigned int currentNr;
 	isRightImgReady = true;
-	rightImgPath = m_choiceRight->GetString(m_choiceRight->GetSelection());
-	imgRight.LoadFile(rightImgPath, wxBITMAP_TYPE_JPEG);
+	imgRightPath = m_choiceRight->GetString(m_choiceRight->GetSelection());
+	imgRight.LoadFile(imgRightPath, wxBITMAP_TYPE_JPEG);
+
+	for (int i = 0; i < cpForLeftImg.size();++i)
+	{
+		currentNr = cpForLeftImg[i].second.image2Nr;
+
+		if (currentNr == imgRightNrs[m_choiceRight->GetSelection()])
+		{
+			CPToDraw.push_back(cpForLeftImg[i]);
+			scaledCP.push_back(cpForLeftImg[i]);
+		}
+	}
+
+
+
+
 	UpdatePreview();
 	
 
@@ -182,13 +201,13 @@ void ARLabStitcherwxControlPointFrame::UpdatePreview()
 {
 	if (isLeftImgReady)
 	{
-		setImage(m_bitmapLeft, leftImgPath, imgLeft);
+		setImage(m_bitmapLeft, imgLeftPath, imgLeft);
 	
 	}
 
 	if (isRightImgReady)
 	{
-		setImage(m_bitmapRight, rightImgPath, imgRight);
+		setImage(m_bitmapRight, imgRightPath, imgRight);
 	}
 	wxClientDC dc(m_bitmapLeft);
 	paintCP(&dc);
@@ -214,5 +233,38 @@ void ARLabStitcherwxControlPointFrame::paintCP(wxDC* dc)
 	dc->SetPen(*wxGREEN_PEN);
 	wxPoint p(0, 0);
 	wxCoord c(50);
-	dc->DrawCircle(p, c);
+	//dc->DrawCircle(p, c);
+	if (isLeftImgReady&&isRightImgReady)
+	{
+		double factorLeft = m_bitmapLeft->GetSize().GetHeight() / imgLeft.GetHeight();
+		double factorRight = m_bitmapRight->GetSize().GetHeight() / imgRight.GetHeight();
+		
+		for (int i=0; i < scaledCP.size();++i)
+		{
+			p.x = scaledCP[i].second.x1 = CPToDraw[i].second.x1*factorLeft;
+			p.y=scaledCP[i].second.y1 = CPToDraw[i].second.y1*factorLeft;
+			dc->DrawCircle(p, c);
+
+
+
+			p.x = scaledCP[i].second.x2 = CPToDraw[i].second.x2*factorRight;
+			p.y = scaledCP[i].second.y2 = CPToDraw[i].second.y2*factorRight;
+			//dc->DrawCircle(p, c);
+			
+
+
+
+		}
+
+
+
+
+
+
+	}
+
+
+
+
+
 }
