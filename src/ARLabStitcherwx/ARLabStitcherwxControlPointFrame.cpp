@@ -11,7 +11,10 @@ ControlPointFrame( parent )
 , imgLeftNr(0)
 , imgRightNr(0)
 , scaledCP(0)
+, isReady(FALSE)
+, bitmapSide(0)
 {
+	bitmapSide = 15;
 
 }
 
@@ -58,7 +61,7 @@ int ARLabStitcherwxControlPointFrame::getReady()
 
 	ControlPointFrame::m_choiceRight->Enable(false);
 
-
+	isReady = TRUE;
 	return 0;
 }
 
@@ -82,7 +85,7 @@ void ARLabStitcherwxControlPointFrame::choiceLeftChanged(wxCommandEvent& ee)
 	cpForLeftImg.clear();
 	cpForLeftImg = pano.getCtrlPointsVectorForImage(imageLeftNr);
 	
-	
+	imgRightNrs.clear();
 	for (int i = 0; i < cpForLeftImg.size(); ++i)
 	{
 
@@ -94,9 +97,10 @@ void ARLabStitcherwxControlPointFrame::choiceLeftChanged(wxCommandEvent& ee)
 	std::vector<unsigned int>::iterator pos;
 	pos =std::unique(imgRightNrs.begin(), imgRightNrs.end());
 	imgRightNrs.erase(pos, imgRightNrs.end());
-
+	m_choiceRight->Clear();
 	for (int i = 0; i < imgRightNrs.size(); ++i)
 	{
+		
 		m_choiceRight->Insert(
 			pano.getImage(imgRightNrs[i]).getFilename(), m_choiceRight->GetCount()
 			);
@@ -104,7 +108,33 @@ void ARLabStitcherwxControlPointFrame::choiceLeftChanged(wxCommandEvent& ee)
 	m_choiceRight->Enable(true);
 	isLeftImgReady = true;
 	imgLeftPath = m_choiceLeft->GetString(imageLeftNr);
-	 imgLeft.LoadFile(imgLeftPath, wxBITMAP_TYPE_JPEG);
+	imgLeft.LoadFile(imgLeftPath, wxBITMAP_TYPE_JPEG);
+	double yaw = const_map_get(pano.getImageVariables(imgLeftNr), "y").getValue();
+	double pitch = const_map_get(pano.getImageVariables(imgLeftNr), "p").getValue();
+	double roll = const_map_get(pano.getImageVariables(imgLeftNr), "r").getValue();
+	ImageRotation rot = GetRot(yaw,pitch,roll);
+	if (rot!=ARLabStitcherwxControlPointFrame::ROT0)
+	{
+		switch (rot)
+		{
+		
+		case ARLabStitcherwxControlPointFrame::ROT90:
+			imgLeft.Rotate90(TRUE);
+			break;
+		case ARLabStitcherwxControlPointFrame::ROT180:
+			imgLeft.Rotate180();
+			break;
+		case ARLabStitcherwxControlPointFrame::ROT270:
+			imgLeft.Rotate90(FALSE);
+			break;
+		default:
+			break;
+		}
+	}
+
+
+	isRightImgReady = false;
+	m_bitmapRight->ClearBackground();
 	UpdatePreview();
 
 
@@ -117,15 +147,39 @@ void ARLabStitcherwxControlPointFrame::choiceRightChanged(wxCommandEvent & ee)
 	isRightImgReady = true;
 	imgRightPath = m_choiceRight->GetString(m_choiceRight->GetSelection());
 	imgRight.LoadFile(imgRightPath, wxBITMAP_TYPE_JPEG);
-
+	CPToDraw.clear();
+	scaledCP.clear();
 	for (int i = 0; i < cpForLeftImg.size();++i)
 	{
 		currentNr = cpForLeftImg[i].second.image2Nr;
 
 		if (currentNr == imgRightNrs[m_choiceRight->GetSelection()])
 		{
+			
 			CPToDraw.push_back(cpForLeftImg[i]);
 			scaledCP.push_back(cpForLeftImg[i]);
+		}
+	}
+	double yaw = const_map_get(pano.getImageVariables(imgRightNr), "y").getValue();
+	double pitch = const_map_get(pano.getImageVariables(imgRightNr), "p").getValue();
+	double roll = const_map_get(pano.getImageVariables(imgRightNr), "r").getValue();
+	ImageRotation rot = GetRot(yaw, pitch, roll);
+	if (rot != ARLabStitcherwxControlPointFrame::ROT0)
+	{
+		switch (rot)
+		{
+
+		case ARLabStitcherwxControlPointFrame::ROT90:
+			imgRight.Rotate90(TRUE);
+			break;
+		case ARLabStitcherwxControlPointFrame::ROT180:
+			imgRight.Rotate180();
+			break;
+		case ARLabStitcherwxControlPointFrame::ROT270:
+			imgRight.Rotate90(FALSE);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -157,7 +211,7 @@ void ARLabStitcherwxControlPointFrame::OnResize(wxSizeEvent& e)
 
 
 	//this->Refresh();
-	UpdatePreview();
+	//UpdatePreview();
 
 
 }
@@ -209,55 +263,51 @@ void ARLabStitcherwxControlPointFrame::UpdatePreview()
 	{
 		setImage(m_bitmapRight, imgRightPath, imgRight);
 	}
-	wxClientDC dc(m_bitmapLeft);
-	paintCP(&dc);
+	wxClientDC dcLeft(m_bitmapLeft);
+	wxClientDC dcRight(m_bitmapRight);
+	paintCP(&dcLeft, &dcRight);
 
 
-	wxSize pSize = m_panelLeft->GetSize();
-	this->SetTitle(wxString::Format("%d,%d", pSize.GetWidth(), pSize.GetHeight())+m_bitmapLeft->GetParent()->GetName());
+	/*wxSize pSize = m_panelLeft->GetSize();
+	this->SetTitle(wxString::Format("%d,%d", pSize.GetWidth(), pSize.GetHeight())+m_bitmapLeft->GetParent()->GetName());*/
 	
 }
 
 
 void ARLabStitcherwxControlPointFrame::OnPaint(wxPaintEvent& ee)
 {
+	
 	ControlPointFrame::OnPaint(ee);
-	wxPaintDC dc(m_bitmapLeft);
-	paintCP(&dc);
+	wxPaintDC dcLeft(m_bitmapLeft);
+	wxPaintDC dcRight(m_bitmapRight);
+	paintCP(&dcLeft, &dcRight);
 }
 
 
-void ARLabStitcherwxControlPointFrame::paintCP(wxDC* dc)
+void ARLabStitcherwxControlPointFrame::paintCP(wxDC* dcLeft, wxDC* dcRight)
 {
-	
-	dc->SetPen(*wxGREEN_PEN);
+	dcLeft->SetPen(*wxGREEN_PEN);
 	wxPoint p(0, 0);
-	wxCoord c(50);
-	//dc->DrawCircle(p, c);
+	wxCoord c(5);
+	//dcLeft->DrawCircle(p, c);
 	if (isLeftImgReady&&isRightImgReady)
 	{
-		double factorLeft = m_bitmapLeft->GetSize().GetHeight() / imgLeft.GetHeight();
-		double factorRight = m_bitmapRight->GetSize().GetHeight() / imgRight.GetHeight();
+		double factorLeft = (double)m_bitmapLeft->GetSize().GetHeight() / (double)imgLeft.GetHeight();
+		double factorRight = (double)m_bitmapRight->GetSize().GetHeight() / (double)imgRight.GetHeight();
 		
 		for (int i=0; i < scaledCP.size();++i)
 		{
 			p.x = scaledCP[i].second.x1 = CPToDraw[i].second.x1*factorLeft;
 			p.y=scaledCP[i].second.y1 = CPToDraw[i].second.y1*factorLeft;
-			dc->DrawCircle(p, c);
-
-
-
+			dcLeft->DrawCircle(p, c);
+			
 			p.x = scaledCP[i].second.x2 = CPToDraw[i].second.x2*factorRight;
 			p.y = scaledCP[i].second.y2 = CPToDraw[i].second.y2*factorRight;
+			dcRight->DrawCircle(p, c);
 			//dc->DrawCircle(p, c);
 			
-
-
-
 		}
-
-
-
+		
 
 
 
@@ -266,5 +316,42 @@ void ARLabStitcherwxControlPointFrame::paintCP(wxDC* dc)
 
 
 
+
+}
+
+
+void ARLabStitcherwxControlPointFrame::OnMoveEnd(wxMoveEvent& ee)
+{
+	UpdatePreview();
+
+}
+
+
+ARLabStitcherwxControlPointFrame::ImageRotation ARLabStitcherwxControlPointFrame::GetRot(double yaw, double pitch, double roll)
+{
+	ARLabStitcherwxControlPointFrame::ImageRotation rot = ARLabStitcherwxControlPointFrame::ROT0;
+	// normalize roll angle
+	while (roll > 360) roll -= 360;
+	while (roll < 0) roll += 360;
+
+	while (pitch > 180) pitch -= 360;
+	while (pitch < -180) pitch += 360;
+	bool headOver = (pitch > 90 || pitch < -90);
+
+	if (FALSE) {
+		if (roll >= 315 || roll < 45) {
+			rot = headOver ? ARLabStitcherwxControlPointFrame::ROT180 : ARLabStitcherwxControlPointFrame::ROT0;
+		}
+		else if (roll >= 45 && roll < 135) {
+			rot = headOver ? ARLabStitcherwxControlPointFrame::ROT270 : ARLabStitcherwxControlPointFrame::ROT90;
+		}
+		else if (roll >= 135 && roll < 225) {
+			rot = headOver ? ARLabStitcherwxControlPointFrame::ROT0 : ARLabStitcherwxControlPointFrame::ROT180;
+		}
+		else {
+			rot = headOver ? ARLabStitcherwxControlPointFrame::ROT90 : ARLabStitcherwxControlPointFrame::ROT270;
+		}
+	}
+	return rot;
 
 }

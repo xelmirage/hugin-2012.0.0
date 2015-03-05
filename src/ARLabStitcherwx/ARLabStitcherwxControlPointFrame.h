@@ -24,6 +24,7 @@ using namespace AppBase;
 /** Implementing ControlPointFrame */
 class ARLabStitcherwxControlPointFrame : public ControlPointFrame
 {
+	enum ImageRotation { ROT0 = 0, ROT90, ROT180, ROT270 };
 public:
 	/** Constructor */
 	ARLabStitcherwxControlPointFrame(wxWindow* parent);
@@ -56,7 +57,7 @@ private:
 public:
 	void UpdatePreview();
 	void OnPaint(wxPaintEvent& ee);
-	void paintCP(wxDC* dc);
+	void paintCP(wxDC* dcLeft, wxDC* dcRight);
 private:
 	HuginBase::CPointVector CPToDraw;
 	unsigned int imgLeftNr;
@@ -64,6 +65,12 @@ private:
 	std::vector<wxPoint> scaledCPLeft;
 	std::vector<wxPoint> scaledCPRight;
 	HuginBase::CPointVector scaledCP;
+public:
+	void OnMoveEnd(wxMoveEvent& ee);
+	bool isReady;
+	ARLabStitcherwxControlPointFrame::ImageRotation GetRot(double yaw, double pitch, double roll);
+private:
+	unsigned int bitmapSide;
 };
 
 #endif // __ARLabStitcherwxControlPointFrame__
