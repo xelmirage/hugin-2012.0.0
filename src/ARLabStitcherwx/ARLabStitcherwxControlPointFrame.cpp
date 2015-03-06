@@ -4,7 +4,6 @@
 ARLabStitcherwxControlPointFrame::ARLabStitcherwxControlPointFrame( wxWindow* parent )
 :
 ControlPointFrame( parent )
-, previewLeftIsReady(false)
 , isLeftImgReady(false)
 , isRightImgReady(false)
 , CPToDraw(0)
@@ -13,9 +12,14 @@ ControlPointFrame( parent )
 , scaledCP(0)
 , isReady(FALSE)
 , bitmapSide(0)
-{
-	bitmapSide = 15;
 
+{
+	bitmapSide = 100;
+	
+
+
+
+	
 }
 
 void ARLabStitcherwxControlPointFrame::setPTO(wxString s)
@@ -66,7 +70,7 @@ int ARLabStitcherwxControlPointFrame::getReady()
 }
 
 
-int ARLabStitcherwxControlPointFrame::UpdateDisplay()
+int ARLabStitcherwxControlPointFrame::UpdateDisplay_disposed()
 {
 
 
@@ -222,12 +226,12 @@ void ARLabStitcherwxControlPointFrame::setImage(wxStaticBitmap* m_staticBitmap, 
 
 	wxImage pImage;
 	float ratioh, ratiow, ratio;
-
-
+	wxSize fsize = m_staticBitmap->GetParent()->GetSize();
+	fsize = fsize - wxSize(bitmapSide, bitmapSide);
 	//preimg.Clear();
 
-	ratioh = preimg.GetHeight() / m_staticBitmap->GetParent()->GetSize().GetHeight();
-	ratiow = preimg.GetWidth() / m_staticBitmap->GetParent()->GetSize().GetWidth();
+	ratioh = preimg.GetHeight() /fsize .GetHeight();
+	ratiow = preimg.GetWidth() / fsize.GetWidth();
 
 	if (ratiow > ratioh)
 	{
@@ -268,8 +272,9 @@ void ARLabStitcherwxControlPointFrame::UpdatePreview()
 	paintCP(&dcLeft, &dcRight);
 
 
-	/*wxSize pSize = m_panelLeft->GetSize();
-	this->SetTitle(wxString::Format("%d,%d", pSize.GetWidth(), pSize.GetHeight())+m_bitmapLeft->GetParent()->GetName());*/
+	wxSize pSize = m_panelLeft->GetSize();
+	wxSize fsize = this->GetSize();
+	this->SetTitle(wxString::Format("%d,%d     frame %d,%d", pSize.GetWidth(), pSize.GetHeight(),fsize.GetWidth(),fsize.GetHeight()));
 	
 }
 
@@ -287,8 +292,10 @@ void ARLabStitcherwxControlPointFrame::OnPaint(wxPaintEvent& ee)
 void ARLabStitcherwxControlPointFrame::paintCP(wxDC* dcLeft, wxDC* dcRight)
 {
 	dcLeft->SetPen(*wxGREEN_PEN);
+	dcLeft->SetPen(*wxRED_PEN);
 	wxPoint p(0, 0);
 	wxCoord c(5);
+	int l = 12;
 	//dcLeft->DrawCircle(p, c);
 	if (isLeftImgReady&&isRightImgReady)
 	{
@@ -299,11 +306,31 @@ void ARLabStitcherwxControlPointFrame::paintCP(wxDC* dcLeft, wxDC* dcRight)
 		{
 			p.x = scaledCP[i].second.x1 = CPToDraw[i].second.x1*factorLeft;
 			p.y=scaledCP[i].second.y1 = CPToDraw[i].second.y1*factorLeft;
-			dcLeft->DrawCircle(p, c);
+			//dcLeft->DrawCircle(p, c);
+			dcLeft->DrawLine(p + wxPoint(-l, 0),
+				p + wxPoint(-1, 0));
+			dcLeft->DrawLine(p + wxPoint(2, 0),
+				p + wxPoint(l + 1, 0));
+			dcLeft->DrawLine(p + wxPoint(0, -l),
+				p + wxPoint(0, -1));
+			dcLeft->DrawLine(p + wxPoint(0, 2),
+				p + wxPoint(0, l + 1));
+
+
+
+
 			
 			p.x = scaledCP[i].second.x2 = CPToDraw[i].second.x2*factorRight;
 			p.y = scaledCP[i].second.y2 = CPToDraw[i].second.y2*factorRight;
-			dcRight->DrawCircle(p, c);
+			//dcRight->DrawCircle(p, c);
+			dcRight->DrawLine(p + wxPoint(-l, 0),
+				p + wxPoint(-1, 0));
+			dcRight->DrawLine(p + wxPoint(2, 0),
+				p + wxPoint(l + 1, 0));
+			dcRight->DrawLine(p + wxPoint(0, -l),
+				p + wxPoint(0, -1));
+			dcRight->DrawLine(p + wxPoint(0, 2),
+				p + wxPoint(0, l + 1));
 			//dc->DrawCircle(p, c);
 			
 		}
@@ -355,3 +382,5 @@ ARLabStitcherwxControlPointFrame::ImageRotation ARLabStitcherwxControlPointFrame
 	return rot;
 
 }
+
+
