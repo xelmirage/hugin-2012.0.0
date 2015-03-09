@@ -292,10 +292,11 @@ void ARLabStitcherwxControlPointFrame::OnPaint(wxPaintEvent& ee)
 void ARLabStitcherwxControlPointFrame::paintCP(wxDC* dcLeft, wxDC* dcRight)
 {
 	dcLeft->SetPen(*wxGREEN_PEN);
-	dcLeft->SetPen(*wxRED_PEN);
+	dcRight->SetPen(*wxRED_PEN);
+	
 	wxPoint p(0, 0);
 	wxCoord c(5);
-	int l = 12;
+
 	//dcLeft->DrawCircle(p, c);
 	if (isLeftImgReady&&isRightImgReady)
 	{
@@ -307,30 +308,32 @@ void ARLabStitcherwxControlPointFrame::paintCP(wxDC* dcLeft, wxDC* dcRight)
 			p.x = scaledCP[i].second.x1 = CPToDraw[i].second.x1*factorLeft;
 			p.y=scaledCP[i].second.y1 = CPToDraw[i].second.y1*factorLeft;
 			//dcLeft->DrawCircle(p, c);
-			dcLeft->DrawLine(p + wxPoint(-l, 0),
+			/*dcLeft->DrawLine(p + wxPoint(-l, 0),
 				p + wxPoint(-1, 0));
 			dcLeft->DrawLine(p + wxPoint(2, 0),
 				p + wxPoint(l + 1, 0));
 			dcLeft->DrawLine(p + wxPoint(0, -l),
 				p + wxPoint(0, -1));
 			dcLeft->DrawLine(p + wxPoint(0, 2),
-				p + wxPoint(0, l + 1));
-
+				p + wxPoint(0, l + 1));*/
+			drawSingleCP(dcLeft, p, m_bitmapLeft, i);
 
 
 
 			
 			p.x = scaledCP[i].second.x2 = CPToDraw[i].second.x2*factorRight;
 			p.y = scaledCP[i].second.y2 = CPToDraw[i].second.y2*factorRight;
+			drawSingleCP(dcRight, p, m_bitmapRight, i);
+
 			//dcRight->DrawCircle(p, c);
-			dcRight->DrawLine(p + wxPoint(-l, 0),
+			/*dcRight->DrawLine(p + wxPoint(-l, 0),
 				p + wxPoint(-1, 0));
 			dcRight->DrawLine(p + wxPoint(2, 0),
 				p + wxPoint(l + 1, 0));
 			dcRight->DrawLine(p + wxPoint(0, -l),
 				p + wxPoint(0, -1));
 			dcRight->DrawLine(p + wxPoint(0, 2),
-				p + wxPoint(0, l + 1));
+				p + wxPoint(0, l + 1));*/
 			//dc->DrawCircle(p, c);
 			
 		}
@@ -384,3 +387,38 @@ ARLabStitcherwxControlPointFrame::ImageRotation ARLabStitcherwxControlPointFrame
 }
 
 
+
+
+void ARLabStitcherwxControlPointFrame::drawSingleCP(wxDC* dc, wxPoint p, wxStaticBitmap* bmpCtrl, unsigned int Nr)
+{
+	int l = 12;
+	wxString label = wxString::Format(wxT("%d"),Nr);
+	dc->DrawLine(p + wxPoint(-l, 0),
+		p + wxPoint(-1, 0));
+	dc->DrawLine(p + wxPoint(2, 0),
+		p + wxPoint(l + 1, 0));
+	dc->DrawLine(p + wxPoint(0, -l),
+		p + wxPoint(0, -1));
+	dc->DrawLine(p + wxPoint(0, 2),
+		p + wxPoint(0, l + 1));
+
+
+	// text and magnifier offset
+	int toff = l - 1;
+	// default to lower right
+	wxPoint tul = p + wxPoint(toff, toff);
+
+
+	// calculate text position and extend
+	// width of border around text label
+	int tB = 2;
+	wxFont font(8, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_LIGHT);
+	dc->SetFont(font);
+	wxCoord tw, th;
+	dc->GetTextExtent(label, &tw, &th);
+
+	
+
+
+
+}

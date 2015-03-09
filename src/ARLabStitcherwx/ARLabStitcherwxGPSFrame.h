@@ -177,7 +177,7 @@ public:
 	ARLabStitcherwxGPSFrame(wxWindow* parent) :
 		GPSFrame(parent)
 	{
-		isReady = false;
+		Ready = false;
 		SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 		m_doubleBuffer = NULL;
 	};
@@ -193,7 +193,7 @@ private:
 	int UTMNorthing;
 	int UTMEasting;
 	int maxx, maxy;
-	bool isReady;
+	bool Ready;
 	void LLtoUTM(double Long, double Lat) {
 		//double PI=3.1415926535897932;
 		UTMNorthing = 0;
@@ -250,6 +250,7 @@ public:
 	void OnResize(wxSizeEvent& e);
 	void paint();
 	void OnErase(wxEraseEvent& e);
+	bool isReadyyy();
 };
 
 

@@ -150,7 +150,7 @@ int ARLabStitcherwxGPSFrame::getReady()
 	}
 
 
-	isReady = true;
+	Ready = true;
 	return 0;
 }
 void ARLabStitcherwxGPSFrame::OnPaint(wxPaintEvent& event)
@@ -179,7 +179,7 @@ void ARLabStitcherwxGPSFrame::OnPaint(wxPaintEvent& event)
 	double ratio_use;
 	dc.Clear();
 	//dc.DrawRectangle(0, 0, windowSize.x, windowSize.y);
-	if (isReady)
+	if (Ready)
 	{
 		ratio_x = (double)(windowSize.x-20) / (double)(maxx);
 		ratio_y = (double)(windowSize.y-20) / (double)(maxy);
@@ -244,4 +244,10 @@ void ARLabStitcherwxGPSFrame::paint()
 
 void ARLabStitcherwxGPSFrame::OnErase(wxEraseEvent& e)
 {
+}
+
+
+bool ARLabStitcherwxGPSFrame::isReady()
+{
+	return Ready;
 }

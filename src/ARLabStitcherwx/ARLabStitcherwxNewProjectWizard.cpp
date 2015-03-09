@@ -43,6 +43,7 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 		{
 			wxRemove(sdir + "\\*.pto");
 			wxRemove(sdir + "\\*.log");
+			return;
 		}
 	}
 
@@ -55,6 +56,7 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 		{
 			wxRemove(sdir + "\\*.pto");
 			wxRemove(sdir + "\\*.log");
+			return;
 		}
 	}
 	if (!stitch_cp_clean.Exists())
@@ -66,6 +68,7 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 		{
 			wxRemove(sdir + "\\*.pto");
 			wxRemove(sdir + "\\*.log");
+			return;
 		}
 	}
 
@@ -78,6 +81,7 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 		{
 			wxRemove(sdir + "\\*.pto");
 			wxRemove(sdir + "\\*.log");
+			return;
 		}
 	}
 	if (!stitch_cp_clean_line_op.Exists())
@@ -89,6 +93,7 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 		{
 			wxRemove(sdir + "\\*.pto");
 			wxRemove(sdir + "\\*.log");
+			return;
 		}
 	}
 	if (!stitch_cp_clean_line_op_crop.Exists())
@@ -100,6 +105,7 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 		{
 			wxRemove(sdir + "\\*.pto");
 			wxRemove(sdir + "\\*.log");
+			return;
 		}
 	}
 

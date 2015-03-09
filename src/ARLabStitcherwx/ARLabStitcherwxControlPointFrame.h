@@ -72,6 +72,8 @@ public:
 private:
 	unsigned int bitmapSide;
 
+public:
+	void drawSingleCP(wxDC* dc, wxPoint p, wxStaticBitmap* bmpCtrl, unsigned int Nr);
 };
 
 #endif // __ARLabStitcherwxControlPointFrame__

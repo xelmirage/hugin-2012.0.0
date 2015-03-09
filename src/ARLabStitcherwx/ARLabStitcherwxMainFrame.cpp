@@ -60,8 +60,19 @@ MainFrame( parent )
 
 	isBatch = false;
 	m_panel14->Bind(wxEVT_SIZE, &ARLabStitcherwxMainFrame::panelPreviewSizeChanged, this);
-
 	preview_isReady = false;
+
+
+	m_menuEdit->Enable(wxID_menuItemProcess,false);
+	m_menuEdit->Enable(wxID_menuItemPreProcess, false);
+	m_menuEdit->Enable(wxID_menuItemFindCP, false);
+
+	m_toolStart->Enable(FALSE);
+	m_toolShowTrack->Enable(FALSE);
+	m_toolSuperOverLay->Enable(FALSE);
+
+
+
 }
 void ARLabStitcherwxMainFrame::throw_to_parent(wxProcessEvent& e)
 {
@@ -76,24 +87,31 @@ void ARLabStitcherwxMainFrame::throw_to_parent(wxProcessEvent& e)
 void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 {
 	::ARLabStitcherwxNewProjectWizard nw=new ::ARLabStitcherwxNewProjectWizard(this);
-	nw.RunWizard(nw.m_pages[0]);
-	sdir = nw.sdir;
-	gpsfileName = nw.gpsfileName;
-	outfileName = nw.outfileName;
+	
+	
+	if (nw.RunWizard(nw.m_pages[0])==TRUE)
+	{
+		sdir = nw.sdir;
+		gpsfileName = nw.gpsfileName;
+		outfileName = nw.outfileName;
 
 
-	wxPathList list;
-	::wxDir::GetAllFiles(sdir, &list, wxT("*.jpg"), wxDIR_FILES);
+		wxPathList list;
+		::wxDir::GetAllFiles(sdir, &list, wxT("*.jpg"), wxDIR_FILES);
 
-	MainFrame::m_listBoxPicList->Clear();
-	MainFrame::m_listBoxPicList->InsertItems(list, 0);
-	wxArrayString exif;
-	wxExecute("exiftool " + list[0], exif);
-	m_listBoxExif->InsertItems(exif, 0);
+		MainFrame::m_listBoxPicList->Clear();
+		MainFrame::m_listBoxPicList->InsertItems(list, 0);
+		wxArrayString exif;
+		wxExecute("exiftool " + list[0], exif);
+		m_listBoxExif->InsertItems(exif, 0);
 
 
-	m_toolShowTrack->Enable(true);
-	m_toolStart->Enable(true);
+		m_toolShowTrack->Enable(true);
+		m_toolStart->Enable(true);
+		m_menuEdit->Enable(wxID_menuItemPreProcess, TRUE);
+		m_menuEdit->Enable(wxID_menuItemProcess, TRUE);
+	}
+	
 
 }
 void ARLabStitcherwxMainFrame::newProcess(wxCommandEvent& WXUNUSED(event))
@@ -265,8 +283,15 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			m_GPSFrame->setGPSFileName(gpsfileName);
 			m_GPSFrame->setResultName(res);
 			
+
+
 			m_GPSFrame->getReady();
 			m_GPSFrame->Show(true);
+
+
+
+
+			m_menuEdit->Enable(wxID_menuItemFindCP, TRUE);
 			break;
 		default:
 			break;
@@ -321,7 +346,7 @@ void ARLabStitcherwxMainFrame::process(void)
 		}
 		
 		
-	case 1://CPFind
+	case 1:
 
 		MainFrame::m_gauge3->SetValue(20);
 
@@ -345,7 +370,7 @@ void ARLabStitcherwxMainFrame::process(void)
 
 		}
 		
-	case 2:
+	case 2://CPFind
 		MainFrame::m_gauge3->SetValue(30);
 
 		
@@ -549,6 +574,11 @@ void ARLabStitcherwxMainFrame::generateSuperOverlay(wxCommandEvent& WXUNUSED(eve
 }
 void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 {
+	
+	
+	if (m_GPSFrame->isReady())
+	{
+	}
 	wxString cmd;
 	
 	
@@ -560,15 +590,15 @@ void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 	time_count = 0;
 	t = wxDateTime::Now();
 
+	if (execexternal(cmd, wxT("航迹识别")) != 0)
+		return;
 
-	wxString res = sdir + wxT("\\belts.log");
+	/*wxString res = sdir + wxT("\\belts.log");
 	this->m_timerprocess.Start(1000);
 	m_GPSFrame->setGPSFileName(gpsfileName);
-	m_GPSFrame->setResultName(res);
+	m_GPSFrame->setResultName(res);*/
 
-	m_GPSFrame->getReady();
-	m_GPSFrame->Show(true);
-
+	
 	/*if (execexternal(cmd, wxT("航迹识别")) != 0)
 		return;*/
 	
@@ -584,7 +614,24 @@ void ARLabStitcherwxMainFrame::menuProcess(wxCommandEvent& WXUNUSED(event))
 
 void ARLabStitcherwxMainFrame::findCP(wxCommandEvent& WXUNUSED(event))
 {
-	m_controlPointsFrame->setPTO("part\\stitch_cp.pto");
+	wxString cmd;
+
+
+	cmd = ExeDir + wxT("\\cpfindgps001 -o ") + sdir + wxT("\\stitch_cp.pto ") + sdir + wxT("\\stitch.pto --gps");
+	phase = 2;
+
+	MainFrame::m_textCtrlProgress->Clear();
+	this->m_execPanel->ClearText();
+	time_count = 0;
+	t = wxDateTime::Now();
+
+
+	
+	this->m_timerprocess.Start(1000);
+	
+
+
+	m_controlPointsFrame->setPTO(sdir + wxT("\\stitch_cp.pto "));
 	if (!m_controlPointsFrame->isReady)
 	{
 		if (m_controlPointsFrame->getReady() != 0)
@@ -605,11 +652,12 @@ void ARLabStitcherwxMainFrame::UpdateImagePreview()
 	wxImage preimg;
 	float ratioh, ratiow, ratio;
 
-	
+	wxSize pSize = MainFrame::m_panel14->GetSize();
+	pSize -= pSize - wxSize(50, 50);
 	//preimg.Clear();
 	preimg.LoadFile(currentPreviewPic, wxBITMAP_TYPE_JPEG);
-	ratioh = preimg.GetHeight() / MainFrame::m_panel14->GetSize().GetHeight();
-	ratiow = preimg.GetWidth() / MainFrame::m_panel14->GetSize().GetWidth();
+	ratioh = preimg.GetHeight() / pSize.GetHeight();
+	ratiow = preimg.GetWidth() / pSize.GetWidth();
 
 	if (ratiow > ratioh)
 	{
