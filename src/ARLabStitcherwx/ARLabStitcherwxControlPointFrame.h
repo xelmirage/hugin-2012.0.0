@@ -53,7 +53,7 @@ private:
 	bool isLeftImgReady;
 	bool isRightImgReady;
 	wxImage imgLeft, imgRight;
-
+	bool Ready;
 public:
 	void UpdatePreview();
 	void OnPaint(wxPaintEvent& ee);
@@ -67,13 +67,14 @@ private:
 	HuginBase::CPointVector scaledCP;
 public:
 	void OnMoveEnd(wxMoveEvent& ee);
-	bool isReady;
+	
 	ARLabStitcherwxControlPointFrame::ImageRotation GetRot(double yaw, double pitch, double roll);
 private:
 	unsigned int bitmapSide;
 
 public:
 	void drawSingleCP(wxDC* dc, wxPoint p, wxStaticBitmap* bmpCtrl, unsigned int Nr);
+	bool isReady();
 };
 
 #endif // __ARLabStitcherwxControlPointFrame__

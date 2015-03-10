@@ -10,7 +10,7 @@ ControlPointFrame( parent )
 , imgLeftNr(0)
 , imgRightNr(0)
 , scaledCP(0)
-, isReady(FALSE)
+, Ready(FALSE)
 , bitmapSide(0)
 
 {
@@ -65,7 +65,7 @@ int ARLabStitcherwxControlPointFrame::getReady()
 
 	ControlPointFrame::m_choiceRight->Enable(false);
 
-	isReady = TRUE;
+	Ready = TRUE;
 	return 0;
 }
 
@@ -421,4 +421,10 @@ void ARLabStitcherwxControlPointFrame::drawSingleCP(wxDC* dc, wxPoint p, wxStati
 
 
 
+}
+
+
+bool ARLabStitcherwxControlPointFrame::isReady()
+{
+	return Ready;
 }

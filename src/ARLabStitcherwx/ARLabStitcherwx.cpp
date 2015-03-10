@@ -54,6 +54,10 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_menuItemFindCP = new wxMenuItem( m_menuEdit, wxID_menuItemFindCP, wxString( _("寻找特征点") ) , wxEmptyString, wxITEM_NORMAL );
 	m_menuEdit->Append( m_menuItemFindCP );
 	
+	wxMenuItem* m_menuItemOptimise;
+	m_menuItemOptimise = new wxMenuItem( m_menuEdit, wxID_menuItemOptimise, wxString( _("定向/平差") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menuEdit->Append( m_menuItemOptimise );
+	
 	m_menubarmain->Append( m_menuEdit, _("处理") ); 
 	
 	m_menu3 = new wxMenu();

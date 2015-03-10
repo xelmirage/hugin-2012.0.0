@@ -250,7 +250,7 @@ public:
 	void OnResize(wxSizeEvent& e);
 	void paint();
 	void OnErase(wxEraseEvent& e);
-	bool isReadyyy();
+	bool isReady();
 };
 
 

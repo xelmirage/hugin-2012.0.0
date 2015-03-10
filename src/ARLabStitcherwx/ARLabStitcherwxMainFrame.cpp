@@ -265,7 +265,7 @@ int ARLabStitcherwxMainFrame::execexternal(wxString command,wxString message)
 }
 void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 {
-	
+	wxString cmd;
 	push_message("\n---------------\n["+run_time+"] "+phasename[phase]+" 完成\n---------------\n");
 	if (isBatch)
 	{
@@ -280,19 +280,52 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 		{
 		case 0://航迹识别
 			
+			
+
+			phase = 1;
+
+			cmd = ExeDir + wxT("\\pto_gen ") + sdir + wxT("\\*.jpg -o") + sdir + wxT("\\stitch.pto --gps -f 1");
+			if (execexternal(cmd, wxT("生成工程")) != 0)
+			{
+				return;
+			}
+			
+			break;
+		case 1://generate project
 			m_GPSFrame->setGPSFileName(gpsfileName);
 			m_GPSFrame->setResultName(res);
-			
+
 
 
 			m_GPSFrame->getReady();
 			m_GPSFrame->Show(true);
-
-
-
-
 			m_menuEdit->Enable(wxID_menuItemFindCP, TRUE);
+			MainFrame::m_timerprocess.Stop();
 			break;
+			
+		case 2://cpclean finish,the clean cp
+			phase = 3;
+			cmd = ExeDir + wxT("\\cpclean -o") + sdir + wxT("\\stitch_cp_clean.pto ") + sdir + wxT("\\stitch_cp.pto");
+			if (execexternal(cmd, wxT("清理误差点")) != 0)
+			{
+				return;
+			}
+			break;
+		case 3:
+			m_controlPointsFrame->setPTO(sdir + wxT("\\stitch_cp.pto "));
+			if (!m_controlPointsFrame->isReady())
+			{
+				if (m_controlPointsFrame->getReady() != 0)
+				{
+					wxMessageBox("cpframe not ready!");
+					return;
+				}
+			}
+			m_controlPointsFrame->Show();
+			MainFrame::m_timerprocess.Stop();
+
+			break;
+
 		default:
 			break;
 		}
@@ -575,10 +608,17 @@ void ARLabStitcherwxMainFrame::generateSuperOverlay(wxCommandEvent& WXUNUSED(eve
 void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 {
 	
-	
+	int answer;
 	if (m_GPSFrame->isReady())
 	{
+		answer=wxMessageBox(wxT("已经存在匹配结果，重新计算？"), wxT("查找匹配点"), wxYES_NO,this);
+		if (answer == wxNO)
+		{
+			m_GPSFrame->Show();
+			return;
+		}
 	}
+	
 	wxString cmd;
 	
 	
@@ -589,7 +629,7 @@ void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 	this->m_execPanel->ClearText();
 	time_count = 0;
 	t = wxDateTime::Now();
-
+	this->m_timerprocess.Start(1000);
 	if (execexternal(cmd, wxT("航迹识别")) != 0)
 		return;
 
@@ -628,19 +668,11 @@ void ARLabStitcherwxMainFrame::findCP(wxCommandEvent& WXUNUSED(event))
 
 	
 	this->m_timerprocess.Start(1000);
+	if (execexternal(cmd, wxT("查找匹配点")) != 0)
+		return;
+
+
 	
-
-
-	m_controlPointsFrame->setPTO(sdir + wxT("\\stitch_cp.pto "));
-	if (!m_controlPointsFrame->isReady)
-	{
-		if (m_controlPointsFrame->getReady() != 0)
-		{
-			wxMessageBox("cpframe not ready!");
-			return;
-		}
-	}
-	m_controlPointsFrame->Show();
 }
 
 void ARLabStitcherwxMainFrame::UpdateImagePreview()

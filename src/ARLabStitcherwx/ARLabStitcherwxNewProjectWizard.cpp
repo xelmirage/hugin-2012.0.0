@@ -41,8 +41,8 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 			return;
 		else
 		{
-			wxRemove(sdir + "\\*.pto");
-			wxRemove(sdir + "\\*.log");
+			wxRemoveFile(sdir + "\\*.pto");
+			wxRemoveFile(sdir + "\\*.log");
 			return;
 		}
 	}
@@ -54,8 +54,8 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 			return;
 		else
 		{
-			wxRemove(sdir + "\\*.pto");
-			wxRemove(sdir + "\\*.log");
+			wxRemoveFile(sdir + "\\*.pto");
+			wxRemoveFile(sdir + "\\*.log");
 			return;
 		}
 	}
@@ -66,8 +66,8 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 			return;
 		else
 		{
-			wxRemove(sdir + "\\*.pto");
-			wxRemove(sdir + "\\*.log");
+			wxRemoveFile(sdir + "\\*.pto");
+			wxRemoveFile(sdir + "\\*.log");
 			return;
 		}
 	}
@@ -79,8 +79,8 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 			return;
 		else
 		{
-			wxRemove(sdir + "\\*.pto");
-			wxRemove(sdir + "\\*.log");
+			wxRemoveFile(sdir + "\\*.pto");
+			wxRemoveFile(sdir + "\\*.log");
 			return;
 		}
 	}
@@ -91,8 +91,8 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 			return;
 		else
 		{
-			wxRemove(sdir + "\\*.pto");
-			wxRemove(sdir + "\\*.log");
+			wxRemoveFile(sdir + "\\*.pto");
+			wxRemoveFile(sdir + "\\*.log");
 			return;
 		}
 	}
