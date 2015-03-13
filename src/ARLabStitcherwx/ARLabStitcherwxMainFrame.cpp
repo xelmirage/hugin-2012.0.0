@@ -4,6 +4,7 @@
 ARLabStitcherwxMainFrame::ARLabStitcherwxMainFrame( wxWindow* parent ,wxString Dir)
 	:
 MainFrame( parent )
+, isExecPanel_Running(false)
 {
 	time_count=0;
 	m_GPSFrame = new ::ARLabStitcherwxGPSFrame(this);
@@ -66,11 +67,21 @@ MainFrame( parent )
 	m_menuEdit->Enable(wxID_menuItemProcess,false);
 	m_menuEdit->Enable(wxID_menuItemPreProcess, false);
 	m_menuEdit->Enable(wxID_menuItemFindCP, false);
+	m_menuEdit->Enable(wxID_menuItemOptimise, FALSE);
 
+
+
+	wxToolBarBase *tb = GetToolBar();
+
+	tb->FindById(wxID_ToolStart)->Enable(false);
+
+
+	tb->EnableTool(wxID_ToolStart, false);
+	tb->EnableTool(wxID_toolShowTrack, false);
 	m_toolStart->Enable(FALSE);
 	m_toolShowTrack->Enable(FALSE);
 	m_toolSuperOverLay->Enable(FALSE);
-
+	
 
 
 }
@@ -108,13 +119,21 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 
 		m_toolShowTrack->Enable(true);
 		m_toolStart->Enable(true);
+
+
 		m_menuEdit->Enable(wxID_menuItemPreProcess, TRUE);
 		m_menuEdit->Enable(wxID_menuItemProcess, TRUE);
 	}
-	
+	wxToolBarBase *tb = GetToolBar();
+
+	tb->FindById(wxID_ToolStart)->Enable(false);
+
+
+	tb->EnableTool(wxID_ToolStart, false);
+	tb->EnableTool(wxID_toolShowTrack, false);
 
 }
-void ARLabStitcherwxMainFrame::newProcess(wxCommandEvent& WXUNUSED(event))
+void ARLabStitcherwxMainFrame::newProcess_discard(wxCommandEvent& WXUNUSED(event))
 {
 	wxString cmd;
 	//wxMessageBox("new");
@@ -250,7 +269,10 @@ void ARLabStitcherwxMainFrame::push_message(wxString message)
 }
 int ARLabStitcherwxMainFrame::execexternal(wxString command,wxString message)
 {
+	if (isExecPanel_Running)
+	{
 
+	}
 	push_message("\n---------------\n["+run_time+"] 开始 "+message+"\n---------------\n");
 	if (m_execPanel->ExecWithRedirect(command) == -1) 
 	{
@@ -273,8 +295,7 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 	}
 	else
 	{
-		m_timerprocess.Stop();
-		MainFrame::m_timerprocess.Stop();
+		
 		wxString res = sdir + wxT("\\belts.log");
 		switch (phase)
 		{
@@ -325,6 +346,15 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			MainFrame::m_timerprocess.Stop();
 
 			break;
+		case 4:
+			phase = 6;
+			cmd = ExeDir + "\\autooptimiser -a -s -l -o " + sdir + "\\stitch_cp_clean_linefind_op.pto " + sdir + "\\stitch_cp_clean_linefind.pto";
+			if (execexternal(cmd, wxT("图像定向")) != 0)
+			{
+				return;
+			}
+			break;
+		case 6:
 
 		default:
 			break;
@@ -607,7 +637,7 @@ void ARLabStitcherwxMainFrame::generateSuperOverlay(wxCommandEvent& WXUNUSED(eve
 }
 void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 {
-	
+	isBatch = false;
 	int answer;
 	if (m_GPSFrame->isReady())
 	{
@@ -655,7 +685,7 @@ void ARLabStitcherwxMainFrame::menuProcess(wxCommandEvent& WXUNUSED(event))
 void ARLabStitcherwxMainFrame::findCP(wxCommandEvent& WXUNUSED(event))
 {
 	wxString cmd;
-
+	isBatch = false;
 
 	cmd = ExeDir + wxT("\\cpfindgps001 -o ") + sdir + wxT("\\stitch_cp.pto ") + sdir + wxT("\\stitch.pto --gps");
 	phase = 2;
@@ -718,4 +748,45 @@ void ARLabStitcherwxMainFrame::panelPreviewSizeChanged(wxSizeEvent& e)
 {
 	
 	UpdateImagePreview();
+}
+
+
+void ARLabStitcherwxMainFrame::menuOptimise(wxCommandEvent& ee)
+{
+	phase = 4;
+		wxString cmd = ExeDir + "\\linefind -o " + sdir + "\\stitch_cp_clean_linefind.pto " + sdir + "\\stitch_cp_clean.pto";
+	if (execexternal(cmd, wxT("图像校准")) != 0)
+	{
+		return;
+	}
+
+
+}
+
+
+void ARLabStitcherwxMainFrame::allDisableForWork()
+{
+	m_menuEdit->Enable(wxID_menuItemProcess, false);
+	m_menuEdit->Enable(wxID_menuItemPreProcess, false);
+	m_menuEdit->Enable(wxID_menuItemFindCP, false);
+	m_menuEdit->Enable(wxID_menuItemOptimise, FALSE);
+
+
+	m_toolStart->Enable(FALSE);
+	m_toolShowTrack->Enable(FALSE);
+	m_toolSuperOverLay->Enable(FALSE);
+}
+
+
+void ARLabStitcherwxMainFrame::allEnableForWork()
+{
+	m_menuEdit->Enable(wxID_menuItemProcess, false);
+	m_menuEdit->Enable(wxID_menuItemPreProcess, false);
+	m_menuEdit->Enable(wxID_menuItemFindCP, false);
+	m_menuEdit->Enable(wxID_menuItemOptimise, FALSE);
+
+
+	m_toolStart->Enable(FALSE);
+	m_toolShowTrack->Enable(FALSE);
+	m_toolSuperOverLay->Enable(FALSE);
 }

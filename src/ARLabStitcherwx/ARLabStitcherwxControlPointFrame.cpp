@@ -428,3 +428,6 @@ bool ARLabStitcherwxControlPointFrame::isReady()
 {
 	return Ready;
 }
+
+
+

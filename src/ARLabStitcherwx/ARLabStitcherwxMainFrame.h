@@ -265,7 +265,7 @@ class ARLabStitcherwxMainFrame : public MainFrame
 public:
 	/** Constructor */
 	ARLabStitcherwxMainFrame( wxWindow* parent,wxString Dir );
-	void newProcess(wxCommandEvent& WXUNUSED(event));
+	void newProcess_discard(wxCommandEvent& WXUNUSED(event));
 	void processcmd(wxCommandEvent& WXUNUSED(event));
 	void ListBoxClicked(wxCommandEvent& e);
 	void count_time(::wxTimerEvent& e);
@@ -279,7 +279,7 @@ public:
 	void generateSuperOverlay(wxCommandEvent& WXUNUSED(event));
 	void preProcess(wxCommandEvent& WXUNUSED(event));
 	void menuProcess(wxCommandEvent& WXUNUSED(event));
-
+	void menuOptimise(wxCommandEvent& ee);
 	void findCP(wxCommandEvent& WXUNUSED(event));
 	void panelPreviewSizeChanged(wxSizeEvent& e);
 
@@ -317,6 +317,11 @@ public:
 
 	void UpdateImagePreview();
 	
+private:
+	void allDisableForWork();
+	void allEnableForWork();
+private:
+	bool isExecPanel_Running;
 };
 
 enum

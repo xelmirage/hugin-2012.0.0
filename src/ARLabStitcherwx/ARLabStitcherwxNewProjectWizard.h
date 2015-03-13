@@ -38,6 +38,7 @@ private:
 	void ValidateInputDir(wxCommandEvent& WXUNUSED(event));
 	void ValidateGPSFile(wxCommandEvent& WXUNUSED(event));
 	void ValidateOutFile(wxCommandEvent& WXUNUSED(event));
+	static wxMutex s_FileFindMutex;
 };
 
 #endif // __ARLabStitcherwxNewProjectWizard__

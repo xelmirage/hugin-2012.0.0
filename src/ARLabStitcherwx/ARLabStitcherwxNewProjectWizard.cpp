@@ -1,13 +1,14 @@
 ﻿#include "ARLabStitcherwxNewProjectWizard.h"
-
+wxMutex ARLabStitcherwxNewProjectWizard::s_FileFindMutex;
 inline void setControlEnable(int id, bool state)
 {
 	wxWindow *win = wxWindow::FindWindowById(id);
 	if (win) win->Enable(state);
 }
-ARLabStitcherwxNewProjectWizard::ARLabStitcherwxNewProjectWizard( wxWindow* parent )
-:
-NewProjectWizard( parent )
+ARLabStitcherwxNewProjectWizard::ARLabStitcherwxNewProjectWizard(wxWindow* parent)
+	:
+	NewProjectWizard(parent)
+	
 {
 	this->m_btnNext->Enable(false);
 }
@@ -17,94 +18,103 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 	if (dd.ShowModal() == wxID_CANCEL)
 		return;
 
-
+	std::vector<wxFileName> workset;
 	m_textCtrlSourceDir->SetValue(dd.GetPath());
 	std::string sdir = dd.GetPath();
 	wxFileName beltlog(sdir + "\\belts.log");
+	workset.push_back(beltlog);
+
 	wxFileName stitch(sdir + "\\stitch.pto");
+	workset.push_back(stitch);
 	wxFileName stitch_cp(sdir + "\\stitch_cp.pto");
+	workset.push_back(stitch_cp);
 	wxFileName stitch_cp_clean(sdir + "\\stitch_cp_clean.pto");
+	workset.push_back(stitch_cp_clean);
 	wxFileName stitch_cp_clean_line(sdir + "\\stitch_cp_clean_linefind.pto");
+	workset.push_back(stitch_cp_clean_line);
 	wxFileName stitch_cp_clean_line_op(sdir + "\\stitch_cp_clean_linefind_op.pto");
+	workset.push_back(stitch_cp_clean_line_op);
 	wxFileName gps_connect(this->outfileName + ".coord");
+	workset.push_back(gps_connect);
 	wxFileName stitch_cp_clean_line_op_crop(sdir + "\\stitch_cp_clean_linefind_op_crop.pto");
+	workset.push_back(stitch_cp_clean_line_op_crop);
+
+	for (int i = 0; i < workset.size(); ++i)
+	{
+		if (workset[i].Exists())
+		{
+			continue;
+		}
+		else if (i > 0)
+		{
+			int answer = wxMessageBox("belt record found, recover from it?", "Recovery", wxYES_NO | wxCANCEL);
+			if (answer == wxYES)
+			{
+				for (int j = i; j < workset.size(); ++j)
+				{
+					if (workset[j].Exists())
+					{
+						wxRemoveFile(workset[j].GetFullPath());
+					}
+				}
+				return;
+			}
+
+			else//用户选择了从头开始，于是清理所有残余
+			{
+				s_FileFindMutex.Lock();
+				wxString f = wxFindFirstFile(sdir + "\\*.pto");
+				while (!f.empty())
+				{
+					wxRemoveFile(f);
+					f = wxFindNextFile();
+				}
+				f = wxFindFirstFile(sdir +"\\*.log");
+				while (!f.empty())
+				{
+					wxRemoveFile(f);
+					f = wxFindNextFile();
+				}
+				f = wxFindFirstFile(sdir +"\\*.coord");
+				while (!f.empty())
+				{
+					wxRemoveFile(f);
+					f = wxFindNextFile();
+				}
+
+				s_FileFindMutex.Unlock();
 
 
-	if (!beltlog.Exists())
-	{
-		return;
-	}
-	if (!stitch.Exists())
-	{
-		int answer = wxMessageBox("belt record found, recover from it?", "Recovery", wxYES_NO | wxCANCEL);
-		if (answer == wxYES)    
-			return;
-		else
-		{
-			wxRemoveFile(sdir + "\\*.pto");
-			wxRemoveFile(sdir + "\\*.log");
-			return;
-		}
-	}
 
-	if (!stitch_cp.Exists())
-	{
-		int answer = wxMessageBox("previous points found, recover from it?", "Recovery", wxYES_NO | wxCANCEL);
-		if (answer == wxYES)
-			return;
-		else
-		{
-			wxRemoveFile(sdir + "\\*.pto");
-			wxRemoveFile(sdir + "\\*.log");
-			return;
-		}
-	}
-	if (!stitch_cp_clean.Exists())
-	{
-		int answer = wxMessageBox("previous record found, recover from it?", "Recovery", wxYES_NO | wxCANCEL);
-		if (answer == wxYES)
-			return;
-		else
-		{
-			wxRemoveFile(sdir + "\\*.pto");
-			wxRemoveFile(sdir + "\\*.log");
-			return;
-		}
-	}
 
-	if (!stitch_cp_clean_line.Exists())
-	{
-		int answer = wxMessageBox("previous record found, recover from it?", "Recovery", wxYES_NO | wxCANCEL);
-		if (answer == wxYES)
-			return;
-		else
-		{
-			wxRemoveFile(sdir + "\\*.pto");
-			wxRemoveFile(sdir + "\\*.log");
-			return;
+				return;
+			}
+	
 		}
-	}
-	if (!stitch_cp_clean_line_op.Exists())
-	{
-		int answer = wxMessageBox("previous record found, recover from it?", "Recovery", wxYES_NO | wxCANCEL);
-		if (answer == wxYES)
-			return;
-		else
+		else//第一个记录缺失，强制从头开始
 		{
-			wxRemoveFile(sdir + "\\*.pto");
-			wxRemoveFile(sdir + "\\*.log");
-			return;
-		}
-	}
-	if (!stitch_cp_clean_line_op_crop.Exists())
-	{
-		int answer = wxMessageBox("previous record found, recover from it?", "Recovery", wxYES_NO | wxCANCEL);
-		if (answer == wxYES)
-			return;
-		else
-		{
-			wxRemove(sdir + "\\*.pto");
-			wxRemove(sdir + "\\*.log");
+			s_FileFindMutex.Lock();
+			wxString f = wxFindFirstFile(sdir + wxT("*.pto"));
+			while (!f.empty())
+			{
+				wxRemoveFile(f);
+				f = wxFindNextFile();
+			}
+			f = wxFindFirstFile(sdir + wxT("*.log"));
+			while (!f.empty())
+			{
+				wxRemoveFile(f);
+				f = wxFindNextFile();
+			}
+			f = wxFindFirstFile(sdir + wxT("*.coord"));
+			while (!f.empty())
+			{
+				wxRemoveFile(f);
+				f = wxFindNextFile();
+			}
+
+			s_FileFindMutex.Unlock();
+			
 			return;
 		}
 	}
@@ -118,7 +128,7 @@ void ARLabStitcherwxNewProjectWizard::OpenGPSFile(wxCommandEvent& WXUNUSED(event
 	if (fdGPS.ShowModal() == wxID_CANCEL)
 		return;
 	this->m_textCtrlGPSFile->SetValue(fdGPS.GetPath());
-	
+
 }
 
 void ARLabStitcherwxNewProjectWizard::OpenOutputFile(wxCommandEvent& WXUNUSED(event))
@@ -138,17 +148,17 @@ void ARLabStitcherwxNewProjectWizard::DisableNextFirst(wxWizardEvent& WXUNUSED(e
 void ARLabStitcherwxNewProjectWizard::ValidateInputDir(wxCommandEvent& WXUNUSED(event))
 {
 	sdir = m_textCtrlSourceDir->GetValue();
-	
+
 	wxDir dir(sdir);
 
 	wxPathList list;
 	::wxDir::GetAllFiles(sdir, &list, wxT("*.jpg"), wxDIR_FILES);
 
-	
 
 
 
-	if (list.size()>0)
+
+	if (list.size() > 0)
 	{
 		this->m_btnNext->Enable(true);
 		m_staticTextInputDirHint->SetForegroundColour(wxColor("BLACK"));
@@ -164,7 +174,7 @@ void ARLabStitcherwxNewProjectWizard::ValidateInputDir(wxCommandEvent& WXUNUSED(
 void ARLabStitcherwxNewProjectWizard::ValidateGPSFile(wxCommandEvent& WXUNUSED(event))
 {
 	gpsfileName = m_textCtrlGPSFile->GetValue();
-	
+
 	wxFile gfile(gpsfileName);
 	if (gfile.Exists(gpsfileName))
 	{
@@ -184,13 +194,13 @@ void ARLabStitcherwxNewProjectWizard::ValidateOutFile(wxCommandEvent& WXUNUSED(e
 	outfileName = m_textCtrlOutputFile->GetValue();
 
 	wxFileName gfile(outfileName);
-	
+
 	if (gfile.IsOk())
 	{
 		this->m_btnNext->Enable(true);
 		m_staticTextOutputFileHint->SetForegroundColour(wxColor("BLACK"));
 		m_staticTextOutputFileHint->SetLabel("输出文件路径检查通过！");
-		
+
 	}
 	else
 	{

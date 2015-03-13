@@ -203,24 +203,24 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	this->SetSizer( bSizer7 );
 	this->Layout();
 	m_timerprocess.SetOwner( this, wxID_TimerProcess );
-	m_toolBar1 = this->CreateToolBar( wxTB_HORIZONTAL, wxID_ANY ); 
-	m_tool_new = m_toolBar1->AddTool( wxID_NEW_PROJECT_TOOL, _("新建工程"), wxBitmap( wxT("images/new.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
+	m_toolBarMain = this->CreateToolBar( wxTB_HORIZONTAL, wxID_toolBarMain ); 
+	m_toolNew = m_toolBarMain->AddTool( wxID_toolNew, _("新建工程"), wxBitmap( wxT("images/new.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
-	m_tool2 = m_toolBar1->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/save.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
+	m_tool2 = m_toolBarMain->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/save.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
-	m_toolStart = m_toolBar1->AddTool( wxID_ToolStart, _("tool"), wxBitmap( wxT("images/start1.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
+	m_toolStart = m_toolBarMain->AddTool( wxID_ToolStart, _("tool"), wxBitmap( wxT("images/start1.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
-	m_toolShowTrack = m_toolBar1->AddTool( wxID_toolShowTrack, _("tool"), wxBitmap( wxT("images/airportsxia.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
+	m_toolShowTrack = m_toolBarMain->AddTool( wxID_toolShowTrack, _("tool"), wxBitmap( wxT("images/airportsxia.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
-	m_toolSuperOverLay = m_toolBar1->AddTool( wxID_SuperOverLay, _("tool"), wxBitmap( wxT("images/Dotriangulation .bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
+	m_toolSuperOverLay = m_toolBarMain->AddTool( wxID_toolSuperOverLay, _("tool"), wxBitmap( wxT("images/Dotriangulation .bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
-	m_toolShowKML = m_toolBar1->AddTool( wxID_ShowKML, _("tool"), wxBitmap( wxT("images/stereoimage.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
+	m_toolShowKML = m_toolBarMain->AddTool( wxID_ShowKML, _("tool"), wxBitmap( wxT("images/stereoimage.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
-	m_toolBar1->AddSeparator(); 
+	m_toolBarMain->AddSeparator(); 
 	
-	m_toolBar1->AddSeparator(); 
+	m_toolBarMain->AddSeparator(); 
 	
-	m_toolBar1->Realize(); 
+	m_toolBarMain->Realize(); 
 	
 	m_statusBar = this->CreateStatusBar( 1, wxST_SIZEGRIP, wxID_ANY );
 	

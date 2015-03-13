@@ -75,6 +75,7 @@ private:
 public:
 	void drawSingleCP(wxDC* dc, wxPoint p, wxStaticBitmap* bmpCtrl, unsigned int Nr);
 	bool isReady();
+
 };
 
 #endif // __ARLabStitcherwxControlPointFrame__

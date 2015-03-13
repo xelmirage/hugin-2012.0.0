@@ -52,28 +52,29 @@ WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
 #define wxID_panelPreview 1008
 #define wxID_NoteBookProgressOut 1009
 #define wxID_TimerProcess 1010
-#define wxID_NEW_PROJECT_TOOL 1011
-#define wxID_ToolStart 1012
-#define wxID_toolShowTrack 1013
-#define wxID_SuperOverLay 1014
-#define wxID_ShowKML 1015
-#define wxID_NewProjectWizard 1016
-#define wxID_WizardPage01 1017
-#define wxID_SourceDir 1018
-#define wxID_InputDirHint 1019
-#define wxID_OpenSourceDir 1020
-#define wxID_WizardPage02 1021
-#define wxID_GPSFile 1022
-#define wxID_GPSHint 1023
-#define wxID_OpenGPSFile 1024
-#define wxID_WizardPage03 1025
-#define wxID_OutputFile 1026
-#define wxID_OutputFileHint 1027
-#define wxID_OpenOutputFile 1028
-#define wxID_choiceLeft 1029
-#define wxID_bitmapLeft 1030
-#define wxID_choiceRight 1031
-#define wxID_bitmapRight 1032
+#define wxID_toolBarMain 1011
+#define wxID_toolNew 1012
+#define wxID_ToolStart 1013
+#define wxID_toolShowTrack 1014
+#define wxID_toolSuperOverLay 1015
+#define wxID_ShowKML 1016
+#define wxID_NewProjectWizard 1017
+#define wxID_WizardPage01 1018
+#define wxID_SourceDir 1019
+#define wxID_InputDirHint 1020
+#define wxID_OpenSourceDir 1021
+#define wxID_WizardPage02 1022
+#define wxID_GPSFile 1023
+#define wxID_GPSHint 1024
+#define wxID_OpenGPSFile 1025
+#define wxID_WizardPage03 1026
+#define wxID_OutputFile 1027
+#define wxID_OutputFileHint 1028
+#define wxID_OpenOutputFile 1029
+#define wxID_choiceLeft 1030
+#define wxID_bitmapLeft 1031
+#define wxID_choiceRight 1032
+#define wxID_bitmapRight 1033
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -106,8 +107,8 @@ class MainFrame : public wxFrame
 		wxTextCtrl* m_textCtrlProgress;
 		wxGauge* m_gauge3;
 		wxTimer m_timerprocess;
-		wxToolBar* m_toolBar1;
-		wxToolBarToolBase* m_tool_new; 
+		wxToolBar* m_toolBarMain;
+		wxToolBarToolBase* m_toolNew; 
 		wxToolBarToolBase* m_tool2; 
 		wxToolBarToolBase* m_toolStart; 
 		wxToolBarToolBase* m_toolShowTrack; 
