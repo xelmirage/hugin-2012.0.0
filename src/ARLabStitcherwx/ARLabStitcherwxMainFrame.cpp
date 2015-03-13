@@ -5,6 +5,8 @@ ARLabStitcherwxMainFrame::ARLabStitcherwxMainFrame( wxWindow* parent ,wxString D
 	:
 MainFrame( parent )
 , isExecPanel_Running(false)
+, allowToolStart(false)
+, allowToolShowTrack(false)
 {
 	time_count=0;
 	m_GPSFrame = new ::ARLabStitcherwxGPSFrame(this);
@@ -366,6 +368,10 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 
 void ARLabStitcherwxMainFrame::process(void)
 {
+	if (!allowToolStart)
+	{
+		wxMessageBox("工程未就绪，请新建工程");
+	}
 	isBatch = true;
 	std::string cmd;
 	wxFileName beltlog(sdir+"\\belts.log");
@@ -789,4 +795,10 @@ void ARLabStitcherwxMainFrame::allEnableForWork()
 	m_toolStart->Enable(FALSE);
 	m_toolShowTrack->Enable(FALSE);
 	m_toolSuperOverLay->Enable(FALSE);
+}
+
+
+void ARLabStitcherwxMainFrame::menuCrop(wxCommandEvent& ee)
+{
+	
 }

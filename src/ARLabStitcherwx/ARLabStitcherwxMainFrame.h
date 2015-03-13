@@ -322,6 +322,9 @@ private:
 	void allEnableForWork();
 private:
 	bool isExecPanel_Running;
+	bool allowToolStart;
+	bool allowToolShowTrack;
+	void menuCrop(wxCommandEvent& ee);
 };
 
 enum
