@@ -39,17 +39,17 @@ EVT_TIMER(wxID_TimerProcess, ARLabStitcherwxMainFrame::count_time)
 EVT_END_PROCESS(-1, ARLabStitcherwxMainFrame::end_process)
 
 
-EVT_TOOL(wxID_NEW_PROJECT_TOOL, ARLabStitcherwxMainFrame::newProjectTool)
+EVT_TOOL(wxID_toolNew, ARLabStitcherwxMainFrame::newProjectTool)
 EVT_TOOL(wxID_toolShowTrack, ARLabStitcherwxMainFrame::showTrack)
 EVT_TOOL(wxID_ShowKML, ARLabStitcherwxMainFrame::showTrack)
-EVT_TOOL(wxID_SuperOverLay, ARLabStitcherwxMainFrame::generateSuperOverlay)
+EVT_TOOL(wxID_toolSuperOverLay, ARLabStitcherwxMainFrame::generateSuperOverlay)
 EVT_TOOL(wxID_ToolStart, ARLabStitcherwxMainFrame::processcmd)
 
 EVT_MENU(wxID_menuItemProcess, ARLabStitcherwxMainFrame::menuProcess)
 EVT_MENU(wxID_menuItemPreProcess, ARLabStitcherwxMainFrame::preProcess)
 EVT_MENU(wxID_menuItemFindCP, ARLabStitcherwxMainFrame::findCP)
 EVT_MENU(wxID_New, ARLabStitcherwxMainFrame::newProjectTool)
-
+EVT_MENU(wxID_menuItemOptimise,ARLabStitcherwxMainFrame::menuOptimise)
 END_EVENT_TABLE()
 
 
