@@ -7,6 +7,7 @@ MainFrame( parent )
 , isExecPanel_Running(false)
 , allowToolStart(false)
 , allowToolShowTrack(false)
+, isExecPanel_Paused(false)
 {
 	time_count=0;
 	m_GPSFrame = new ::ARLabStitcherwxGPSFrame(this);
@@ -126,6 +127,20 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 		m_menuEdit->Enable(wxID_menuItemPreProcess, TRUE);
 		m_menuEdit->Enable(wxID_menuItemProcess, TRUE);
 	}
+
+	beltlog.SetPath(sdir + "\\belts.log");
+	stitch.SetPath(sdir + "\\stitch.pto");
+	stitch_cp.SetPath(sdir + "\\stitch_cp.pto");
+	stitch_cp_clean.SetPath(sdir + "\\stitch_cp_clean.pto");
+	stitch_cp_clean_line.SetPath(sdir + "\\stitch_cp_clean_linefind.pto");
+	stitch_cp_clean_line_op.SetPath(sdir + "\\stitch_cp_clean_linefind_op.pto");
+	gps_connect.SetPath(this->outfileName + ".coord");
+	stitch_cp_clean_line_op_crop.SetPath(sdir + "\\stitch_cp_clean_linefind_op_crop.pto");
+	ofile.SetPath(this->outfileName);
+
+
+
+
 	wxToolBarBase *tb = GetToolBar();
 
 	tb->FindById(wxID_ToolStart)->Enable(false);
@@ -273,8 +288,10 @@ int ARLabStitcherwxMainFrame::execexternal(wxString command,wxString message)
 {
 	if (isExecPanel_Running)
 	{
-
+		wxMessageBox("运行中，请勿重复运行");
+		return 0;
 	}
+	isExecPanel_Running = true;
 	push_message("\n---------------\n["+run_time+"] 开始 "+message+"\n---------------\n");
 	if (m_execPanel->ExecWithRedirect(command) == -1) 
 	{
@@ -290,7 +307,9 @@ int ARLabStitcherwxMainFrame::execexternal(wxString command,wxString message)
 void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 {
 	wxString cmd;
+	EnableFunction(phase);
 	push_message("\n---------------\n["+run_time+"] "+phasename[phase]+" 完成\n---------------\n");
+	isExecPanel_Running = false;
 	if (isBatch)
 	{
 		process();
@@ -357,7 +376,22 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			}
 			break;
 		case 6:
-
+			wxMessageBox("定向完成！");
+			break;
+		case 7:
+			phase = 8;
+			cmd = ExeDir + "\\nona -f " + sdir + "\\stitch_cp_clean_linefind_op_crop.pto -o " + this->outfileName;
+			if (execexternal(cmd, wxT("GPS重采样")) != 0)
+			{
+				return;
+			}
+			break;
+		case 8:
+			wxMessageBox("crop finish!");
+			break;
+		case 9:
+			wxMessageBox("");
+			break;
 		default:
 			break;
 		}
@@ -374,15 +408,7 @@ void ARLabStitcherwxMainFrame::process(void)
 	}
 	isBatch = true;
 	std::string cmd;
-	wxFileName beltlog(sdir+"\\belts.log");
-	wxFileName stitch(sdir+"\\stitch.pto");
-	wxFileName stitch_cp(sdir+"\\stitch_cp.pto");
-	wxFileName stitch_cp_clean(sdir+"\\stitch_cp_clean.pto");
-	wxFileName stitch_cp_clean_line(sdir+"\\stitch_cp_clean_linefind.pto");
-	wxFileName stitch_cp_clean_line_op(sdir+"\\stitch_cp_clean_linefind_op.pto");
-	wxFileName gps_connect(this->outfileName+".coord");
-	wxFileName stitch_cp_clean_line_op_crop(sdir+"\\stitch_cp_clean_linefind_op_crop.pto");
-	wxFileName ofile(this->outfileName);
+	
 	++phase;
 	switch (phase)
 	{
@@ -629,11 +655,7 @@ void ARLabStitcherwxMainFrame::showTrack(wxCommandEvent& WXUNUSED(event))
 	
 
 }
-int ARLabStitcherwxMainFrame::stitch(wxString inputFileName, wxString outFileName)
-{
 
-	return 0;
-}
 
 void ARLabStitcherwxMainFrame::generateSuperOverlay(wxCommandEvent& WXUNUSED(event))
 {
@@ -645,6 +667,10 @@ void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 {
 	isBatch = false;
 	int answer;
+
+	
+
+
 	if (m_GPSFrame->isReady())
 	{
 		answer=wxMessageBox(wxT("已经存在匹配结果，重新计算？"), wxT("查找匹配点"), wxYES_NO,this);
@@ -655,6 +681,21 @@ void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 		}
 	}
 	
+	if (beltlog.FileExists())
+	{
+		answer = wxMessageBox(wxT("找到已存在的文件，直接使用？"), wxT("查找匹配点"), wxYES_NO, this);
+		if (answer == wxYES)
+		{
+			m_GPSFrame->setGPSFileName(beltlog.GetFullPath());
+			phase = phase_preprocess;
+			end_process();
+			return;
+		}
+
+	}
+
+
+
 	wxString cmd;
 	
 	
@@ -692,7 +733,17 @@ void ARLabStitcherwxMainFrame::findCP(wxCommandEvent& WXUNUSED(event))
 {
 	wxString cmd;
 	isBatch = false;
-
+	int answer;
+	if (stitch_cp.FileExists())
+	{
+		answer = wxMessageBox(wxT("找到已存在的结果文件，直接使用？"), wxT("查找匹配点"), wxYES_NO, this);
+		if (answer == wxYES)
+		{
+			phase = phase_cpfind;
+			end_process();
+			return;
+		}
+	}
 	cmd = ExeDir + wxT("\\cpfindgps001 -o ") + sdir + wxT("\\stitch_cp.pto ") + sdir + wxT("\\stitch.pto --gps");
 	phase = 2;
 
@@ -800,5 +851,82 @@ void ARLabStitcherwxMainFrame::allEnableForWork()
 
 void ARLabStitcherwxMainFrame::menuCrop(wxCommandEvent& ee)
 {
+	isBatch = false;
+	phase = 7;
+	wxString cmd = ExeDir + "\\pano_modify --canvas=30% --crop=auto " + sdir + "\\stitch_cp_clean_linefind_op.pto -o " + sdir + "\\stitch_cp_clean_linefind_op_crop.pto";
+	if (execexternal(cmd, wxT("裁剪")) != 0)
+	{
+		return;
+	}
 	
+
+
+}
+
+
+void ARLabStitcherwxMainFrame::blend(wxCommandEvent& ee)
+{
+	wxString cmd = ExeDir + "\\split_blend " + sdir + "\\stitch_cp_clean_linefind_op_crop.pto -o " + this->outfileName;
+	if (execexternal(cmd, wxT("融合")) != 0)
+	{
+		return;
+	}
+}
+
+
+void ARLabStitcherwxMainFrame::EnableFunction(int phase)
+{
+	m_toolBarMain->EnableTool(wxID_menuItemMerge, false);
+	m_toolBarMain->EnableTool(wxID_menuItemAutoCrop, false);
+	m_toolBarMain->EnableTool(wxID_menuItemOptimise, false);
+	m_toolBarMain->EnableTool(wxID_menuItemFindCP, false);
+	switch (phase)
+	{
+	case phase_merge:
+	case phase_nona_gps:
+	case phase_crop://crop finishi
+		m_toolBarMain->EnableTool(wxID_menuItemMerge, TRUE);
+	case phase_optimise:
+		m_toolBarMain->EnableTool(wxID_menuItemAutoCrop, TRUE);
+	case phase_checkpto:
+	case phase_linefind:
+	case phase_cpclean:
+	case phase_cpfind:
+		m_toolBarMain->EnableTool(wxID_menuItemOptimise,TRUE);
+	case phase_pto_gen:
+	case phase_preprocess:
+		m_toolBarMain->EnableTool(wxID_menuItemFindCP, TRUE);
+	default:
+		break;
+	}
+}
+
+
+void ARLabStitcherwxMainFrame::pauseProcess(wxCommandEvent& ee)
+{
+	if (isExecPanel_Running)
+	{
+		if (m_toolPause->IsToggled())
+		{
+			m_execPanel->ContinueProcess();
+		}
+		else
+		{
+			m_execPanel->PauseProcess();
+		}
+		
+	}
+	return;
+	
+}
+
+
+void ARLabStitcherwxMainFrame::stopProcess(wxCommandEvent& ee)
+{
+	if (isExecPanel_Running)
+	{
+		m_execPanel->KillProcess();
+		isExecPanel_Running = false;
+	}
+	return;
 }

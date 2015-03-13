@@ -58,6 +58,18 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_menuItemOptimise = new wxMenuItem( m_menuEdit, wxID_menuItemOptimise, wxString( _("定向/平差") ) , wxEmptyString, wxITEM_NORMAL );
 	m_menuEdit->Append( m_menuItemOptimise );
 	
+	wxMenuItem* m_menuItemAutoCrop;
+	m_menuItemAutoCrop = new wxMenuItem( m_menuEdit, wxID_menuItemAutoCrop, wxString( _("自动裁剪") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menuEdit->Append( m_menuItemAutoCrop );
+	
+	wxMenuItem* m_menuItemMerge;
+	m_menuItemMerge = new wxMenuItem( m_menuEdit, wxID_menuItemMerge, wxString( _("融合") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menuEdit->Append( m_menuItemMerge );
+	
+	wxMenuItem* m_menuItemSuperOverlay;
+	m_menuItemSuperOverlay = new wxMenuItem( m_menuEdit, wxID_menuItemSuperOverlay, wxString( _("创建瓦片") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menuEdit->Append( m_menuItemSuperOverlay );
+	
 	m_menubarmain->Append( m_menuEdit, _("处理") ); 
 	
 	m_menu3 = new wxMenu();
@@ -209,6 +221,10 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_tool2 = m_toolBarMain->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/save.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
 	m_toolStart = m_toolBarMain->AddTool( wxID_ToolStart, _("tool"), wxBitmap( wxT("images/start1.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
+	
+	m_toolPause = m_toolBarMain->AddTool( wxID_toolPause, _("tool"), wxBitmap( wxT("images/pause.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_CHECK, wxEmptyString, wxEmptyString, NULL ); 
+	
+	m_toolStop = m_toolBarMain->AddTool( wxID_toolStop, _("tool"), wxBitmap( wxT("images/stop.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
 	m_toolShowTrack = m_toolBarMain->AddTool( wxID_toolShowTrack, _("tool"), wxBitmap( wxT("images/airportsxia.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	

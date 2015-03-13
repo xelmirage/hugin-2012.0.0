@@ -88,7 +88,7 @@
             <event name="OnSetFocus"></event>
             <event name="OnSize"></event>
             <event name="OnUpdateUI"></event>
-            <object class="wxMenuBar" expanded="0">
+            <object class="wxMenuBar" expanded="1">
                 <property name="bg"></property>
                 <property name="context_help"></property>
                 <property name="context_menu">1</property>
@@ -279,6 +279,51 @@
                         <property name="kind">wxITEM_NORMAL</property>
                         <property name="label">定向/平差</property>
                         <property name="name">m_menuItemOptimise</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="wxMenuItem" expanded="0">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_menuItemAutoCrop</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">自动裁剪</property>
+                        <property name="name">m_menuItemAutoCrop</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="wxMenuItem" expanded="0">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_menuItemMerge</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">融合</property>
+                        <property name="name">m_menuItemMerge</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection"></event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="wxMenuItem" expanded="0">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">wxID_menuItemSuperOverlay</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">创建瓦片</property>
+                        <property name="name">m_menuItemSuperOverlay</property>
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
@@ -1989,6 +2034,48 @@
                     <property name="kind">wxITEM_NORMAL</property>
                     <property name="label">tool</property>
                     <property name="name">m_toolStart</property>
+                    <property name="permission">protected</property>
+                    <property name="statusbar"></property>
+                    <property name="tooltip"></property>
+                    <event name="OnAuiToolBarBeginDrag"></event>
+                    <event name="OnAuiToolBarMiddleClick"></event>
+                    <event name="OnAuiToolBarOverflowClick"></event>
+                    <event name="OnAuiToolBarRightClick"></event>
+                    <event name="OnAuiToolBarToolDropDown"></event>
+                    <event name="OnMenuSelection"></event>
+                    <event name="OnToolClicked"></event>
+                    <event name="OnToolEnter"></event>
+                    <event name="OnToolRClicked"></event>
+                    <event name="OnUpdateUI"></event>
+                </object>
+                <object class="tool" expanded="1">
+                    <property name="bitmap">Load From File; images\pause.bmp</property>
+                    <property name="context_menu">0</property>
+                    <property name="id">wxID_toolPause</property>
+                    <property name="kind">wxITEM_CHECK</property>
+                    <property name="label">tool</property>
+                    <property name="name">m_toolPause</property>
+                    <property name="permission">protected</property>
+                    <property name="statusbar"></property>
+                    <property name="tooltip"></property>
+                    <event name="OnAuiToolBarBeginDrag"></event>
+                    <event name="OnAuiToolBarMiddleClick"></event>
+                    <event name="OnAuiToolBarOverflowClick"></event>
+                    <event name="OnAuiToolBarRightClick"></event>
+                    <event name="OnAuiToolBarToolDropDown"></event>
+                    <event name="OnMenuSelection"></event>
+                    <event name="OnToolClicked"></event>
+                    <event name="OnToolEnter"></event>
+                    <event name="OnToolRClicked"></event>
+                    <event name="OnUpdateUI"></event>
+                </object>
+                <object class="tool" expanded="1">
+                    <property name="bitmap">Load From File; images\stop.bmp</property>
+                    <property name="context_menu">0</property>
+                    <property name="id">wxID_toolStop</property>
+                    <property name="kind">wxITEM_NORMAL</property>
+                    <property name="label">tool</property>
+                    <property name="name">m_toolStop</property>
                     <property name="permission">protected</property>
                     <property name="statusbar"></property>
                     <property name="tooltip"></property>
