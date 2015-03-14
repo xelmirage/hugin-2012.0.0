@@ -119,6 +119,18 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 		wxExecute("exiftool " + list[0], exif);
 		m_listBoxExif->InsertItems(exif, 0);
 
+		beltlog.SetPath(sdir + "\\belts.log");
+		stitch.SetPath(sdir + "\\stitch.pto");
+		stitch_cp.SetPath(sdir + "\\stitch_cp.pto");
+		stitch_cp_clean.SetPath(sdir + "\\stitch_cp_clean.pto");
+		stitch_cp_clean_line.SetPath(sdir + "\\stitch_cp_clean_linefind.pto");
+		stitch_cp_clean_line_op.SetPath(sdir + "\\stitch_cp_clean_linefind_op.pto");
+		gps_connect.SetPath(this->outfileName + ".coord");
+		stitch_cp_clean_line_op_crop.SetPath(sdir + "\\stitch_cp_clean_linefind_op_crop.pto");
+		ofile.SetPath(this->outfileName);
+
+
+
 
 		m_toolShowTrack->Enable(true);
 		m_toolStart->Enable(true);
@@ -126,24 +138,17 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 
 		m_menuEdit->Enable(wxID_menuItemPreProcess, TRUE);
 		m_menuEdit->Enable(wxID_menuItemProcess, TRUE);
+
+		m_toolBarMain->EnableTool(wxID_ToolStart, true);
+		return;
 	}
 
-	beltlog.SetPath(sdir + "\\belts.log");
-	stitch.SetPath(sdir + "\\stitch.pto");
-	stitch_cp.SetPath(sdir + "\\stitch_cp.pto");
-	stitch_cp_clean.SetPath(sdir + "\\stitch_cp_clean.pto");
-	stitch_cp_clean_line.SetPath(sdir + "\\stitch_cp_clean_linefind.pto");
-	stitch_cp_clean_line_op.SetPath(sdir + "\\stitch_cp_clean_linefind_op.pto");
-	gps_connect.SetPath(this->outfileName + ".coord");
-	stitch_cp_clean_line_op_crop.SetPath(sdir + "\\stitch_cp_clean_linefind_op_crop.pto");
-	ofile.SetPath(this->outfileName);
+	
 
 
 
 
 	wxToolBarBase *tb = GetToolBar();
-
-	tb->FindById(wxID_ToolStart)->Enable(false);
 
 
 	tb->EnableTool(wxID_ToolStart, false);
@@ -343,6 +348,7 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			m_GPSFrame->Show(true);
 			m_menuEdit->Enable(wxID_menuItemFindCP, TRUE);
 			MainFrame::m_timerprocess.Stop();
+			
 			break;
 			
 		case 2://cpclean finish,the clean cp
@@ -365,7 +371,7 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			}
 			m_controlPointsFrame->Show();
 			MainFrame::m_timerprocess.Stop();
-
+			EnableFunction(phase_cpfind);
 			break;
 		case 4:
 			phase = 6;
@@ -377,6 +383,7 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			break;
 		case 6:
 			wxMessageBox("定向完成！");
+			EnableFunction(phase_optimise);
 			break;
 		case 7:
 			phase = 8;
@@ -405,6 +412,7 @@ void ARLabStitcherwxMainFrame::process(void)
 	if (!allowToolStart)
 	{
 		wxMessageBox("工程未就绪，请新建工程");
+		return;
 	}
 	isBatch = true;
 	std::string cmd;
@@ -677,6 +685,10 @@ void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 		if (answer == wxNO)
 		{
 			m_GPSFrame->Show();
+			phase = phase_preprocess;
+			wxProcessEvent ee;
+			ee.SetEventObject(m_execPanel);
+			end_process(ee);
 			return;
 		}
 	}
@@ -687,8 +699,11 @@ void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 		if (answer == wxYES)
 		{
 			m_GPSFrame->setGPSFileName(beltlog.GetFullPath());
-			phase = phase_preprocess;
-			end_process();
+			phase = phase_pto_gen;
+			wxProcessEvent ee;
+			ee.SetEventObject(m_execPanel);
+			end_process(ee);
+
 			return;
 		}
 
@@ -740,7 +755,7 @@ void ARLabStitcherwxMainFrame::findCP(wxCommandEvent& WXUNUSED(event))
 		if (answer == wxYES)
 		{
 			phase = phase_cpfind;
-			end_process();
+			//end_process();
 			return;
 		}
 	}

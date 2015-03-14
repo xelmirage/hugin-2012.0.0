@@ -44,6 +44,8 @@ EVT_TOOL(wxID_toolShowTrack, ARLabStitcherwxMainFrame::showTrack)
 EVT_TOOL(wxID_ShowKML, ARLabStitcherwxMainFrame::showTrack)
 EVT_TOOL(wxID_toolSuperOverLay, ARLabStitcherwxMainFrame::generateSuperOverlay)
 EVT_TOOL(wxID_ToolStart, ARLabStitcherwxMainFrame::processcmd)
+EVT_TOOL(wxID_toolPause, ARLabStitcherwxMainFrame::pauseProcess)
+
 
 EVT_MENU(wxID_menuItemProcess, ARLabStitcherwxMainFrame::menuProcess)
 EVT_MENU(wxID_menuItemPreProcess, ARLabStitcherwxMainFrame::preProcess)
