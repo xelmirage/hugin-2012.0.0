@@ -815,7 +815,7 @@ int main(int argc,char* argv[])
 
 	for (i=pointsL.begin();i<pointsL.end();++i)
 	{
-		if (( (*i).yawint==most1||(*i).yawint==(most2))&&(*i).dyaw<10)
+		if (( (*i).yawint==most1||(*i).yawint==(most2))&&(*i).dyaw<5)
 		{
 			(*i).selected=true;
 

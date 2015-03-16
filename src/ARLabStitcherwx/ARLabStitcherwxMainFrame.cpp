@@ -940,29 +940,29 @@ void ARLabStitcherwxMainFrame::EnableFunction(int phase)
 			wxRemoveFile(stitch.GetFullPath());
 		}
 	case phase_pto_gen:
-		if (stitch.Exists())
+		if (stitch_cp.Exists())
 		{
 			wxRemoveFile(stitch_cp.GetFullPath());
 		}
 	case phase_cpfind:
-		if (stitch.Exists())
+		if (stitch_cp_clean.Exists())
 		{
 			wxRemoveFile(stitch_cp_clean.GetFullPath());
 		}
 	case phase_cpclean:
-		if (stitch.Exists())
+		if (stitch_cp_clean_line.Exists())
 		{
 			wxRemoveFile(stitch_cp_clean_line.GetFullPath());
 		}
 	case phase_linefind:
-		if (stitch.Exists())
+		if (stitch_cp_clean_line_op.Exists())
 		{
 			wxRemoveFile(stitch_cp_clean_line_op.GetFullPath());
 		}
 	case phase_checkpto:
 		
 	case phase_optimise:
-		if (stitch.Exists())
+		if (stitch_cp_clean_line_op_crop.Exists())
 		{
 			wxRemoveFile(stitch_cp_clean_line_op_crop.GetFullPath());
 		}
