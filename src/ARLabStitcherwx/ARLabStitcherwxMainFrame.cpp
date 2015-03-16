@@ -81,10 +81,10 @@ MainFrame( parent )
 
 	tb->EnableTool(wxID_ToolStart, false);
 	tb->EnableTool(wxID_toolShowTrack, false);
-	m_toolBarMain->EnableTool(wxID_menuItemMerge, false);
-	m_toolBarMain->EnableTool(wxID_menuItemAutoCrop, false);
-	m_toolBarMain->EnableTool(wxID_menuItemOptimise, false);
-	m_toolBarMain->EnableTool(wxID_menuItemFindCP, false);
+	m_menuEdit->Enable(wxID_menuItemMerge, false);
+	m_menuEdit->Enable(wxID_menuItemAutoCrop, false);
+	m_menuEdit->Enable(wxID_menuItemOptimise, false);
+	m_menuEdit->Enable(wxID_menuItemFindCP, false);
 	
 
 
@@ -376,7 +376,7 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			}
 			break;
 		case 3:
-			m_controlPointsFrame->setPTO(sdir + wxT("\\stitch_cp.mosaicinfo "));
+			m_controlPointsFrame->setPTO(sdir + wxT("\\stitch_cp_clean.mosaicinfo "));
 			if (!m_controlPointsFrame->isReady())
 			{
 				if (m_controlPointsFrame->getReady() != 0)
@@ -387,7 +387,7 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			}
 			m_controlPointsFrame->Show();
 			MainFrame::m_timerprocess.Stop();
-			EnableFunction(phase_cpfind);
+			EnableFunction(phase_cpclean);
 			break;
 		case 4:
 			phase = 6;
@@ -907,26 +907,26 @@ void ARLabStitcherwxMainFrame::blend(wxCommandEvent& ee)
 
 void ARLabStitcherwxMainFrame::EnableFunction(int phase)
 {
-	m_toolBarMain->EnableTool(wxID_menuItemMerge, false);
-	m_toolBarMain->EnableTool(wxID_menuItemAutoCrop, false);
-	m_toolBarMain->EnableTool(wxID_menuItemOptimise, false);
-	m_toolBarMain->EnableTool(wxID_menuItemFindCP, false);
+	m_menuEdit->Enable(wxID_menuItemMerge, false);
+	m_menuEdit->Enable(wxID_menuItemAutoCrop, false);
+	m_menuEdit->Enable(wxID_menuItemOptimise, false);
+	m_menuEdit->Enable(wxID_menuItemFindCP, false);
 	switch (phase)
 	{
 	case phase_merge:
 	case phase_nona_gps:
 	case phase_crop://crop finishi
-		m_toolBarMain->EnableTool(wxID_menuItemMerge, TRUE);
+		m_menuEdit->Enable(wxID_menuItemMerge, TRUE);
 	case phase_optimise:
-		m_toolBarMain->EnableTool(wxID_menuItemAutoCrop, TRUE);
+		m_menuEdit->Enable(wxID_menuItemAutoCrop, TRUE);
 	case phase_checkpto:
 	case phase_linefind:
 	case phase_cpclean:
 	case phase_cpfind:
-		m_toolBarMain->EnableTool(wxID_menuItemOptimise,TRUE);
+		m_menuEdit->Enable(wxID_menuItemOptimise,TRUE);
 	case phase_pto_gen:
 	case phase_preprocess:
-		m_toolBarMain->EnableTool(wxID_menuItemFindCP, TRUE);
+		m_menuEdit->Enable(wxID_menuItemFindCP, TRUE);
 	default:
 		break;
 	}
@@ -937,7 +937,7 @@ void ARLabStitcherwxMainFrame::EnableFunction(int phase)
 	case phase_preprocess:
 		if (stitch.Exists())
 		{
-			wxRemoveFile(stitch.GetFullPath());
+			wxRemoveFile(stitch.GetPath()+stitch.GetFullName());
 		}
 	case phase_pto_gen:
 		if (stitch_cp.Exists())

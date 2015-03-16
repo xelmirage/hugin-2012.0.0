@@ -249,6 +249,7 @@ void LLtoUTM(double Long, double Lat) {
 }
 int findmost()
 {
+	int second=0;
 	int len=pointsL.size();
 	int* data=new int[len];
 	int* sum=new int[len];
@@ -277,6 +278,13 @@ int findmost()
 
 		if (sum[i]>sum[most])
 			most=i;
+		else
+		{
+			if (sum[i]>sum[second])
+			{
+				second = i;
+			}
+		}
 	}
 
 
@@ -797,6 +805,7 @@ int main(int argc,char* argv[])
 		else
 			i->yawint=floor(i->yaw/inf);
 		i->dyaw=abs(deg1-deg2);
+		
 		//out<<(*i).x<<"    "<<(*i).y<<"    "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<endl;
 		//cout<<(*i).x<<"    "<<(*i).y<<"    "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<endl;
 		//cout<<(*i).id<<"     "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<" yawint "<<i->yawint<<endl;
@@ -815,11 +824,17 @@ int main(int argc,char* argv[])
 
 	for (i=pointsL.begin();i<pointsL.end();++i)
 	{
-		if (( (*i).yawint==most1||(*i).yawint==(most2))&&(*i).dyaw<5)
+		/**/
+		int dyaw = (*i).dyaw;
+		if (((*i).yawint == most1 || (*i).yawint == (most2)) && dyaw<5)
 		{
 			(*i).selected=true;
+			cout << "-";
 
-
+		}
+		else
+		{
+			cout << (*i).yawint<<",";
 		}
 		//out<<(*i).id<<"   yawint  "<<(*i).yawint<<"  roll  "<<(*i).roll<<" dyaw:"<<(*i).dyaw<<"  selected "<<i->selected<<endl;
 		//cout<<(*i).id<<"   yawint  "<<(*i).yawint<<"  roll  "<<(*i).roll<<" dyaw:"<<(*i).dyaw<<"  selected "<<i->selected<<endl;
