@@ -81,9 +81,10 @@ MainFrame( parent )
 
 	tb->EnableTool(wxID_ToolStart, false);
 	tb->EnableTool(wxID_toolShowTrack, false);
-	m_toolStart->Enable(FALSE);
-	m_toolShowTrack->Enable(FALSE);
-	m_toolSuperOverLay->Enable(FALSE);
+	m_toolBarMain->EnableTool(wxID_menuItemMerge, false);
+	m_toolBarMain->EnableTool(wxID_menuItemAutoCrop, false);
+	m_toolBarMain->EnableTool(wxID_menuItemOptimise, false);
+	m_toolBarMain->EnableTool(wxID_menuItemFindCP, false);
 	
 
 
@@ -120,13 +121,28 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 		m_listBoxExif->InsertItems(exif, 0);
 
 		beltlog.SetPath(sdir + "\\belts.log");
-		stitch.SetPath(sdir + "\\stitch.pto");
-		stitch_cp.SetPath(sdir + "\\stitch_cp.pto");
-		stitch_cp_clean.SetPath(sdir + "\\stitch_cp_clean.pto");
-		stitch_cp_clean_line.SetPath(sdir + "\\stitch_cp_clean_linefind.pto");
-		stitch_cp_clean_line_op.SetPath(sdir + "\\stitch_cp_clean_linefind_op.pto");
+		stitch.SetPath(sdir + "\\stitch.mosaicinfo");
+		stitch_cp.SetPath(sdir + "\\stitch_cp.mosaicinfo");
+		stitch_cp_clean.SetPath(sdir + "\\stitch_cp_clean.mosaicinfo");
+		stitch_cp_clean_line.SetPath(sdir + "\\stitch_cp_clean_linefind.mosaicinfo");
+		stitch_cp_clean_line_op.SetPath(sdir + "\\stitch_cp_clean_linefind_op.mosaicinfo");
 		gps_connect.SetPath(this->outfileName + ".coord");
-		stitch_cp_clean_line_op_crop.SetPath(sdir + "\\stitch_cp_clean_linefind_op_crop.pto");
+		stitch_cp_clean_line_op_crop.SetPath(sdir + "\\stitch_cp_clean_linefind_op_crop.mosaicinfo");
+		
+		workset.push_back(beltlog);
+		workset.push_back(stitch);
+		workset.push_back(stitch_cp);
+		workset.push_back(stitch_cp_clean);
+		workset.push_back(stitch_cp_clean_line);
+		workset.push_back(stitch_cp_clean_line_op);
+		workset.push_back(gps_connect);
+		workset.push_back(stitch_cp_clean_line_op_crop);
+		
+		
+		
+		
+		
+		
 		ofile.SetPath(this->outfileName);
 
 
@@ -331,7 +347,7 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 
 			phase = 1;
 
-			cmd = ExeDir + wxT("\\pto_gen ") + sdir + wxT("\\*.jpg -o") + sdir + wxT("\\stitch.pto --gps -f 1");
+			cmd = ExeDir + wxT("\\pto_gen ") + sdir + wxT("\\*.jpg -o") + sdir + wxT("\\stitch.mosaicinfo --gps -f 1");
 			if (execexternal(cmd, wxT("生成工程")) != 0)
 			{
 				return;
@@ -353,14 +369,14 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			
 		case 2://cpclean finish,the clean cp
 			phase = 3;
-			cmd = ExeDir + wxT("\\cpclean -o") + sdir + wxT("\\stitch_cp_clean.pto ") + sdir + wxT("\\stitch_cp.pto");
+			cmd = ExeDir + wxT("\\cpclean -o") + sdir + wxT("\\stitch_cp_clean.mosaicinfo ") + sdir + wxT("\\stitch_cp.mosaicinfo");
 			if (execexternal(cmd, wxT("清理误差点")) != 0)
 			{
 				return;
 			}
 			break;
 		case 3:
-			m_controlPointsFrame->setPTO(sdir + wxT("\\stitch_cp.pto "));
+			m_controlPointsFrame->setPTO(sdir + wxT("\\stitch_cp.mosaicinfo "));
 			if (!m_controlPointsFrame->isReady())
 			{
 				if (m_controlPointsFrame->getReady() != 0)
@@ -375,7 +391,7 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			break;
 		case 4:
 			phase = 6;
-			cmd = ExeDir + "\\autooptimiser -a -s -l -o " + sdir + "\\stitch_cp_clean_linefind_op.pto " + sdir + "\\stitch_cp_clean_linefind.pto";
+			cmd = ExeDir + "\\autooptimiser -a -s -l -o " + sdir + "\\stitch_cp_clean_linefind_op.mosaicinfo " + sdir + "\\stitch_cp_clean_linefind.mosaicinfo";
 			if (execexternal(cmd, wxT("图像定向")) != 0)
 			{
 				return;
@@ -387,7 +403,7 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			break;
 		case 7:
 			phase = 8;
-			cmd = ExeDir + "\\nona -f " + sdir + "\\stitch_cp_clean_linefind_op_crop.pto -o " + this->outfileName;
+			cmd = ExeDir + "\\nona -f " + sdir + "\\stitch_cp_clean_linefind_op_crop.mosaicinfo -o " + this->outfileName;
 			if (execexternal(cmd, wxT("GPS重采样")) != 0)
 			{
 				return;
@@ -456,7 +472,7 @@ void ARLabStitcherwxMainFrame::process(void)
 
 		if(!stitch.FileExists())
 		{
-			cmd=ExeDir+wxT("\\pto_gen ")+sdir+wxT("\\*.jpg -o")+sdir+wxT("\\stitch.pto --gps -f 1");
+			cmd=ExeDir+wxT("\\pto_gen ")+sdir+wxT("\\*.jpg -o")+sdir+wxT("\\stitch.mosaicinfo --gps -f 1");
 			if(execexternal(cmd,wxT("生成工程"))!=0)
 			{
 				return;
@@ -480,7 +496,7 @@ void ARLabStitcherwxMainFrame::process(void)
 
 		if(!stitch_cp.FileExists())
 		{
-			cmd=ExeDir+wxT("\\cpfindgps001 -o ")+sdir+wxT("\\stitch_cp.pto ")+sdir+wxT("\\stitch.pto --gps");
+			cmd=ExeDir+wxT("\\cpfindgps001 -o ")+sdir+wxT("\\stitch_cp.mosaicinfo ")+sdir+wxT("\\stitch.mosaicinfo --gps");
 			if(execexternal(cmd,wxT("匹配图像"))!=0)
 			{
 				return;
@@ -506,7 +522,7 @@ void ARLabStitcherwxMainFrame::process(void)
 
 		if(!stitch_cp_clean.FileExists())
 		{
-			cmd=ExeDir+wxT("\\cpclean -o")+sdir+wxT("\\stitch_cp_clean.pto ")+sdir+wxT("\\stitch_cp.pto");
+			cmd=ExeDir+wxT("\\cpclean -o")+sdir+wxT("\\stitch_cp_clean.mosaicinfo ")+sdir+wxT("\\stitch_cp.mosaicinfo");
 			if(execexternal(cmd,wxT("清理误差点"))!=0)
 			{
 				return;
@@ -527,7 +543,7 @@ void ARLabStitcherwxMainFrame::process(void)
 		if(!stitch_cp_clean_line.FileExists())
 		{
 
-			cmd=ExeDir+"\\linefind -o "+sdir+"\\stitch_cp_clean_linefind.pto "+sdir+"\\stitch_cp_clean.pto";
+			cmd=ExeDir+"\\linefind -o "+sdir+"\\stitch_cp_clean_linefind.mosaicinfo "+sdir+"\\stitch_cp_clean.mosaicinfo";
 			if(execexternal(cmd,wxT("图像校准"))!=0)
 			{
 				return;
@@ -548,7 +564,7 @@ void ARLabStitcherwxMainFrame::process(void)
 	case 5:
 		MainFrame::m_gauge3->SetValue(60);
 
-		cmd=ExeDir+"\\checkpto "+sdir+"\\stitch_cp_clean_linefind.pto";
+		cmd=ExeDir+"\\checkpto "+sdir+"\\stitch_cp_clean_linefind.mosaicinfo";
 		if(execexternal(cmd,wxT("工程检查"))!=0)
 		{
 			return;
@@ -559,7 +575,7 @@ void ARLabStitcherwxMainFrame::process(void)
 
 		if(!stitch_cp_clean_line_op.FileExists())
 		{
-			cmd=ExeDir+"\\autooptimiser -a -s -l -o "+sdir+"\\stitch_cp_clean_linefind_op.pto "+sdir+"\\stitch_cp_clean_linefind.pto";
+			cmd=ExeDir+"\\autooptimiser -a -s -l -o "+sdir+"\\stitch_cp_clean_linefind_op.mosaicinfo "+sdir+"\\stitch_cp_clean_linefind.mosaicinfo";
 			if(execexternal(cmd,wxT("图像定向"))!=0)
 			{
 				return;
@@ -577,7 +593,7 @@ void ARLabStitcherwxMainFrame::process(void)
 
 		if (!stitch_cp_clean_line_op_crop.FileExists())
 		{
-			cmd = ExeDir + "\\pano_modify --canvas=30% --crop=auto " + sdir + "\\stitch_cp_clean_linefind_op.pto -o " + sdir + "\\stitch_cp_clean_linefind_op_crop.pto";
+			cmd = ExeDir + "\\pano_modify --canvas=30% --crop=auto " + sdir + "\\stitch_cp_clean_linefind_op.mosaicinfo -o " + sdir + "\\stitch_cp_clean_linefind_op_crop.mosaicinfo";
 			if (execexternal(cmd, wxT("裁剪")) != 0)
 			{
 				return;
@@ -596,7 +612,7 @@ void ARLabStitcherwxMainFrame::process(void)
 
 		if (!gps_connect.FileExists())
 		{
-			cmd = ExeDir + "\\nona -f " + sdir + "\\stitch_cp_clean_linefind_op_crop.pto -o " + this->outfileName;
+			cmd = ExeDir + "\\nona -f " + sdir + "\\stitch_cp_clean_linefind_op_crop.mosaicinfo -o " + this->outfileName;
 			if (execexternal(cmd, wxT("GPS重采样")) != 0)
 			{
 				return;
@@ -617,7 +633,7 @@ void ARLabStitcherwxMainFrame::process(void)
 		while((!stitch_cp_clean_line_op_crop.FileExists())||(!gps_connect.FileExists()))
 		{
 		}
-		cmd=ExeDir+"\\split_blend "+sdir+"\\stitch_cp_clean_linefind_op_crop.pto -o "+this->outfileName;
+		cmd=ExeDir+"\\split_blend "+sdir+"\\stitch_cp_clean_linefind_op_crop.mosaicinfo -o "+this->outfileName;
 		if(execexternal(cmd,wxT("融合"))!=0)
 		{
 			return;
@@ -759,7 +775,7 @@ void ARLabStitcherwxMainFrame::findCP(wxCommandEvent& WXUNUSED(event))
 			return;
 		}
 	}
-	cmd = ExeDir + wxT("\\cpfindgps001 -o ") + sdir + wxT("\\stitch_cp.pto ") + sdir + wxT("\\stitch.pto --gps");
+	cmd = ExeDir + wxT("\\cpfindgps001 -o ") + sdir + wxT("\\stitch_cp.mosaicinfo ") + sdir + wxT("\\stitch.mosaicinfo --gps");
 	phase = 2;
 
 	MainFrame::m_textCtrlProgress->Clear();
@@ -826,7 +842,7 @@ void ARLabStitcherwxMainFrame::panelPreviewSizeChanged(wxSizeEvent& e)
 void ARLabStitcherwxMainFrame::menuOptimise(wxCommandEvent& ee)
 {
 	phase = 4;
-		wxString cmd = ExeDir + "\\linefind -o " + sdir + "\\stitch_cp_clean_linefind.pto " + sdir + "\\stitch_cp_clean.pto";
+		wxString cmd = ExeDir + "\\linefind -o " + sdir + "\\stitch_cp_clean_linefind.mosaicinfo " + sdir + "\\stitch_cp_clean.mosaicinfo";
 	if (execexternal(cmd, wxT("图像校准")) != 0)
 	{
 		return;
@@ -868,7 +884,7 @@ void ARLabStitcherwxMainFrame::menuCrop(wxCommandEvent& ee)
 {
 	isBatch = false;
 	phase = 7;
-	wxString cmd = ExeDir + "\\pano_modify --canvas=30% --crop=auto " + sdir + "\\stitch_cp_clean_linefind_op.pto -o " + sdir + "\\stitch_cp_clean_linefind_op_crop.pto";
+	wxString cmd = ExeDir + "\\pano_modify --canvas=30% --crop=auto " + sdir + "\\stitch_cp_clean_linefind_op.mosaicinfo -o " + sdir + "\\stitch_cp_clean_linefind_op_crop.mosaicinfo";
 	if (execexternal(cmd, wxT("裁剪")) != 0)
 	{
 		return;
@@ -881,7 +897,7 @@ void ARLabStitcherwxMainFrame::menuCrop(wxCommandEvent& ee)
 
 void ARLabStitcherwxMainFrame::blend(wxCommandEvent& ee)
 {
-	wxString cmd = ExeDir + "\\split_blend " + sdir + "\\stitch_cp_clean_linefind_op_crop.pto -o " + this->outfileName;
+	wxString cmd = ExeDir + "\\split_blend " + sdir + "\\stitch_cp_clean_linefind_op_crop.mosaicinfo -o " + this->outfileName;
 	if (execexternal(cmd, wxT("融合")) != 0)
 	{
 		return;
@@ -911,6 +927,54 @@ void ARLabStitcherwxMainFrame::EnableFunction(int phase)
 	case phase_pto_gen:
 	case phase_preprocess:
 		m_toolBarMain->EnableTool(wxID_menuItemFindCP, TRUE);
+	default:
+		break;
+	}
+
+	switch (phase)
+	{
+		
+	case phase_preprocess:
+		if (stitch.Exists())
+		{
+			wxRemoveFile(stitch.GetFullPath());
+		}
+	case phase_pto_gen:
+		if (stitch.Exists())
+		{
+			wxRemoveFile(stitch_cp.GetFullPath());
+		}
+	case phase_cpfind:
+		if (stitch.Exists())
+		{
+			wxRemoveFile(stitch_cp_clean.GetFullPath());
+		}
+	case phase_cpclean:
+		if (stitch.Exists())
+		{
+			wxRemoveFile(stitch_cp_clean_line.GetFullPath());
+		}
+	case phase_linefind:
+		if (stitch.Exists())
+		{
+			wxRemoveFile(stitch_cp_clean_line_op.GetFullPath());
+		}
+	case phase_checkpto:
+		
+	case phase_optimise:
+		if (stitch.Exists())
+		{
+			wxRemoveFile(stitch_cp_clean_line_op_crop.GetFullPath());
+		}
+	case phase_crop://crop finishi
+		if (gps_connect.Exists())
+		{
+			wxRemoveFile(gps_connect.GetFullPath());
+		}
+	case phase_nona_gps:
+		
+	case phase_merge:
+		
 	default:
 		break;
 	}

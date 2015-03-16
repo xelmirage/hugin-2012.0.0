@@ -355,6 +355,7 @@ private:
 	void pauseProcess(wxCommandEvent& ee);
 	void stopProcess(wxCommandEvent& ee);
 
+	std::vector<wxFileName> workset;
 };
 
 enum

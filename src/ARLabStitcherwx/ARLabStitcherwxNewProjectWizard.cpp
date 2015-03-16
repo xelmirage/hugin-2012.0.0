@@ -22,21 +22,30 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 	m_textCtrlSourceDir->SetValue(dd.GetPath());
 	std::string sdir = dd.GetPath();
 	wxFileName beltlog(sdir + "\\belts.log");
-	workset.push_back(beltlog);
+	
 
 	wxFileName stitch(sdir + "\\stitch.pto");
-	workset.push_back(stitch);
+	
 	wxFileName stitch_cp(sdir + "\\stitch_cp.pto");
-	workset.push_back(stitch_cp);
+	
 	wxFileName stitch_cp_clean(sdir + "\\stitch_cp_clean.pto");
-	workset.push_back(stitch_cp_clean);
+	
 	wxFileName stitch_cp_clean_line(sdir + "\\stitch_cp_clean_linefind.pto");
-	workset.push_back(stitch_cp_clean_line);
+	
 	wxFileName stitch_cp_clean_line_op(sdir + "\\stitch_cp_clean_linefind_op.pto");
-	workset.push_back(stitch_cp_clean_line_op);
+
 	wxFileName gps_connect(this->outfileName + ".coord");
-	workset.push_back(gps_connect);
+	
 	wxFileName stitch_cp_clean_line_op_crop(sdir + "\\stitch_cp_clean_linefind_op_crop.pto");
+
+
+	workset.push_back(beltlog);
+	workset.push_back(stitch);
+	workset.push_back(stitch_cp);
+	workset.push_back(stitch_cp_clean);
+	workset.push_back(stitch_cp_clean_line);
+	workset.push_back(stitch_cp_clean_line_op);
+	workset.push_back(gps_connect);
 	workset.push_back(stitch_cp_clean_line_op_crop);
 
 	for (int i = 0; i < workset.size(); ++i)
