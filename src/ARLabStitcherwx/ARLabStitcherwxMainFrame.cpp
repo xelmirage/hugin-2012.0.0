@@ -122,6 +122,8 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 
 		beltlog.SetPath(sdir + "\\belts.log");
 		stitch.SetPath(sdir + "\\stitch.mosaicinfo");
+		
+
 		stitch_cp.SetPath(sdir + "\\stitch_cp.mosaicinfo");
 		stitch_cp_clean.SetPath(sdir + "\\stitch_cp_clean.mosaicinfo");
 		stitch_cp_clean_line.SetPath(sdir + "\\stitch_cp_clean_linefind.mosaicinfo");
@@ -138,15 +140,7 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 		workset.push_back(gps_connect);
 		workset.push_back(stitch_cp_clean_line_op_crop);
 		
-		
-		
-		
-		
-		
 		ofile.SetPath(this->outfileName);
-
-
-
 
 		m_toolShowTrack->Enable(true);
 		m_toolStart->Enable(true);
@@ -156,6 +150,32 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 		m_menuEdit->Enable(wxID_menuItemProcess, TRUE);
 
 		m_toolBarMain->EnableTool(wxID_ToolStart, true);
+
+
+		if (stitch.Exists() && beltlog.Exists())
+		{
+			m_menuEdit->Enable(wxID_menuItemFindCP, TRUE);
+			
+		}
+		if (stitch_cp.Exists()&&stitch_cp_clean.Exists())
+		{
+			m_menuEdit->Enable(wxID_menuItemOptimise, true);
+		}
+		if (stitch_cp_clean_line.Exists()&&stitch_cp_clean_line_op.Exists())
+		{
+			m_menuEdit->Enable(wxID_menuItemAutoCrop, true);
+		}
+		if (stitch_cp_clean_line_op_crop.Exists()&&gps_connect.Exists())
+		{
+			m_menuEdit->Enable(wxID_menuItemMerge, true);
+		}
+
+
+
+
+
+
+
 		return;
 	}
 

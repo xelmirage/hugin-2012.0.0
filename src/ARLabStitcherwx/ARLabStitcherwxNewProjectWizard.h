@@ -39,6 +39,9 @@ private:
 	void ValidateGPSFile(wxCommandEvent& WXUNUSED(event));
 	void ValidateOutFile(wxCommandEvent& WXUNUSED(event));
 	static wxMutex s_FileFindMutex;
+	bool recover;
+public:
+	bool isRecover();
 };
 
 #endif // __ARLabStitcherwxNewProjectWizard__

@@ -9,6 +9,7 @@ ARLabStitcherwxNewProjectWizard::ARLabStitcherwxNewProjectWizard(wxWindow* paren
 	:
 	NewProjectWizard(parent)
 	
+	, recover(false)
 {
 	this->m_btnNext->Enable(false);
 }
@@ -66,6 +67,7 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 						wxRemoveFile(workset[j].GetFullPath());
 					}
 				}
+				recover = true;
 				return;
 			}
 
@@ -217,4 +219,9 @@ void ARLabStitcherwxNewProjectWizard::ValidateOutFile(wxCommandEvent& WXUNUSED(e
 		m_staticTextOutputFileHint->SetLabel("输出文件名称存在错误！");
 		this->m_btnNext->Enable(false);
 	}
+}
+
+bool ARLabStitcherwxNewProjectWizard::isRecover()
+{
+	return false;
 }
