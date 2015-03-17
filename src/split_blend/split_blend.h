@@ -92,6 +92,7 @@ BEGIN_EVENT_TABLE(SplitBlendFrame, wxFrame)
     EVT_BUTTON(wxID_CANCEL, SplitBlendFrame::OnCancel)
     EVT_END_PROCESS(-1, SplitBlendFrame::OnProcessTerminate)
 END_EVENT_TABLE()
+class MainFrame;
 class split_blend_App : public wxApp
 {
 	public:
@@ -124,7 +125,7 @@ private:
     wxString m_macFileNameToOpenOnStart;
 #endif
 	DECLARE_EVENT_TABLE();
-
+	MainFrame *frame;
 };
 
 
