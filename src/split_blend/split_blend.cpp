@@ -281,7 +281,8 @@ bool split_blend_App::OnInit()
 	MainFrame *frame;
 	frame = new MainFrame(NULL, wxT("SplitBlender"), wxDefaultPosition, wxSize(640,600) );
 	frame->superOverlay=superOverlay;
-	//frame->Show( true );
+	frame->Show( true );
+	SetTopWindow(frame);
 	frame->SetTitle("SplitBlender");
 	frame->SetOverwrite(parser.Found(wxT("w")));
 	frame->SetSize(wxSize(640,640));
@@ -295,7 +296,7 @@ bool split_blend_App::OnInit()
 
 
 
-
+	return true;
 
 
 
