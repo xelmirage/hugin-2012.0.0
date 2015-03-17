@@ -8,6 +8,7 @@ MainFrame( parent )
 , allowToolStart(false)
 , allowToolShowTrack(false)
 , isExecPanel_Paused(false)
+, isUserInterrupt(false)
 {
 	time_count=0;
 	m_GPSFrame = new ::ARLabStitcherwxGPSFrame(this);
@@ -71,7 +72,7 @@ MainFrame( parent )
 	m_menuEdit->Enable(wxID_menuItemPreProcess, false);
 	m_menuEdit->Enable(wxID_menuItemFindCP, false);
 	m_menuEdit->Enable(wxID_menuItemOptimise, FALSE);
-
+	
 
 
 	wxToolBarBase *tb = GetToolBar();
@@ -351,6 +352,22 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 	EnableFunction(phase);
 	push_message("\n---------------\n["+run_time+"] "+phasename[phase]+" 完成\n---------------\n");
 	isExecPanel_Running = false;
+	if (e.GetExitCode() != 0)
+	{
+		if (isUserInterrupt)
+		{
+			wxMessageBox("用户终止");
+		}
+		else
+		{
+
+			wxMessageBox("运行出现错误，请检查重试");
+			
+		}
+		m_timerprocess.Stop();
+		isUserInterrupt = false;
+		return;
+	}
 	if (isBatch)
 	{
 		process();
@@ -361,11 +378,11 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 		wxString res = sdir + wxT("\\belts.log");
 		switch (phase)
 		{
-		case 0://航迹识别
+		case phase_preprocess://航迹识别
 			
 			
 
-			phase = 1;
+			phase = phase_pto_gen;
 
 			cmd = ExeDir + wxT("\\pto_gen ") + sdir + wxT("\\*.jpg -o") + sdir + wxT("\\stitch.mosaicinfo --gps -f 1");
 			if (execexternal(cmd, wxT("生成工程")) != 0)
@@ -374,7 +391,7 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			}
 			
 			break;
-		case 1://generate project
+		case  phase_pto_gen://generate project
 			m_GPSFrame->setGPSFileName(gpsfileName);
 			m_GPSFrame->setResultName(res);
 
@@ -387,15 +404,15 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			
 			break;
 			
-		case 2://cpclean finish,the clean cp
-			phase = 3;
+		case phase_cpfind://cpclean finish,the clean cp
+			phase = phase_cpclean;
 			cmd = ExeDir + wxT("\\cpclean -o") + sdir + wxT("\\stitch_cp_clean.mosaicinfo ") + sdir + wxT("\\stitch_cp.mosaicinfo");
 			if (execexternal(cmd, wxT("清理误差点")) != 0)
 			{
 				return;
 			}
 			break;
-		case 3:
+		case phase_cpclean:
 			m_controlPointsFrame->setPTO(sdir + wxT("\\stitch_cp_clean.mosaicinfo "));
 			if (!m_controlPointsFrame->isReady())
 			{
@@ -409,20 +426,21 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			MainFrame::m_timerprocess.Stop();
 			EnableFunction(phase_cpclean);
 			break;
-		case 4:
-			phase = 6;
+		case phase_linefind:
+			phase = phase_optimise;
 			cmd = ExeDir + "\\autooptimiser -a -s -l -o " + sdir + "\\stitch_cp_clean_linefind_op.mosaicinfo " + sdir + "\\stitch_cp_clean_linefind.mosaicinfo";
 			if (execexternal(cmd, wxT("图像定向")) != 0)
 			{
 				return;
 			}
 			break;
-		case 6:
+		case phase_optimise:
 			wxMessageBox("定向完成！");
 			EnableFunction(phase_optimise);
+			MainFrame::m_timerprocess.Stop();
 			break;
-		case 7:
-			phase = 8;
+		case phase_crop:
+			phase = phase_nona_gps;
 			cmd = ExeDir + "\\nona -f " + sdir + "\\stitch_cp_clean_linefind_op_crop.mosaicinfo -o " + this->outfileName;
 			if (execexternal(cmd, wxT("GPS重采样")) != 0)
 			{
@@ -430,9 +448,11 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			}
 			break;
 		case 8:
+			MainFrame::m_timerprocess.Stop();
 			wxMessageBox("crop finish!");
 			break;
 		case 9:
+			MainFrame::m_timerprocess.Stop();
 			wxMessageBox("");
 			break;
 		default:
@@ -861,8 +881,13 @@ void ARLabStitcherwxMainFrame::panelPreviewSizeChanged(wxSizeEvent& e)
 
 void ARLabStitcherwxMainFrame::menuOptimise(wxCommandEvent& ee)
 {
-	phase = 4;
-		wxString cmd = ExeDir + "\\linefind -o " + sdir + "\\stitch_cp_clean_linefind.mosaicinfo " + sdir + "\\stitch_cp_clean.mosaicinfo";
+	
+	phase = phase_linefind;
+	isBatch = false;
+	time_count = 0;
+	t = wxDateTime::Now();
+	m_timerprocess.Start(1000);
+	wxString cmd = ExeDir + "\\linefind -o " + sdir + "\\stitch_cp_clean_linefind.mosaicinfo " + sdir + "\\stitch_cp_clean.mosaicinfo";
 	if (execexternal(cmd, wxT("图像校准")) != 0)
 	{
 		return;
@@ -902,8 +927,12 @@ void ARLabStitcherwxMainFrame::allEnableForWork()
 
 void ARLabStitcherwxMainFrame::menuCrop(wxCommandEvent& ee)
 {
+	
+	phase = phase_crop;
 	isBatch = false;
-	phase = 7;
+	time_count = 0;
+	t = wxDateTime::Now();
+	m_timerprocess.Start(1000);
 	wxString cmd = ExeDir + "\\pano_modify --canvas=30% --crop=auto " + sdir + "\\stitch_cp_clean_linefind_op.mosaicinfo -o " + sdir + "\\stitch_cp_clean_linefind_op_crop.mosaicinfo";
 	if (execexternal(cmd, wxT("裁剪")) != 0)
 	{
@@ -917,6 +946,11 @@ void ARLabStitcherwxMainFrame::menuCrop(wxCommandEvent& ee)
 
 void ARLabStitcherwxMainFrame::blend(wxCommandEvent& ee)
 {
+	phase = phase_merge;
+	isBatch = false;
+	time_count = 0;
+	t = wxDateTime::Now();
+	m_timerprocess.Start(1000);
 	wxString cmd = ExeDir + "\\split_blend " + sdir + "\\stitch_cp_clean_linefind_op_crop.mosaicinfo -o " + this->outfileName;
 	if (execexternal(cmd, wxT("融合")) != 0)
 	{
@@ -1024,6 +1058,7 @@ void ARLabStitcherwxMainFrame::stopProcess(wxCommandEvent& ee)
 {
 	if (isExecPanel_Running)
 	{
+		isUserInterrupt = TRUE;
 		m_execPanel->KillProcess();
 		isExecPanel_Running = false;
 	}

@@ -356,6 +356,7 @@ private:
 	void stopProcess(wxCommandEvent& ee);
 
 	std::vector<wxFileName> workset;
+	bool isUserInterrupt;
 };
 
 enum
