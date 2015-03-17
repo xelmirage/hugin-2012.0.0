@@ -723,8 +723,7 @@ void ARLabStitcherwxMainFrame::showTrack(wxCommandEvent& WXUNUSED(event))
 
 void ARLabStitcherwxMainFrame::generateSuperOverlay(wxCommandEvent& WXUNUSED(event))
 {
-	SuperOverlay ovl =SuperOverlay("f:/ge/20141111debug.tif", "f:/ge/20141111debug.kml", "f:/ge/superoverlay");
-	ovl.build();
+	
 	
 }
 void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
@@ -1063,4 +1062,21 @@ void ARLabStitcherwxMainFrame::stopProcess(wxCommandEvent& ee)
 		isExecPanel_Running = false;
 	}
 	return;
+}
+
+
+void ARLabStitcherwxMainFrame::menuSuperOverlay(wxCommandEvent& ee)
+{
+	wxFileName outTif(outfileName);
+	wxFileName outKML = outTif;
+	outKML.SetExt("kml");
+	wxString outdir=sdir+"\\"+outTif.GetName();
+	wxDir::Make(outdir);
+	SuperOverlay ovl = SuperOverlay(outTif.GetFullPath(), outKML.GetFullPath(), outdir);
+	ovl.build();
+
+
+
+
+
 }

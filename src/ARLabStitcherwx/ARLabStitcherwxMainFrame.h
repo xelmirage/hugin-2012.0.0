@@ -357,6 +357,7 @@ private:
 
 	std::vector<wxFileName> workset;
 	bool isUserInterrupt;
+	void menuSuperOverlay(wxCommandEvent& ee);
 };
 
 enum

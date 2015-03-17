@@ -54,6 +54,7 @@ EVT_MENU(wxID_New, ARLabStitcherwxMainFrame::newProjectTool)
 EVT_MENU(wxID_menuItemOptimise,ARLabStitcherwxMainFrame::menuOptimise)
 EVT_MENU(wxID_menuItemAutoCrop,ARLabStitcherwxMainFrame::menuCrop)
 EVT_MENU(wxID_menuItemMerge,ARLabStitcherwxMainFrame::blend)
+EVT_MENU(wxID_menuItemSuperOverlay,ARLabStitcherwxMainFrame::menuSuperOverlay)
 END_EVENT_TABLE()
 
 
