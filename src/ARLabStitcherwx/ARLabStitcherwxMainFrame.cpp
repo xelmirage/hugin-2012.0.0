@@ -86,7 +86,7 @@ MainFrame( parent )
 	m_menuEdit->Enable(wxID_menuItemAutoCrop, false);
 	m_menuEdit->Enable(wxID_menuItemOptimise, false);
 	m_menuEdit->Enable(wxID_menuItemFindCP, false);
-	
+	m_menuEdit->Enable(wxID_menuItemSuperOverlay, false);
 
 
 }
@@ -170,7 +170,9 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 		{
 			m_menuEdit->Enable(wxID_menuItemMerge, true);
 		}
-
+		if ()
+		{
+		}
 
 
 
