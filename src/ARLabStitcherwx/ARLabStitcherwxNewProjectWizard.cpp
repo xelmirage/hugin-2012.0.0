@@ -66,7 +66,7 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 		}
 		else if (i > 0)
 		{
-			int answer = wxMessageBox("belt record found, recover from it?", "Recovery", wxYES_NO );
+			int answer = wxMessageBox("找到旧的记录，点击（是）继续或者点击（否）清除", "Recovery", wxYES_NO );
 			if (answer == wxYES)
 			{
 				for (int j = i; j < workset.size(); ++j)

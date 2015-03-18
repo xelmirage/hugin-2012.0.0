@@ -40,8 +40,8 @@ EVT_END_PROCESS(-1, ARLabStitcherwxMainFrame::end_process)
 
 
 EVT_TOOL(wxID_toolNew, ARLabStitcherwxMainFrame::newProjectTool)
-EVT_TOOL(wxID_toolShowTrack, ARLabStitcherwxMainFrame::showTrack)
-EVT_TOOL(wxID_ShowKML, ARLabStitcherwxMainFrame::showTrack)
+EVT_TOOL(wxID_toolShowTrack, ARLabStitcherwxMainFrame::preProcess)
+//EVT_TOOL(wxID_ShowKML, ARLabStitcherwxMainFrame::showTrack)
 EVT_TOOL(wxID_toolSuperOverLay, ARLabStitcherwxMainFrame::generateSuperOverlay)
 EVT_TOOL(wxID_ToolStart, ARLabStitcherwxMainFrame::processcmd)
 //EVT_TOOL(wxID_toolPause, ARLabStitcherwxMainFrame::pauseProcess)

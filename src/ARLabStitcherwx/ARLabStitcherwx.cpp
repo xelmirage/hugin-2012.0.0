@@ -199,8 +199,6 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_toolBarMain = this->CreateToolBar( wxTB_HORIZONTAL, wxID_toolBarMain ); 
 	m_toolNew = m_toolBarMain->AddTool( wxID_toolNew, _("新建工程"), wxBitmap( wxT("images/new.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
-	m_tool2 = m_toolBarMain->AddTool( wxID_ANY, _("tool"), wxBitmap( wxT("images/save.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
-	
 	m_toolStart = m_toolBarMain->AddTool( wxID_ToolStart, _("tool"), wxBitmap( wxT("images/start1.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
 	m_toolStop = m_toolBarMain->AddTool( wxID_toolStop, _("tool"), wxBitmap( wxT("images/stop.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
@@ -208,8 +206,6 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_toolShowTrack = m_toolBarMain->AddTool( wxID_toolShowTrack, _("tool"), wxBitmap( wxT("images/airportsxia.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
 	m_toolSuperOverLay = m_toolBarMain->AddTool( wxID_toolSuperOverLay, _("tool"), wxBitmap( wxT("images/Dotriangulation .bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
-	
-	m_toolShowKML = m_toolBarMain->AddTool( wxID_ShowKML, _("tool"), wxBitmap( wxT("images/stereoimage.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
 	m_toolBarMain->AddSeparator(); 
 	

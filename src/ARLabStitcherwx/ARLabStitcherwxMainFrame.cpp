@@ -64,7 +64,7 @@ MainFrame( parent )
 
 	m_toolStart->Enable(false);
 	m_toolShowTrack->Enable(false);
-	m_toolShowKML->Enable(false);
+//	m_toolShowKML->Enable(false);
 
 	isBatch = false;
 	m_panel14->Bind(wxEVT_SIZE, &ARLabStitcherwxMainFrame::panelPreviewSizeChanged, this);
@@ -114,7 +114,15 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 		sdir = nw.sdir;
 		gpsfileName = nw.gpsfileName;
 		outfileName = nw.outfileName;
+		if (isMS)
+		{
+			wxCopyFile(ExeDir + "\\enblend.exe", ExeDir + "\\multiblend_x64.exe");
+		}
+		else
+		{
+			wxCopyFile(ExeDir + "\\multiblend_x64_1.exe", ExeDir + "\\multiblend_x64.exe");
 
+		}
 
 		wxPathList list;
 		::wxDir::GetAllFiles(sdir, &list, wxT("*.jpg"), wxDIR_FILES);
@@ -139,7 +147,7 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 		stitch_cp_clean_line_op.SetPath(sdir);
 		stitch_cp_clean_line_op.SetFullName("\\stitch_cp_clean_linefind_op.mosaicinfo");
 		gps_connect.SetPath(sdir);
-		gps_connect.SetFullName(ofile.GetName()+ ".coord");
+		gps_connect.SetFullName(ofile.GetFullName()+ ".coord");
 		stitch_cp_clean_line_op_crop.SetPath(sdir);
 		stitch_cp_clean_line_op_crop.SetFullName("stitch_cp_clean_linefind_op_crop.mosaicinfo");
 		oKML = ofile;
@@ -194,7 +202,7 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 
 
 
-
+		allowToolStart = true;
 		return;
 	}
 
@@ -333,7 +341,7 @@ void ARLabStitcherwxMainFrame::change_status()
 	}
 	
 
-	if(phase>10) phase=10;
+	//if(phase>10) phase=10;
 	status+=phasename[phase]+"   "+boost::lexical_cast<string>(phase)+"/10    "+run_time;
 	m_statusBar->SetStatusText(status);
 }
@@ -467,14 +475,15 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 			break;
 		case phase_nona_gps:
 			MainFrame::m_timerprocess.Stop();
-			wxMessageBox("crop finish!");
+			wxMessageBox("裁剪完成!");
 			break;
 		case phase_merge:
 			MainFrame::m_timerprocess.Stop();
-			wxMessageBox("");
+			wxMessageBox("融合完成！");
 			break;
 		case phase_mspreprocess:
 			MainFrame::m_timerprocess.Stop();
+			wxMessageBox("多光谱整理完成！");
 			break;
 		default:
 			break;
@@ -721,7 +730,7 @@ void ARLabStitcherwxMainFrame::process(void)
 		push_message(wxT("\n---------------\n["+run_time+"] 处理完成;-)\n---------------\n"));
 		m_timerprocess.Stop();
 		MainFrame::m_timerprocess.Stop();
-		m_toolShowKML->Enable(true);
+//		m_toolShowKML->Enable(true);
 		isBatch = false;
 	}
 	
@@ -826,7 +835,8 @@ void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 }
 void ARLabStitcherwxMainFrame::menuProcess(wxCommandEvent& WXUNUSED(event))
 {
-	
+	phase = -1;
+	process();
 	
 
 
@@ -876,7 +886,7 @@ void ARLabStitcherwxMainFrame::UpdateImagePreview()
 	float ratioh, ratiow, ratio;
 
 	wxSize pSize = MainFrame::m_panel14->GetSize();
-	pSize -= pSize - wxSize(50, 50);
+	//pSize -= pSize - wxSize(50, 50);
 	//preimg.Clear();
 	preimg.LoadFile(currentPreviewPic, wxBITMAP_TYPE_JPEG);
 	ratioh = preimg.GetHeight() / pSize.GetHeight();
@@ -1002,9 +1012,13 @@ void ARLabStitcherwxMainFrame::EnableFunction(int phase)
 	switch (phase)
 	{
 	case phase_merge:
-		m_menuEdit->Enable(wxID_menuItemSuperOverlay, true);
+		
 	case phase_nona_gps:
 	case phase_crop://crop finishi
+		if (!isMS)
+		{
+			m_menuEdit->Enable(wxID_menuItemSuperOverlay, true);
+		}
 		m_menuEdit->Enable(wxID_menuItemMerge, TRUE);
 	case phase_optimise:
 		m_menuEdit->Enable(wxID_menuItemAutoCrop, TRUE);
@@ -1012,7 +1026,7 @@ void ARLabStitcherwxMainFrame::EnableFunction(int phase)
 	case phase_linefind:
 	case phase_cpclean:
 	case phase_cpfind:
-		m_menuEdit->Enable(wxID_menuItemOptimise,TRUE);
+		m_menuEdit->Enable(wxID_menuItemOptimise, TRUE);
 	case phase_pto_gen:
 	case phase_preprocess:
 		m_menuEdit->Enable(wxID_menuItemFindCP, TRUE);
@@ -1163,7 +1177,7 @@ void ARLabStitcherwxMainFrame::menuMSSecond(wxCommandEvent& ee)
 		wxFileName targetPto;
 		targetPto.SetPath(TargetDIR);
 		wxFileName targetGPS;
-
+		targetGPS.SetPath(TargetDIR);
 		targetGPS.SetFullName(gps_connect.GetFullName());
 		wxCopyFile(gps_connect.GetFullPath(), targetGPS.GetFullPath());
 
@@ -1173,7 +1187,7 @@ void ARLabStitcherwxMainFrame::menuMSSecond(wxCommandEvent& ee)
 		wxFileName out2 = ofile;
 		out2.SetName(out2.GetName() + "_2");
 
-		wxString cmd = ExeDir + "\\split_blend " + targetPto.GetFullPath()  + out2.GetFullPath();
+		wxString cmd = ExeDir + "\\split_blend " + targetPto.GetFullPath()  +" -o "+ out2.GetFullPath();
 		
 		if (execexternal(cmd, wxT("第二组融合")) != 0)
 		{

@@ -63,24 +63,23 @@ WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
 #define wxID_toolStop 1019
 #define wxID_toolShowTrack 1020
 #define wxID_toolSuperOverLay 1021
-#define wxID_ShowKML 1022
-#define wxID_NewProjectWizard 1023
-#define wxID_WizardPage01 1024
-#define wxID_SourceDir 1025
-#define wxID_InputDirHint 1026
-#define wxID_OpenSourceDir 1027
-#define wxID_WizardPage02 1028
-#define wxID_GPSFile 1029
-#define wxID_GPSHint 1030
-#define wxID_OpenGPSFile 1031
-#define wxID_WizardPage03 1032
-#define wxID_OutputFile 1033
-#define wxID_OutputFileHint 1034
-#define wxID_OpenOutputFile 1035
-#define wxID_choiceLeft 1036
-#define wxID_bitmapLeft 1037
-#define wxID_choiceRight 1038
-#define wxID_bitmapRight 1039
+#define wxID_NewProjectWizard 1022
+#define wxID_WizardPage01 1023
+#define wxID_SourceDir 1024
+#define wxID_InputDirHint 1025
+#define wxID_OpenSourceDir 1026
+#define wxID_WizardPage02 1027
+#define wxID_GPSFile 1028
+#define wxID_GPSHint 1029
+#define wxID_OpenGPSFile 1030
+#define wxID_WizardPage03 1031
+#define wxID_OutputFile 1032
+#define wxID_OutputFileHint 1033
+#define wxID_OpenOutputFile 1034
+#define wxID_choiceLeft 1035
+#define wxID_bitmapLeft 1036
+#define wxID_choiceRight 1037
+#define wxID_bitmapRight 1038
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -114,12 +113,10 @@ class MainFrame : public wxFrame
 		wxTimer m_timerprocess;
 		wxToolBar* m_toolBarMain;
 		wxToolBarToolBase* m_toolNew; 
-		wxToolBarToolBase* m_tool2; 
 		wxToolBarToolBase* m_toolStart; 
 		wxToolBarToolBase* m_toolStop; 
 		wxToolBarToolBase* m_toolShowTrack; 
 		wxToolBarToolBase* m_toolSuperOverLay; 
-		wxToolBarToolBase* m_toolShowKML; 
 		wxStatusBar* m_statusBar;
 	
 	public:

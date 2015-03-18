@@ -17,7 +17,7 @@
         <property name="internationalize">1</property>
         <property name="name">ARLabStitcherwx</property>
         <property name="namespace"></property>
-        <property name="path">c:\huginbase64\hugin-2012.0.0\src\ARLabStitcherwx</property>
+        <property name="path">E:\huginbase64\hugin-2012.0.0\src\ARLabStitcherwx</property>
         <property name="precompiled_header"></property>
         <property name="relative_path">1</property>
         <property name="skip_lua_events">1</property>
@@ -133,7 +133,7 @@
                 <event name="OnSetFocus"></event>
                 <event name="OnSize"></event>
                 <event name="OnUpdateUI"></event>
-                <object class="wxMenu" expanded="0">
+                <object class="wxMenu" expanded="1">
                     <property name="label">文件</property>
                     <property name="name">m_menufile</property>
                     <property name="permission">protected</property>
@@ -1942,27 +1942,6 @@
                     <event name="OnUpdateUI"></event>
                 </object>
                 <object class="tool" expanded="0">
-                    <property name="bitmap">Load From File; images\save.bmp</property>
-                    <property name="context_menu">0</property>
-                    <property name="id">wxID_ANY</property>
-                    <property name="kind">wxITEM_NORMAL</property>
-                    <property name="label">tool</property>
-                    <property name="name">m_tool2</property>
-                    <property name="permission">protected</property>
-                    <property name="statusbar"></property>
-                    <property name="tooltip"></property>
-                    <event name="OnAuiToolBarBeginDrag"></event>
-                    <event name="OnAuiToolBarMiddleClick"></event>
-                    <event name="OnAuiToolBarOverflowClick"></event>
-                    <event name="OnAuiToolBarRightClick"></event>
-                    <event name="OnAuiToolBarToolDropDown"></event>
-                    <event name="OnMenuSelection"></event>
-                    <event name="OnToolClicked"></event>
-                    <event name="OnToolEnter"></event>
-                    <event name="OnToolRClicked"></event>
-                    <event name="OnUpdateUI"></event>
-                </object>
-                <object class="tool" expanded="0">
                     <property name="bitmap">Load From File; images/start1.bmp</property>
                     <property name="context_menu">0</property>
                     <property name="id">wxID_ToolStart</property>
@@ -2032,27 +2011,6 @@
                     <property name="kind">wxITEM_NORMAL</property>
                     <property name="label">tool</property>
                     <property name="name">m_toolSuperOverLay</property>
-                    <property name="permission">protected</property>
-                    <property name="statusbar"></property>
-                    <property name="tooltip"></property>
-                    <event name="OnAuiToolBarBeginDrag"></event>
-                    <event name="OnAuiToolBarMiddleClick"></event>
-                    <event name="OnAuiToolBarOverflowClick"></event>
-                    <event name="OnAuiToolBarRightClick"></event>
-                    <event name="OnAuiToolBarToolDropDown"></event>
-                    <event name="OnMenuSelection"></event>
-                    <event name="OnToolClicked"></event>
-                    <event name="OnToolEnter"></event>
-                    <event name="OnToolRClicked"></event>
-                    <event name="OnUpdateUI"></event>
-                </object>
-                <object class="tool" expanded="0">
-                    <property name="bitmap">Load From File; images/stereoimage.bmp</property>
-                    <property name="context_menu">0</property>
-                    <property name="id">wxID_ShowKML</property>
-                    <property name="kind">wxITEM_NORMAL</property>
-                    <property name="label">tool</property>
-                    <property name="name">m_toolShowKML</property>
                     <property name="permission">protected</property>
                     <property name="statusbar"></property>
                     <property name="tooltip"></property>

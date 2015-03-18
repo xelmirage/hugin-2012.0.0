@@ -595,6 +595,7 @@ void belt_heli(string _outputFile)
 		{
 
 			dist_to_be.clear();
+			
 			for (int j = i + 1; j < pointsL.size(); ++j)
 			{
 				long d = pointsL[i].distance(pointsL[j]);
@@ -614,6 +615,33 @@ void belt_heli(string _outputFile)
 			}
 			tag = tag.erase(tag.size() - 1, 1);
 		}
+		else
+		{
+			dist_to_be.clear();
+
+			for (int j =0; j < pointsL.size()-1; ++j)
+			{
+				long d = pointsL[i].distance(pointsL[j]);
+				dist tempDist(pointsL[j].id, d, 0);
+				dist_to_be.push_back(tempDist);
+			}
+			sort(dist_to_be.begin(), dist_to_be.end());
+
+
+			for (int j = 0; j < 6; ++j)
+			{
+				if (j >= dist_to_be.size())
+				{
+					break;
+				}
+				tag += lexical_cast<string>(dist_to_be[j].id) + ",";
+			}
+			tag = tag.erase(tag.size() - 1, 1);
+		}
+
+
+
+
 		string cmd = "exiftool -F -m -overwrite_original -UserComment=\"" + tag + "\" "
 			+ images[pointsL[i].id - 1];
 		belt_out << tag << endl;
