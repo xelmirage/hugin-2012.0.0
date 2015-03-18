@@ -33,19 +33,19 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 	wxFileName beltlog(sdir + "\\belts.log");
 	
 
-	wxFileName stitch(sdir + "\\stitch.pto");
+	wxFileName stitch(sdir + "\\stitch.mosaicinfo");
 	
-	wxFileName stitch_cp(sdir + "\\stitch_cp.pto");
+	wxFileName stitch_cp(sdir + "\\stitch_cp.mosaicinfo");
 	
-	wxFileName stitch_cp_clean(sdir + "\\stitch_cp_clean.pto");
+	wxFileName stitch_cp_clean(sdir + "\\stitch_cp_clean.mosaicinfo");
 	
-	wxFileName stitch_cp_clean_line(sdir + "\\stitch_cp_clean_linefind.pto");
+	wxFileName stitch_cp_clean_line(sdir + "\\stitch_cp_clean_linefind.mosaicinfo");
 	
-	wxFileName stitch_cp_clean_line_op(sdir + "\\stitch_cp_clean_linefind_op.pto");
+	wxFileName stitch_cp_clean_line_op(sdir + "\\stitch_cp_clean_linefind_op.mosaicinfo");
 
 	wxFileName gps_connect(this->outfileName + ".coord");
 	
-	wxFileName stitch_cp_clean_line_op_crop(sdir + "\\stitch_cp_clean_linefind_op_crop.pto");
+	wxFileName stitch_cp_clean_line_op_crop(sdir + "\\stitch_cp_clean_linefind_op_crop.mosaicinfo");
 
 
 	workset.push_back(beltlog);
@@ -82,7 +82,7 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 			else//用户选择了从头开始，于是清理所有残余
 			{
 				s_FileFindMutex.Lock();
-				wxString f = wxFindFirstFile(sdir + "\\*.pto");
+				wxString f = wxFindFirstFile(sdir + "\\*.mosaicinfo");
 				while (!f.empty())
 				{
 					wxRemoveFile(f);
@@ -113,7 +113,7 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 		else//第一个记录缺失，强制从头开始
 		{
 			s_FileFindMutex.Lock();
-			wxString f = wxFindFirstFile(sdir + wxT("*.pto"));
+			wxString f = wxFindFirstFile(sdir + wxT("*.mosaicinfo"));
 			while (!f.empty())
 			{
 				wxRemoveFile(f);

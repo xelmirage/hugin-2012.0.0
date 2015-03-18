@@ -118,25 +118,33 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 
 		wxPathList list;
 		::wxDir::GetAllFiles(sdir, &list, wxT("*.jpg"), wxDIR_FILES);
-
+		wxFileName ofile_local(this->outfileName);
 		MainFrame::m_listBoxPicList->Clear();
 		MainFrame::m_listBoxPicList->InsertItems(list, 0);
 		wxArrayString exif;
 		wxExecute("exiftool " + list[0], exif);
 		m_listBoxExif->InsertItems(exif, 0);
-
-		beltlog.SetPath(sdir + "\\belts.log");
-		stitch.SetPath(sdir + "\\stitch.mosaicinfo");
+		ofile = ofile_local;
+		beltlog.SetPath(sdir);
+		beltlog.SetFullName("belts.log");
+		stitch.SetPath(sdir );
+		stitch.SetFullName("stitch.mosaicinfo");
 		
-
-		stitch_cp.SetPath(sdir + "\\stitch_cp.mosaicinfo");
-		stitch_cp_clean.SetPath(sdir + "\\stitch_cp_clean.mosaicinfo");
-		stitch_cp_clean_line.SetPath(sdir + "\\stitch_cp_clean_linefind.mosaicinfo");
-		stitch_cp_clean_line_op.SetPath(sdir + "\\stitch_cp_clean_linefind_op.mosaicinfo");
-		gps_connect.SetPath(this->outfileName + ".coord");
-		stitch_cp_clean_line_op_crop.SetPath(sdir + "\\stitch_cp_clean_linefind_op_crop.mosaicinfo");
-		oKML.SetPath(sdir + "\\" + ofile.GetName());
-
+		stitch_cp.SetPath(sdir);
+		stitch_cp.SetFullName( "stitch_cp.mosaicinfo");
+		stitch_cp_clean.SetPath(sdir );
+		stitch_cp_clean.SetFullName("stitch_cp_clean.mosaicinfo");
+		stitch_cp_clean_line.SetPath(sdir);
+		stitch_cp_clean_line.SetFullName("stitch_cp_clean_linefind.mosaicinfo");
+		stitch_cp_clean_line_op.SetPath(sdir);
+		stitch_cp_clean_line_op.SetFullName("\\stitch_cp_clean_linefind_op.mosaicinfo");
+		gps_connect.SetPath(sdir);
+		gps_connect.SetFullName(ofile.GetName()+ ".coord");
+		stitch_cp_clean_line_op_crop.SetPath(sdir);
+		stitch_cp_clean_line_op_crop.SetFullName("stitch_cp_clean_linefind_op_crop.mosaicinfo");
+		oKML = ofile;
+		oKML.SetExt("kml");
+		
 
 		workset.push_back(beltlog);
 		workset.push_back(stitch);
@@ -147,7 +155,7 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 		workset.push_back(gps_connect);
 		workset.push_back(stitch_cp_clean_line_op_crop);
 		
-		ofile.SetPath(this->outfileName);
+		
 
 		m_toolShowTrack->Enable(true);
 		m_toolStart->Enable(true);

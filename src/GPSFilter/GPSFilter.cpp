@@ -604,7 +604,7 @@ void belt_heli(string _outputFile)
 			sort(dist_to_be.begin(), dist_to_be.end());
 			
 
-			for (int j = 0; j < 4; ++j)
+			for (int j = 0; j < 6; ++j)
 			{
 				if (j >= dist_to_be.size())
 				{
