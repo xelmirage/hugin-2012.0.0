@@ -10,6 +10,7 @@ ARLabStitcherwxNewProjectWizard::ARLabStitcherwxNewProjectWizard(wxWindow* paren
 	NewProjectWizard(parent)
 	
 	, recover(false)
+	, isMS(false)
 {
 	this->m_btnNext->Enable(false);
 }

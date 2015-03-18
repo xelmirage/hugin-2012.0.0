@@ -60,28 +60,27 @@ WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
 #define wxID_toolBarMain 1016
 #define wxID_toolNew 1017
 #define wxID_ToolStart 1018
-#define wxID_toolPause 1019
-#define wxID_toolStop 1020
-#define wxID_toolShowTrack 1021
-#define wxID_toolSuperOverLay 1022
-#define wxID_ShowKML 1023
-#define wxID_NewProjectWizard 1024
-#define wxID_WizardPage01 1025
-#define wxID_SourceDir 1026
-#define wxID_InputDirHint 1027
-#define wxID_OpenSourceDir 1028
-#define wxID_WizardPage02 1029
-#define wxID_GPSFile 1030
-#define wxID_GPSHint 1031
-#define wxID_OpenGPSFile 1032
-#define wxID_WizardPage03 1033
-#define wxID_OutputFile 1034
-#define wxID_OutputFileHint 1035
-#define wxID_OpenOutputFile 1036
-#define wxID_choiceLeft 1037
-#define wxID_bitmapLeft 1038
-#define wxID_choiceRight 1039
-#define wxID_bitmapRight 1040
+#define wxID_toolStop 1019
+#define wxID_toolShowTrack 1020
+#define wxID_toolSuperOverLay 1021
+#define wxID_ShowKML 1022
+#define wxID_NewProjectWizard 1023
+#define wxID_WizardPage01 1024
+#define wxID_SourceDir 1025
+#define wxID_InputDirHint 1026
+#define wxID_OpenSourceDir 1027
+#define wxID_WizardPage02 1028
+#define wxID_GPSFile 1029
+#define wxID_GPSHint 1030
+#define wxID_OpenGPSFile 1031
+#define wxID_WizardPage03 1032
+#define wxID_OutputFile 1033
+#define wxID_OutputFileHint 1034
+#define wxID_OpenOutputFile 1035
+#define wxID_choiceLeft 1036
+#define wxID_bitmapLeft 1037
+#define wxID_choiceRight 1038
+#define wxID_bitmapRight 1039
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -94,7 +93,6 @@ class MainFrame : public wxFrame
 		wxMenuBar* m_menubarmain;
 		wxMenu* m_menufile;
 		wxMenu* m_menuEdit;
-		wxMenu* m_menu3;
 		wxMenu* m_menuMultiSpec;
 		wxPanel* m_panel6;
 		wxSplitterWindow* m_splitter4;
@@ -118,7 +116,6 @@ class MainFrame : public wxFrame
 		wxToolBarToolBase* m_toolNew; 
 		wxToolBarToolBase* m_tool2; 
 		wxToolBarToolBase* m_toolStart; 
-		wxToolBarToolBase* m_toolPause; 
 		wxToolBarToolBase* m_toolStop; 
 		wxToolBarToolBase* m_toolShowTrack; 
 		wxToolBarToolBase* m_toolSuperOverLay; 
@@ -173,7 +170,6 @@ class NewProjectWizard : public wxWizard
 		WizardPages m_pages;
 		~NewProjectWizard();
 	
-		bool isMS;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

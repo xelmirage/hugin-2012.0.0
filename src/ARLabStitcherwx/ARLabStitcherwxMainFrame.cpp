@@ -1072,7 +1072,7 @@ void ARLabStitcherwxMainFrame::EnableFunction(int phase)
 
 void ARLabStitcherwxMainFrame::pauseProcess(wxCommandEvent& ee)
 {
-	if (isExecPanel_Running)
+	/*if (isExecPanel_Running)
 	{
 		if (m_toolPause->IsToggled())
 		{
@@ -1083,7 +1083,7 @@ void ARLabStitcherwxMainFrame::pauseProcess(wxCommandEvent& ee)
 			m_execPanel->PauseProcess();
 		}
 		
-	}
+	}*/
 	return;
 	
 }

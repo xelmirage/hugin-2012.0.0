@@ -72,25 +72,6 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	m_menubarmain->Append( m_menuEdit, _("处理") ); 
 	
-	m_menu3 = new wxMenu();
-	wxMenuItem* m_menuItem6;
-	m_menuItem6 = new wxMenuItem( m_menu3, wxID_ANY, wxString( _("影像匹配") ) , wxEmptyString, wxITEM_NORMAL );
-	m_menu3->Append( m_menuItem6 );
-	
-	wxMenuItem* m_menuItem7;
-	m_menuItem7 = new wxMenuItem( m_menu3, wxID_ANY, wxString( _("平差优化") ) , wxEmptyString, wxITEM_NORMAL );
-	m_menu3->Append( m_menuItem7 );
-	
-	wxMenuItem* m_menuItem8;
-	m_menuItem8 = new wxMenuItem( m_menu3, wxID_ANY, wxString( _("图像融合") ) , wxEmptyString, wxITEM_NORMAL );
-	m_menu3->Append( m_menuItem8 );
-	
-	wxMenuItem* m_menuItem9;
-	m_menuItem9 = new wxMenuItem( m_menu3, wxID_ANY, wxString( _("生成瓦片") ) , wxEmptyString, wxITEM_NORMAL );
-	m_menu3->Append( m_menuItem9 );
-	
-	m_menubarmain->Append( m_menu3, _("影像拼接") ); 
-	
 	m_menuMultiSpec = new wxMenu();
 	wxMenuItem* m_menuItemMSPrerocess;
 	m_menuItemMSPrerocess = new wxMenuItem( m_menuMultiSpec, wxID_menuItemMSPrerocess, wxString( _("多光谱数据整理") ) , wxEmptyString, wxITEM_NORMAL );
@@ -222,8 +203,6 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	m_toolStart = m_toolBarMain->AddTool( wxID_ToolStart, _("tool"), wxBitmap( wxT("images/start1.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
-	m_toolPause = m_toolBarMain->AddTool( wxID_toolPause, _("tool"), wxBitmap( wxT("images/pause.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_CHECK, wxEmptyString, wxEmptyString, NULL ); 
-	
 	m_toolStop = m_toolBarMain->AddTool( wxID_toolStop, _("tool"), wxBitmap( wxT("images/stop.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
 	
 	m_toolShowTrack = m_toolBarMain->AddTool( wxID_toolShowTrack, _("tool"), wxBitmap( wxT("images/airportsxia.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL ); 
@@ -248,7 +227,6 @@ MainFrame::~MainFrame()
 }
 
 NewProjectWizard::NewProjectWizard( wxWindow* parent, wxWindowID id, const wxString& title, const wxBitmap& bitmap, const wxPoint& pos, long style ) 
-	: isMS(false)
 {
 	this->Create( parent, id, title, bitmap, pos, style );
 	this->SetSizeHints( wxSize( 600,400 ), wxDefaultSize );

@@ -42,6 +42,7 @@ private:
 	bool recover;
 public:
 	bool isRecover();
+	bool isMS;
 };
 
 #endif // __ARLabStitcherwxNewProjectWizard__
