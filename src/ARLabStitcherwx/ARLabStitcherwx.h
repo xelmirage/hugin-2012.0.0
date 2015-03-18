@@ -50,36 +50,38 @@ WX_DEFINE_ARRAY_PTR( wxWizardPageSimple*, WizardPages );
 #define wxID_menuItemAutoCrop 1006
 #define wxID_menuItemMerge 1007
 #define wxID_menuItemSuperOverlay 1008
-#define wxID_Panel6 1009
-#define wxID_ListBoxPicList 1010
-#define wxID_panelPreview 1011
-#define wxID_NoteBookProgressOut 1012
-#define wxID_TimerProcess 1013
-#define wxID_toolBarMain 1014
-#define wxID_toolNew 1015
-#define wxID_ToolStart 1016
-#define wxID_toolPause 1017
-#define wxID_toolStop 1018
-#define wxID_toolShowTrack 1019
-#define wxID_toolSuperOverLay 1020
-#define wxID_ShowKML 1021
-#define wxID_NewProjectWizard 1022
-#define wxID_WizardPage01 1023
-#define wxID_SourceDir 1024
-#define wxID_InputDirHint 1025
-#define wxID_OpenSourceDir 1026
-#define wxID_WizardPage02 1027
-#define wxID_GPSFile 1028
-#define wxID_GPSHint 1029
-#define wxID_OpenGPSFile 1030
-#define wxID_WizardPage03 1031
-#define wxID_OutputFile 1032
-#define wxID_OutputFileHint 1033
-#define wxID_OpenOutputFile 1034
-#define wxID_choiceLeft 1035
-#define wxID_bitmapLeft 1036
-#define wxID_choiceRight 1037
-#define wxID_bitmapRight 1038
+#define wxID_menuItemMSPrerocess 1009
+#define wxID_menuItemMSSecond 1010
+#define wxID_Panel6 1011
+#define wxID_ListBoxPicList 1012
+#define wxID_panelPreview 1013
+#define wxID_NoteBookProgressOut 1014
+#define wxID_TimerProcess 1015
+#define wxID_toolBarMain 1016
+#define wxID_toolNew 1017
+#define wxID_ToolStart 1018
+#define wxID_toolPause 1019
+#define wxID_toolStop 1020
+#define wxID_toolShowTrack 1021
+#define wxID_toolSuperOverLay 1022
+#define wxID_ShowKML 1023
+#define wxID_NewProjectWizard 1024
+#define wxID_WizardPage01 1025
+#define wxID_SourceDir 1026
+#define wxID_InputDirHint 1027
+#define wxID_OpenSourceDir 1028
+#define wxID_WizardPage02 1029
+#define wxID_GPSFile 1030
+#define wxID_GPSHint 1031
+#define wxID_OpenGPSFile 1032
+#define wxID_WizardPage03 1033
+#define wxID_OutputFile 1034
+#define wxID_OutputFileHint 1035
+#define wxID_OpenOutputFile 1036
+#define wxID_choiceLeft 1037
+#define wxID_bitmapLeft 1038
+#define wxID_choiceRight 1039
+#define wxID_bitmapRight 1040
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -93,7 +95,7 @@ class MainFrame : public wxFrame
 		wxMenu* m_menufile;
 		wxMenu* m_menuEdit;
 		wxMenu* m_menu3;
-		wxMenu* m_menu4;
+		wxMenu* m_menuMultiSpec;
 		wxPanel* m_panel6;
 		wxSplitterWindow* m_splitter4;
 		wxPanel* m_panel15;
@@ -171,6 +173,7 @@ class NewProjectWizard : public wxWizard
 		WizardPages m_pages;
 		~NewProjectWizard();
 	
+		bool isMS;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

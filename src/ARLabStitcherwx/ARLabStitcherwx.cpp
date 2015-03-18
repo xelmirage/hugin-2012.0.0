@@ -91,16 +91,16 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	
 	m_menubarmain->Append( m_menu3, _("影像拼接") ); 
 	
-	m_menu4 = new wxMenu();
-	wxMenuItem* m_menuItem11;
-	m_menuItem11 = new wxMenuItem( m_menu4, wxID_ANY, wxString( _("加载多光谱数据") ) , wxEmptyString, wxITEM_NORMAL );
-	m_menu4->Append( m_menuItem11 );
+	m_menuMultiSpec = new wxMenu();
+	wxMenuItem* m_menuItemMSPrerocess;
+	m_menuItemMSPrerocess = new wxMenuItem( m_menuMultiSpec, wxID_menuItemMSPrerocess, wxString( _("多光谱数据整理") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menuMultiSpec->Append( m_menuItemMSPrerocess );
 	
-	wxMenuItem* m_menuItem12;
-	m_menuItem12 = new wxMenuItem( m_menu4, wxID_ANY, wxString( _("多光谱数据转化") ) , wxEmptyString, wxITEM_NORMAL );
-	m_menu4->Append( m_menuItem12 );
+	wxMenuItem* m_menuItemMSSecond;
+	m_menuItemMSSecond = new wxMenuItem( m_menuMultiSpec, wxID_menuItemMSSecond, wxString( _("多光谱数据第二组") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menuMultiSpec->Append( m_menuItemMSSecond );
 	
-	m_menubarmain->Append( m_menu4, _("多光谱") ); 
+	m_menubarmain->Append( m_menuMultiSpec, _("多光谱") ); 
 	
 	this->SetMenuBar( m_menubarmain );
 	
@@ -248,6 +248,7 @@ MainFrame::~MainFrame()
 }
 
 NewProjectWizard::NewProjectWizard( wxWindow* parent, wxWindowID id, const wxString& title, const wxBitmap& bitmap, const wxPoint& pos, long style ) 
+	: isMS(false)
 {
 	this->Create( parent, id, title, bitmap, pos, style );
 	this->SetSizeHints( wxSize( 600,400 ), wxDefaultSize );

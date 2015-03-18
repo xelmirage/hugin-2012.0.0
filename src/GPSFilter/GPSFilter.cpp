@@ -380,6 +380,7 @@ bool is_next_valid(int id,int step)
 void build_belt(string outfile)
 {
 	int _cores=hugin_utils::getCPUCount();
+	ZThread::PoolExecutor aExecutor(_cores);
 	boost::thread_group threads;
 	POINTSLV::iterator belt_iterator;
 	int row_step=1;    //选取照片的间隔
@@ -391,7 +392,7 @@ void build_belt(string outfile)
 	string _outputFile=outfile;
 	ofstream belt_out(_outputFile.c_str());
 	POINTSL::iterator i;
-	ZThread::PoolExecutor aExecutor(_cores);
+	
 	for(i=pointsL.begin();i!=pointsL.end()-1;++i)
 	{
 		if(!i->selected)
@@ -575,6 +576,54 @@ void build_belt(string outfile)
 
 
 }
+void belt_heli(string _outputFile)
+{
+	vector<dist> dist_to_be;
+	dist_to_be.clear();
+	ofstream belt_out(_outputFile.c_str());
+	int _cores = hugin_utils::getCPUCount();
+	ZThread::PoolExecutor aExecutor(_cores);
+	for (int i = 0; i < pointsL.size();++i)
+	{
+		string tag;
+		tag.clear();
+		tag = "selected ";
+		tag += lexical_cast<string>(pointsL[i].id);
+		tag += " pairs_with ";
+
+		if (i != pointsL.size() - 1)
+		{
+
+			dist_to_be.clear();
+			for (int j = i + 1; j < pointsL.size(); ++j)
+			{
+				long d = pointsL[i].distance(pointsL[j]);
+				dist tempDist(pointsL[j].id, d, 0);
+				dist_to_be.push_back(tempDist);
+			}
+			sort(dist_to_be.begin(), dist_to_be.end());
+			
+
+			for (int j = 0; j < 4; ++j)
+			{
+				if (j >= dist_to_be.size())
+				{
+					break;
+				}
+				tag += lexical_cast<string>(dist_to_be[j].id) + ",";
+			}
+			tag = tag.erase(tag.size() - 1, 1);
+		}
+		string cmd = "exiftool -F -m -overwrite_original -UserComment=\"" + tag + "\" "
+			+ images[pointsL[i].id - 1];
+		belt_out << tag << endl;
+
+		aExecutor.execute(new runexif(cmd, images[pointsL[i].id - 1]));
+	}
+	aExecutor.wait();
+	cout << endl << endl << "Filtered successfully    ;-)" << endl;
+
+}
 
 static void usage(const char* name)
 {
@@ -585,7 +634,7 @@ static void usage(const char* name)
          << endl
          << "  Options:" << endl
          << "     -o, --output=file.pto  Output Hugin PTO file." << endl
-       
+		 << "     -m, --mca if its from mca" << endl
          << "     -s, --sourcedir=dir    directory contains images to be handled" << endl
          << "                            (default: 1, no stacks)" << endl
          << "     -g, --gpsfile=file.txt Specify GPS data file" << endl
@@ -595,6 +644,7 @@ static void usage(const char* name)
 
 int main(int argc,char* argv[])
 {
+	bool mca = false;
 	int _cores=hugin_utils::getCPUCount();
 	int c;
 	int optionIndex = 0;
@@ -602,7 +652,7 @@ int main(int argc,char* argv[])
 	ZThread::PoolExecutor aExecutor(_cores);
 	huginExeDir = getExePath(argv[0]);
 	
-	const char* optstring = "o:s:g:h";
+	const char* optstring = "o:s:g:h:m";
 	static struct option longOptions[] =
     {
 		
@@ -612,50 +662,54 @@ int main(int argc,char* argv[])
         //{"gpsoutput", required_argument, NULL, 'p' },
         //{"stacklength", required_argument, NULL, 's' },
         //{"linkstacks", no_argument, NULL, 'l' },
-        
+		{ "mca", no_argument, NULL, 'm' },
         {"help", no_argument, NULL, 'h' },
 
         0
     };
 	 while ((c = getopt_long (argc, argv, optstring, longOptions,&optionIndex)) != -1)
     {
-        switch (c)
-        {
-			case 'g':
-				_inputFile=optarg;
-				cout<<"inputfile "<<_inputFile<<endl;
-                
-                break;
-            case 'o':
-                _outputFile=optarg;
-				cout<<"outputfile "<<_outputFile<<endl;
-                break;
-           //H:\demo\belts.log -g h:\demo\02.txt -s h:\demo
-            case 'p':
-                {
-                  
-                };
-                break;
-            
-           
-            case 's':
-                _inputDIR=optarg;
-				cout<<"inputDIR "<<_inputDIR<<endl;
-                break;
-           
-            
-			case ':':
-				cerr <<"Option " << longOptions[optionIndex].name << " requires a number" << endl;
-				return 1;
-				break;
-			case '?':
-				break;
-			case 'h':
+		switch (c)
+		{
+		case 'g':
+			_inputFile = optarg;
+			cout << "inputfile " << _inputFile << endl;
+
+			break;
+		case 'o':
+			_outputFile = optarg;
+			cout << "outputfile " << _outputFile << endl;
+			break;
+			//H:\demo\belts.log -g h:\demo\02.txt -s h:\demo
+		case 'p':
+		{
+
+		};
+		break;
+
+
+		case 's':
+			_inputDIR = optarg;
+			cout << "inputDIR " << _inputDIR << endl;
+			break;
+		case 'm':
+			mca = true;
+			break;
+		case ':':
+			cerr << "Option " << longOptions[optionIndex].name << " requires a number" << endl;
+			return 1;
+			break;
+		case '?':
+			break;
+		case 'h':
+			usage(argv[0]);
+			return 0;
+		
+
+
+		default:
 				usage(argv[0]);
-				return 0;
-			default:
-				usage(argv[0]);
-				abort ();
+				abort();
 		}
 	 }
 
@@ -711,7 +765,7 @@ int main(int argc,char* argv[])
 	}
 
 	while (data.good()) {
-	
+
 		std::getline(data, line);
 		//cout<<line<<endl;
 		SplitVec.clear();
@@ -719,36 +773,36 @@ int main(int argc,char* argv[])
 		split(SplitVec, line, is_any_of(" "), token_compress_on);
 		//yawTemp=lexical_cast<double>(SplitVec[8]);
 		//cout<<yawTemp<<","<<endl;
-		if(SplitVec.size()<9) 
+		if (SplitVec.size() < 9)
 			break;
-		for(int i=0;i<SplitVec.size();++i)
+		for (int i = 0; i<SplitVec.size(); ++i)
 		{
 			trim(SplitVec[i]);
 		}
 
 		int id;
-		float x,y,yaw,roll;
+		float x, y, yaw, roll;
+		cout << SplitVec[0] << endl;
+		id = lexical_cast<int>(SplitVec[0]);
 		
-		id=lexical_cast<int>(SplitVec[0]);
-		
-		x=lexical_cast<float>(SplitVec[3]);
-		y=lexical_cast<float>(SplitVec[4]);
-		yaw=lexical_cast<float>(SplitVec[8]);
-		roll=lexical_cast<float>(SplitVec[7]);
-		LLtoUTM(x,y);
-		PointL *p=new PointL(id,UTMEasting,UTMNorthing,yaw,roll);
+		x = lexical_cast<float>(SplitVec[3]);
+		y = lexical_cast<float>(SplitVec[4]);
+		yaw = lexical_cast<float>(SplitVec[8]);
+		roll = lexical_cast<float>(SplitVec[7]);
+		LLtoUTM(x, y);
+		PointL *p = new PointL(id, UTMEasting, UTMNorthing, yaw, roll);
 
 		pointsL.push_back(*p);
 		YawVec.push_back(yaw);
 
-		if(minx==0||minx>UTMEasting)
+		if (minx == 0 || minx>UTMEasting)
 		{
-			minx=UTMEasting;
+			minx = UTMEasting;
 		}
 
-		if(miny==0||miny>UTMNorthing)
+		if (miny == 0 || miny > UTMNorthing)
 		{
-			miny=UTMNorthing;
+			miny = UTMNorthing;
 		}
 
 
@@ -758,13 +812,15 @@ int main(int argc,char* argv[])
 		//Exiv2::ExifData &exifData = image->exifData();
 		//exifData["Exif.Photo.UserComment"]
 		//= "charset=Ascii thrown";
+	
+
+			string cmd = huginExeDir.ToStdString() + "\\exiftool -F -m -overwrite_original -GPSLongitude=\"" + lexical_cast<string>(SplitVec[3])
+				+ "\"  -GPSLatitude=\"" + lexical_cast<string>(SplitVec[4])
+				+ "\" -UserComment=\"thrown\" "
+				+ images[j];
+
+			aExecutor.execute(new runexif(cmd, images[j]));
 		
-		string cmd=huginExeDir.ToStdString()+"\\exiftool -F -m -overwrite_original -GPSLongitude=\""+ lexical_cast<string>(SplitVec[3])
-			+"\"  -GPSLatitude=\""+ lexical_cast<string>(SplitVec[4])
-			+"\" -UserComment=\"thrown\" "
-			+images[j];
-		
-		aExecutor.execute(new runexif(cmd,images[j]));
 		//threads.add_thread(new boost::thread(boost::bind(&run,cmd)));
 		//std::system(cmd.c_str());
 
@@ -772,82 +828,95 @@ int main(int argc,char* argv[])
 		//image->writeMetadata();
 		j++;
 
+	
 	}
+
 	aExecutor.wait();
-	//threads.join_all();
-	POINTSL::iterator i;
-	PointL minPoint(0,minx,miny,0,0);
-	for(i=pointsL.begin();i!=pointsL.end();++i)
-	{
-		(*i)=(*i)-minPoint;
-
-		//cout<<(*i).x<<"   "<<(*i).y<<endl;
-	}
-	POINTSLV groups;
-	double deg,heading,deg1,deg2;
-//	out.clear();
-	//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).heading(*(i+1))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
-	//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).slope(*(i+1))"<<"    "<<"atan((*i).slope(*(i+1)))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
-	i=pointsL.begin()+1;
-
-	int inf=5;
-
-	for(i=pointsL.begin()+1;i!=pointsL.end()-1;++i)
-	{
-		heading=(*(i-1)).heading(*(i));
-
-		deg1=360-heading/PI*180;
-		heading=(*(i)).heading(*(i+1));
-		deg2=360-heading/PI*180;
-		
-		if((i->yaw/inf-floor(i->yaw/inf))>=0.5)
-			i->yawint=ceil (i->yaw/inf);
-		else
-			i->yawint=floor(i->yaw/inf);
-		i->dyaw=abs(deg1-deg2);
-		
-		//out<<(*i).x<<"    "<<(*i).y<<"    "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<endl;
-		//cout<<(*i).x<<"    "<<(*i).y<<"    "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<endl;
-		//cout<<(*i).id<<"     "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<" yawint "<<i->yawint<<endl;
-		//out<<(*i).id<<"     "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<" yawint "<<i->yawint<<endl;
-		//cout<<(*i).x<<"    "<<(*i).y<<"    "<<heading<<"    "<<deg<<"    "<<(*i).yaw<<"    "<<deg-(*i).yaw<<endl;
-		//out<<(*i).x<<"    "<<(*i).y<<"    "<<heading<<"    "<<deg<<"    "<<(*i).yaw<<"    "<<deg-(*i).yaw<<endl;
-		//system("pause");
-	}
-
-	int most1=findmost(),most2;
-	if (most1>(180/inf))
-		most2=most1-(180/inf);
-	else
-		most2=(180/inf)+most1;
-
-
-	for (i=pointsL.begin();i<pointsL.end();++i)
-	{
-		/**/
-		int dyaw = (*i).dyaw;
-		if (((*i).yawint == most1 || (*i).yawint == (most2)) && dyaw<5)
-		{
-			(*i).selected=true;
-			cout << "-";
-
-		}
-		else
-		{
-			cout << (*i).yawint<<",";
-		}
-		//out<<(*i).id<<"   yawint  "<<(*i).yawint<<"  roll  "<<(*i).roll<<" dyaw:"<<(*i).dyaw<<"  selected "<<i->selected<<endl;
-		//cout<<(*i).id<<"   yawint  "<<(*i).yawint<<"  roll  "<<(*i).roll<<" dyaw:"<<(*i).dyaw<<"  selected "<<i->selected<<endl;
-		//cout<<(*i).id<<"   yawint  "<<(*i).yawint<<"  roll  "<<(*i).roll<<" dyaw:"<<(*i).dyaw<<"  selected "<<i->selected<<endl;
-	}
 
 	//cout<<most1<<"     "<<most2<<endl;
 
 
+	
+	
+	//threads.join_all();
+	
 
 
+	if (!mca)
+	{
+		POINTSL::iterator i;
+		PointL minPoint(0, minx, miny, 0, 0);
+		for (i = pointsL.begin(); i != pointsL.end(); ++i)
+		{
+			(*i) = (*i) - minPoint;
 
-	build_belt(_outputFile);
+			//cout<<(*i).x<<"   "<<(*i).y<<endl;
+		}
+		POINTSLV groups;
+		double deg, heading, deg1, deg2;
+		//	out.clear();
+		//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).heading(*(i+1))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
+		//out<<"(*i).x"<<"    "<<"(*i).y"<<"    "<<"(*i).slope(*(i+1))"<<"    "<<"atan((*i).slope(*(i+1)))"<<"    "<<"deg"<<"    "<<"(*i).yaw"<<"    "<<"deg-(*i).yaw"<<endl;;
+		i = pointsL.begin() + 1;
+
+		int inf = 5;
+
+		for (i = pointsL.begin() + 1; i != pointsL.end() - 1; ++i)
+		{
+			heading = (*(i - 1)).heading(*(i));
+
+			deg1 = 360 - heading / PI * 180;
+			heading = (*(i)).heading(*(i + 1));
+			deg2 = 360 - heading / PI * 180;
+
+			if ((i->yaw / inf - floor(i->yaw / inf)) >= 0.5)
+				i->yawint = ceil(i->yaw / inf);
+			else
+				i->yawint = floor(i->yaw / inf);
+			i->dyaw = abs(deg1 - deg2);
+
+			//out<<(*i).x<<"    "<<(*i).y<<"    "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<endl;
+			//cout<<(*i).x<<"    "<<(*i).y<<"    "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<endl;
+			//cout<<(*i).id<<"     "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<" yawint "<<i->yawint<<endl;
+			//out<<(*i).id<<"     "<<deg1<<"    "<<deg2<<"    "<<abs(deg1-deg2)<<" yawint "<<i->yawint<<endl;
+			//cout<<(*i).x<<"    "<<(*i).y<<"    "<<heading<<"    "<<deg<<"    "<<(*i).yaw<<"    "<<deg-(*i).yaw<<endl;
+			//out<<(*i).x<<"    "<<(*i).y<<"    "<<heading<<"    "<<deg<<"    "<<(*i).yaw<<"    "<<deg-(*i).yaw<<endl;
+			//system("pause");
+		}
+
+		int most1 = findmost(), most2;
+		if (most1 > (180 / inf))
+			most2 = most1 - (180 / inf);
+		else
+			most2 = (180 / inf) + most1;
+
+
+		for (i = pointsL.begin(); i < pointsL.end(); ++i)
+		{
+			/**/
+			int dyaw = (*i).dyaw;
+			if (((*i).yawint == most1 || (*i).yawint == (most2)) && dyaw < 5)
+			{
+				(*i).selected = true;
+				cout << "-";
+
+			}
+			else
+			{
+				cout << (*i).yawint << ",";
+			}
+			//out<<(*i).id<<"   yawint  "<<(*i).yawint<<"  roll  "<<(*i).roll<<" dyaw:"<<(*i).dyaw<<"  selected "<<i->selected<<endl;
+			//cout<<(*i).id<<"   yawint  "<<(*i).yawint<<"  roll  "<<(*i).roll<<" dyaw:"<<(*i).dyaw<<"  selected "<<i->selected<<endl;
+			//cout<<(*i).id<<"   yawint  "<<(*i).yawint<<"  roll  "<<(*i).roll<<" dyaw:"<<(*i).dyaw<<"  selected "<<i->selected<<endl;
+		}
+
+		build_belt(_outputFile);
+
+	}
+	else
+	{
+		belt_heli(_outputFile);
+	}
 
 
 	//::system("pause");

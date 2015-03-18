@@ -9,6 +9,7 @@ MainFrame( parent )
 , allowToolShowTrack(false)
 , isExecPanel_Paused(false)
 , isUserInterrupt(false)
+, isMS(false)
 {
 	time_count=0;
 	m_GPSFrame = new ::ARLabStitcherwxGPSFrame(this);
@@ -54,6 +55,8 @@ MainFrame( parent )
 	phasename[8]="GPS点位重采样";
 	phasename[9]="图像融合";
 	phasename[10] = "结束";
+	phasename[11] = "多光谱整理";
+	phasename[12] = "第二组多光谱融合";
 	sdir="f:\\kl\\part";
 	gpsfileName="f:\\kl\\part\\02.txt";
 	
@@ -107,6 +110,7 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 	
 	if (nw.RunWizard(nw.m_pages[0])==TRUE)
 	{
+		isMS = nw.isMS;
 		sdir = nw.sdir;
 		gpsfileName = nw.gpsfileName;
 		outfileName = nw.outfileName;
@@ -172,8 +176,10 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 		{
 			m_menuEdit->Enable(wxID_menuItemMerge, true);
 		}
-		if ()
+		
+		if (oKML.Exists()&&ofile.Exists())
 		{
+			m_menuEdit->Enable(wxID_menuItemSuperOverlay, true);
 		}
 
 
@@ -451,13 +457,16 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 				return;
 			}
 			break;
-		case 8:
+		case phase_nona_gps:
 			MainFrame::m_timerprocess.Stop();
 			wxMessageBox("crop finish!");
 			break;
-		case 9:
+		case phase_merge:
 			MainFrame::m_timerprocess.Stop();
 			wxMessageBox("");
+			break;
+		case phase_mspreprocess:
+			MainFrame::m_timerprocess.Stop();
 			break;
 		default:
 			break;
@@ -491,8 +500,14 @@ void ARLabStitcherwxMainFrame::process(void)
 		this->m_timerprocess.Start(1000);
 		if(!beltlog.FileExists())
 		{
-			cmd=ExeDir+wxT("\\gpsfilter -o ")+sdir+wxT("\\belts.log -g ")+gpsfileName+wxT(" -s ")+sdir;
-
+			if (isMS)
+			{
+				cmd = ExeDir + wxT("\\gpsfilter -o ") + sdir + wxT("\\belts.log -m -g ") + gpsfileName + wxT(" -s ") + sdir;
+			}
+			else
+			{
+				cmd = ExeDir + wxT("\\gpsfilter -o ") + sdir + wxT("\\belts.log -g ") + gpsfileName + wxT(" -s ") + sdir;
+			}
 			if (execexternal(cmd,wxT("航迹识别"))!=0)
 				return;
 			//"gpsfilter -o "+sdir+"belts.log -g "+gpsfileName+" -s "+sdir,"processing GPSFilting");
@@ -772,8 +787,15 @@ void ARLabStitcherwxMainFrame::preProcess(wxCommandEvent& WXUNUSED(event))
 
 	wxString cmd;
 	
-	
-	cmd = ExeDir + wxT("\\gpsfilter -o ") + sdir + wxT("\\belts.log -g ") + gpsfileName + wxT(" -s ") + sdir;
+	if (isMS)
+	{
+		cmd = ExeDir + wxT("\\gpsfilter -o ") + sdir + wxT("\\belts.log -m -g ") + gpsfileName + wxT(" -s ") + sdir;
+	}
+	else
+	{
+		cmd = ExeDir + wxT("\\gpsfilter -o ") + sdir + wxT("\\belts.log  -g ") + gpsfileName + wxT(" -s ") + sdir;
+
+	}
 	phase = 0;
 
 	MainFrame::m_textCtrlProgress->Clear();
@@ -968,9 +990,11 @@ void ARLabStitcherwxMainFrame::EnableFunction(int phase)
 	m_menuEdit->Enable(wxID_menuItemAutoCrop, false);
 	m_menuEdit->Enable(wxID_menuItemOptimise, false);
 	m_menuEdit->Enable(wxID_menuItemFindCP, false);
+	m_menuEdit->Enable(wxID_menuItemSuperOverlay, FALSE);
 	switch (phase)
 	{
 	case phase_merge:
+		m_menuEdit->Enable(wxID_menuItemSuperOverlay, true);
 	case phase_nona_gps:
 	case phase_crop://crop finishi
 		m_menuEdit->Enable(wxID_menuItemMerge, TRUE);
@@ -1079,6 +1103,80 @@ void ARLabStitcherwxMainFrame::menuSuperOverlay(wxCommandEvent& ee)
 	SuperOverlay ovl = SuperOverlay(outTif.GetFullPath(), outKML.GetFullPath(), outdir);
 	ovl.build();
 
+
+
+
+
+}
+
+
+void ARLabStitcherwxMainFrame::menuMSPreProcess(wxCommandEvent& ee)
+{
+	wxDirDialog ms(this, _("选择多光谱目录"), "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+
+	//图像目录
+	if (ms.ShowModal() == wxID_CANCEL)
+		return;
+	phase = phase_mspreprocess;
+	isBatch = false;
+	wxDir msDir = ms.GetPath();
+	time_count = 0;
+	t = wxDateTime::Now();
+	m_timerprocess.Start(1000);
+	wxString cmd = ExeDir + "\\python\\python "+ExeDir+"\\python\\try-file.py "+ms.GetPath();
+	if (execexternal(cmd, wxT("")) != 0)
+	{
+		return;
+	}
+
+
+}
+
+
+void ARLabStitcherwxMainFrame::menuMSSecond(wxCommandEvent& ee)
+{
+
+	if (stitch_cp_clean_line_op_crop.Exists()&&gps_connect.Exists())
+	{
+		wxDirDialog ms(this, _("选择第二组多光谱目录"), "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+
+		//图像目录
+		if (ms.ShowModal() == wxID_CANCEL)
+			return;
+		phase = phase_mssecond;
+		isBatch = false;
+		wxDir msDir = ms.GetPath();
+		time_count = 0;
+		t = wxDateTime::Now();
+		m_timerprocess.Start(1000);
+
+
+		wxString TargetDIR = ms.GetPath();
+		wxFileName targetPto;
+		targetPto.SetPath(TargetDIR);
+		wxFileName targetGPS;
+
+		targetGPS.SetFullName(gps_connect.GetFullName());
+		wxCopyFile(gps_connect.GetFullPath(), targetGPS.GetFullPath());
+
+		targetPto.SetFullName(stitch_cp_clean_line_op_crop.GetFullName());
+		wxCopyFile(stitch_cp_clean_line_op_crop.GetFullPath(), targetPto.GetFullPath());
+
+		wxFileName out2 = ofile;
+		out2.SetName(out2.GetName() + "_2");
+
+		wxString cmd = ExeDir + "\\split_blend " + targetPto.GetFullPath()  + out2.GetFullPath();
+		
+		if (execexternal(cmd, wxT("第二组融合")) != 0)
+		{
+			return;
+		}
+
+
+
+
+
+	}
 
 
 

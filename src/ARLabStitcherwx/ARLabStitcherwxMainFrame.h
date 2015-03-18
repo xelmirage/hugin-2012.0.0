@@ -38,6 +38,8 @@ using namespace std;
 #define phase_nona_gps 8
 #define phase_merge 9
 #define phase_done 10
+#define phase_mspreprocess 11
+#define phase_mssecond 12
 class ARLabStitcherwxMainFrame : public MainFrame
 {
 
@@ -317,7 +319,7 @@ private:
 	wxString ExeDir,run_time;
 	long time_count;
 	int phase;
-	std::string phasename[11];
+	std::string phasename[13];
 	bool isBatch;
 	wxString currentPreviewPic;
 
@@ -359,6 +361,11 @@ private:
 	std::vector<wxFileName> workset;
 	bool isUserInterrupt;
 	void menuSuperOverlay(wxCommandEvent& ee);
+public:
+	void menuMSPreProcess(wxCommandEvent& ee);
+private:
+	void menuMSSecond(wxCommandEvent& ee);
+	bool isMS;
 };
 
 enum

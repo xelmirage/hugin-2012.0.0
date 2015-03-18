@@ -17,7 +17,7 @@
         <property name="internationalize">1</property>
         <property name="name">ARLabStitcherwx</property>
         <property name="namespace"></property>
-        <property name="path">f:\huginbase64\hugin-2012.0.0\src\ARLabStitcherwx</property>
+        <property name="path">e:\huginbase64\hugin-2012.0.0\src\ARLabStitcherwx</property>
         <property name="precompiled_header"></property>
         <property name="relative_path">1</property>
         <property name="skip_lua_events">1</property>
@@ -396,19 +396,19 @@
                         <event name="OnUpdateUI"></event>
                     </object>
                 </object>
-                <object class="wxMenu" expanded="0">
+                <object class="wxMenu" expanded="1">
                     <property name="label">多光谱</property>
-                    <property name="name">m_menu4</property>
+                    <property name="name">m_menuMultiSpec</property>
                     <property name="permission">protected</property>
                     <object class="wxMenuItem" expanded="0">
                         <property name="bitmap"></property>
                         <property name="checked">0</property>
                         <property name="enabled">1</property>
                         <property name="help"></property>
-                        <property name="id">wxID_ANY</property>
+                        <property name="id">wxID_menuItemMSPrerocess</property>
                         <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">加载多光谱数据</property>
-                        <property name="name">m_menuItem11</property>
+                        <property name="label">多光谱数据整理</property>
+                        <property name="name">m_menuItemMSPrerocess</property>
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
@@ -420,10 +420,10 @@
                         <property name="checked">0</property>
                         <property name="enabled">1</property>
                         <property name="help"></property>
-                        <property name="id">wxID_ANY</property>
+                        <property name="id">wxID_menuItemMSSecond</property>
                         <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">多光谱数据转化</property>
-                        <property name="name">m_menuItem12</property>
+                        <property name="label">多光谱数据第二组</property>
+                        <property name="name">m_menuItemMSSecond</property>
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>

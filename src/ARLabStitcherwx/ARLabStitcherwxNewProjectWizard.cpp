@@ -18,7 +18,15 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 	wxDirDialog dd(this, _("选择图像目录"), "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
 	if (dd.ShowModal() == wxID_CANCEL)
 		return;
-
+	int ms = wxMessageBox("是否是多光谱数据？", "多光谱", wxYES_NO);
+	if (ms==wxYES)
+	{
+		isMS	= true;
+	}
+	else
+	{
+		isMS = false;
+	}
 	std::vector<wxFileName> workset;
 	m_textCtrlSourceDir->SetValue(dd.GetPath());
 	std::string sdir = dd.GetPath();
@@ -57,7 +65,7 @@ void ARLabStitcherwxNewProjectWizard::OpenSourceDir(wxCommandEvent& WXUNUSED(eve
 		}
 		else if (i > 0)
 		{
-			int answer = wxMessageBox("belt record found, recover from it?", "Recovery", wxYES_NO | wxCANCEL);
+			int answer = wxMessageBox("belt record found, recover from it?", "Recovery", wxYES_NO );
 			if (answer == wxYES)
 			{
 				for (int j = i; j < workset.size(); ++j)
