@@ -131,7 +131,9 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 		stitch_cp_clean_line_op.SetPath(sdir + "\\stitch_cp_clean_linefind_op.mosaicinfo");
 		gps_connect.SetPath(this->outfileName + ".coord");
 		stitch_cp_clean_line_op_crop.SetPath(sdir + "\\stitch_cp_clean_linefind_op_crop.mosaicinfo");
-		
+		oKML.SetPath(sdir + "\\" + ofile.GetName());
+
+
 		workset.push_back(beltlog);
 		workset.push_back(stitch);
 		workset.push_back(stitch_cp);

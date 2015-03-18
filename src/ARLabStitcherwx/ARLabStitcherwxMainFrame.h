@@ -330,6 +330,7 @@ private:
 	wxFileName gps_connect;
 	wxFileName stitch_cp_clean_line_op_crop;
 	wxFileName ofile;
+	wxFileName oKML;
 
 
 	DECLARE_EVENT_TABLE()
