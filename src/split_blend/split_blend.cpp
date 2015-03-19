@@ -363,14 +363,8 @@ void MainFrame::SetOverwrite(bool doOverwrite)
 }
 void MainFrame::OnProcessTerminate(wxProcessEvent & event)
 {
-	cout << "融合完成，请手动终止任务" << endl;
-	cout << "融合完成，请手动终止任务" << endl;
-	cout << "融合完成，请手动终止任务" << endl;
-	cout << "融合完成，请手动终止任务" << endl;
-	cout << "融合完成，请手动终止任务" << endl;
-	cout << "融合完成，请手动终止任务" << endl;
-	cout << "融合完成，请手动终止任务" << endl;
-	cout << "融合完成，请手动终止任务" << endl;
+	
+
 	//vector<SplitBlendFrame*>::iterator it;
 	bool can_start=true;
 	SplitBlendFrame* frame;
@@ -425,7 +419,7 @@ void MainFrame::OnProcessTerminate(wxProcessEvent & event)
 			wxRemoveFile(outparts[i]+".tif");
 			
 		}
-		
+		cout << "merge done please stop maaaaaanually " << endl;
 		Close();
 	}
 	//if(all_set)

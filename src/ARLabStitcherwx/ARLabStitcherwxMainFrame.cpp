@@ -311,7 +311,11 @@ void ARLabStitcherwxMainFrame::count_time(::wxTimerEvent& e)
 	run_time += (runtime.GetSeconds()%60).ToString() + wxT(" 秒 ");
 
 	this->change_status();
-
+	wxString lastLine = m_execPanel->m_textctrl->GetLineText(m_execPanel->m_textctrl->GetLineLength() - 1);
+	if (lastLine.Contains("maaaaaanually"))
+	{
+		m_execPanel->KillProcess();
+	}
 	
 }
 void ARLabStitcherwxMainFrame::change_status()
@@ -356,7 +360,7 @@ int ARLabStitcherwxMainFrame::execexternal(wxString command,wxString message)
 {
 	if (isExecPanel_Running)
 	{
-		wxMessageBox("运行中，请勿重复运行");
+		//wxMessageBox("运行中，请勿重复运行");
 		return 0;
 	}
 	isExecPanel_Running = true;
