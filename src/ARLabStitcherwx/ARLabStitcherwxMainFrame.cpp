@@ -188,7 +188,7 @@ void ARLabStitcherwxMainFrame::newProjectTool(wxCommandEvent& WXUNUSED(event))
 		{
 			m_menuEdit->Enable(wxID_menuItemAutoCrop, true);
 		}
-		if (stitch_cp_clean_line_op_crop.Exists()&&gps_connect.Exists())
+		if (stitch_cp_clean_line_op_crop.Exists())
 		{
 			m_menuEdit->Enable(wxID_menuItemMerge, true);
 		}
@@ -311,10 +311,16 @@ void ARLabStitcherwxMainFrame::count_time(::wxTimerEvent& e)
 	run_time += (runtime.GetSeconds()%60).ToString() + wxT(" 秒 ");
 
 	this->change_status();
-	wxString lastLine = m_execPanel->m_textctrl->GetLineText(m_execPanel->m_textctrl->GetLineLength() - 1);
+	
+	wxString lastLine = m_execPanel->m_textctrl->GetLineText(m_execPanel->m_textctrl->GetNumberOfLines() - 2);
 	if (lastLine.Contains("maaaaaanually"))
 	{
-		m_execPanel->KillProcess();
+		MainFrame::m_timerprocess.Stop();
+		wxMessageBox("融合完成，请手动结束任务");
+		//isUserInterrupt = true;
+		//m_execPanel->KillProcess();
+		
+		EnableFunction(phase);
 	}
 	
 }
@@ -386,7 +392,8 @@ void ARLabStitcherwxMainFrame::end_process(::wxProcessEvent& e)
 	{
 		if (isUserInterrupt)
 		{
-			wxMessageBox("用户终止");
+			wxMessageBox("用户终止，或者融合结束");
+			m_execPanel->m_textctrl->Clear();
 		}
 		else
 		{
@@ -1016,13 +1023,13 @@ void ARLabStitcherwxMainFrame::EnableFunction(int phase)
 	switch (phase)
 	{
 	case phase_merge:
-		
-	case phase_nona_gps:
-	case phase_crop://crop finishi
 		if (!isMS)
 		{
 			m_menuEdit->Enable(wxID_menuItemSuperOverlay, true);
 		}
+	case phase_nona_gps:
+	case phase_crop://crop finishi
+		
 		m_menuEdit->Enable(wxID_menuItemMerge, TRUE);
 	case phase_optimise:
 		m_menuEdit->Enable(wxID_menuItemAutoCrop, TRUE);
@@ -1126,6 +1133,7 @@ void ARLabStitcherwxMainFrame::menuSuperOverlay(wxCommandEvent& ee)
 	outKML.SetExt("kml");
 	wxString outdir=sdir+"\\"+outTif.GetName();
 	wxDir::Make(outdir);
+
 	SuperOverlay ovl = SuperOverlay(outTif.GetFullPath(), outKML.GetFullPath(), outdir);
 	ovl.build();
 
